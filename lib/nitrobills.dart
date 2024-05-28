@@ -6,7 +6,6 @@ import 'package:nitrobills/app/ui/global_widgets/tab_overlay.dart';
 import 'package:nitrobills/app/ui/pages/onboarding/splash_page.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_utils.dart';
-import 'package:nitrobills/test.dart';
 
 class NitroBills extends StatelessWidget {
   const NitroBills({super.key});
@@ -30,8 +29,7 @@ class NitroBills extends StatelessWidget {
           ),
           initialBinding: InitialBinding(),
           builder: (context, child) => TabOverlay(child: child ?? Container()),
-          // home: const SplashPage(),
-          home: const TestPage(),
+          home: const SplashPage(),
         );
       },
     );
