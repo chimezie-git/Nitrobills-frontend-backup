@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "48618475958",
+    "project_id": "nitrobills",
+    "storage_bucket": "nitrobills.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48618475958:android:253a8a08d857798b0bf117",
+        "android_client_info": {
+          "package_name": "com.example.nitrobills"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRSyrUdyPNU-JgsGk0UVrfFXOOnllw4MY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
