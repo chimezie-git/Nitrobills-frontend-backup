@@ -8,21 +8,19 @@ import 'package:nitrobills/app/ui/utils/nb_text.dart';
 class OrderSelectingWidget extends StatelessWidget {
   final bool active;
   final bool aToZ;
-  final void Function(bool) onChange;
+  final void Function() onTap;
 
   const OrderSelectingWidget({
     super.key,
     required this.aToZ,
     required this.active,
-    required this.onChange,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        onChange(!aToZ);
-      },
+      onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         alignment: Alignment.center,

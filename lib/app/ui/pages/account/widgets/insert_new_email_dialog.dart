@@ -2,17 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/data/enums/button_enum.dart';
+import 'package:nitrobills/app/data/services/validators.dart';
+import 'package:nitrobills/app/hive_box/auth_data/auth_data.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/pages/account/widgets/email_verification_sent_dialog.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
+import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 
-class InsertNewEmailDailog extends StatelessWidget {
+class InsertNewEmailDailog extends StatefulWidget {
   const InsertNewEmailDailog({
     super.key,
   });
+
+  @override
+  State<InsertNewEmailDailog> createState() => _InsertNewEmailDailogState();
+}
+
+class _InsertNewEmailDailogState extends State<InsertNewEmailDailog> {
+  TextEditingController emailCntrl = TextEditingController();
+  bool loading = false;
+
+  @override
+  void dispose() {
+    emailCntrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +66,19 @@ class InsertNewEmailDailog extends StatelessWidget {
                           .setColor(const Color(0xFF4D4D4D)),
                       const Spacer(),
                       NbField.text(
+                        controller: emailCntrl,
                         hint: "New email address",
+                        keyboardType: TextInputType.emailAddress,
                         fieldColor: const Color(0xFFF2F2F2),
                         borderColor: const Color(0xFFF2F2F2),
                       ),
                       const Spacer(),
                       NbButton.primary(
-                          text: "Change my email", onTap: _changeEmail),
+                        text: "Change my email",
+                        onTap: _changeEmail,
+                        status:
+                            loading ? ButtonEnum.loading : ButtonEnum.active,
+                      ),
                       const Spacer(),
                     ],
                   ),
@@ -80,7 +104,11 @@ class InsertNewEmailDailog extends StatelessWidget {
     );
   }
 
-  _changeEmail() {
-    Get.dialog(const EmailVerificationSentDialog());
+  _changeEmail() async {
+    if (!NbValidators.isEmail(emailCntrl.text)) {
+      NbToast.error("Enter a valid email address");
+      return;
+    }
+    // Change email here
   }
 }

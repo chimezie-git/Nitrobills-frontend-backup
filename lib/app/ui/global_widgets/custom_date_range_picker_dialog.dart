@@ -82,11 +82,13 @@ class _CustomDatePickerDialogState extends State<CustomDateRangePickerDialog> {
                 11.verticalSpace,
                 Row(
                   children: [
+                    // _DropdownButton("d", ['jan', 'feb', 'mar'], (p0) {}),
                     backButton(true),
-                    Expanded(
-                        child: NbText.sp18(
-                      DateFormat("MMM yyyy").format(date.value),
-                    ).w600.black.centerText),
+                    const Spacer(),
+                    _monthDropdown(),
+                    const Spacer(),
+                    _yearDropdown(),
+                    const Spacer(),
                     backButton(false),
                   ],
                 ),
@@ -130,6 +132,78 @@ class _CustomDatePickerDialogState extends State<CustomDateRangePickerDialog> {
           ),
         ),
       ),
+    );
+  }
+
+  Container _yearDropdown() {
+    return Container(
+      width: 86.w,
+      height: 34.h,
+      padding: EdgeInsets.symmetric(horizontal: 8.r),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24.r),
+        color: const Color(0xFFECECEC),
+      ),
+      child: DropdownButton<int>(
+          value: date.value.year,
+          underline: const SizedBox.shrink(),
+          icon: SvgPicture.asset(
+            NbSvg.arrowDown,
+            width: 13.r,
+          ),
+          isExpanded: true,
+          items: List.generate(
+            30,
+            (index) => DropdownMenuItem(
+              alignment: AlignmentDirectional.center,
+              value: 2000 + index,
+              child:
+                  NbText.sp18(DateFormat('yyyy').format(DateTime(2000 + index)))
+                      .w600
+                      .centerText,
+            ),
+          ),
+          onChanged: (v) {
+            firstSelectDate = null;
+            lastSelectDate = null;
+            date.value = DateTime(v ?? date.value.year);
+          }),
+    );
+  }
+
+  Container _monthDropdown() {
+    return Container(
+      width: 86.w,
+      height: 34.h,
+      padding: EdgeInsets.symmetric(horizontal: 8.r),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24.r),
+        color: const Color(0xFFECECEC),
+      ),
+      child: DropdownButton<int>(
+          value: date.value.month,
+          underline: const SizedBox.shrink(),
+          icon: SvgPicture.asset(
+            NbSvg.arrowDown,
+            width: 13.r,
+          ),
+          isExpanded: true,
+          items: List.generate(
+            12,
+            (index) => DropdownMenuItem(
+              alignment: AlignmentDirectional.center,
+              value: index,
+              child: NbText.sp18(DateFormat('MMM')
+                      .format(DateTime(date.value.year, index + 1)))
+                  .w600
+                  .centerText,
+            ),
+          ),
+          onChanged: (v) {
+            firstSelectDate = null;
+            lastSelectDate = null;
+            date.value = DateTime(date.value.year, v ?? date.value.month);
+          }),
     );
   }
 
@@ -343,6 +417,36 @@ class _TimeButton extends StatelessWidget {
         border: active ? Border.all(color: NbColors.primary) : null,
       ),
       child: NbText.sp14(txt).w500.black,
+    );
+  }
+}
+
+class _DropdownButton extends StatelessWidget {
+  final String val;
+  final void Function(String) onChange;
+  final List<String> values;
+  const _DropdownButton(this.val, this.values, this.onChange);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // width: 86.w,
+      // height: 35.h,
+      decoration: BoxDecoration(
+        color: const Color(0xFFECECEC),
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: DropdownButton<String>(
+        items: values
+            .map((e) =>
+                DropdownMenuItem<String>(child: NbText.sp18(e).w500.black))
+            .toList(),
+        onChanged: (v) {
+          if (v != null) {
+            onChange(v);
+          }
+        },
+      ),
     );
   }
 }

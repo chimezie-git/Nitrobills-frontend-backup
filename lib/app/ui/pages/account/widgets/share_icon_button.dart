@@ -14,15 +14,18 @@ class ShareIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 56.r,
-      height: 56.r,
-      decoration: const BoxDecoration(
-        color: NbColors.white,
-        shape: BoxShape.circle,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: 56.r,
+        height: 56.r,
+        decoration: const BoxDecoration(
+          color: NbColors.white,
+          shape: BoxShape.circle,
+        ),
+        padding: EdgeInsets.all(10.r),
+        child: SvgPicture.asset(svg),
       ),
-      padding: EdgeInsets.all(10.r),
-      child: SvgPicture.asset(svg),
     );
   }
 }

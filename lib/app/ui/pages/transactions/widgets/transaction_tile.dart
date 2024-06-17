@@ -34,7 +34,7 @@ class TransactionTile extends StatelessWidget {
                 Container(
                   width: 36.r,
                   height: 36.r,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       image: AssetImage(NbImage.mtn),
@@ -57,7 +57,7 @@ class TransactionTile extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    NbText.sp16("Buy data").w500.black,
+                    NbText.sp14("${isCredit ? '+' : '-'}₦ 2500").w500.black,
                     const Spacer(),
                     Container(
                       width: 20.r,

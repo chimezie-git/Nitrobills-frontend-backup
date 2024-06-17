@@ -43,6 +43,11 @@ class NbSvg {
   static const String autopay = "assets/svg/autopay.svg";
   static const String delete = "assets/svg/delete.svg";
   static const String obscure = "assets/svg/obscure.svg";
+  static const String info = "assets/svg/info.svg";
+  static const String search = "assets/svg/search.svg";
+  static const String reloadRotate = "assets/svg/reload_rotate.svg";
+  static const String greenCheck = "assets/svg/green_check.svg";
+  // static const String phone = "assets/svg/phone.svg";
 }
 
 class NbImage {
@@ -72,6 +77,10 @@ class NbImage {
   static const String eedc = "assets/images/eedc.png";
   static const String bedc = "assets/images/bedc.png";
   static const String apleNg = "assets/images/apleng.png";
+  static const String smileTelecom = "assets/images/smile_telecom.jpeg";
+  static const String starcomms = "assets/images/starcomms.jpg";
+  static const String multilinks = "assets/images/multilinks.jpeg";
+  static const String mtel = "assets/images/mtel.png";
   // onboarding page
   static const String onboarding1 = "assets/images/onboarding/onboarding1.png";
   static const String onboarding2 = "assets/images/onboarding/onboarding2.png";

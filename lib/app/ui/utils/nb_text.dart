@@ -88,7 +88,7 @@ extension HtTextExtensions on Text {
         textAlign: textAlign ?? this.textAlign,
         maxLines: maxLines ?? this.maxLines,
         // style: style?.merge(this.style) ?? this.style,
-        style: (this.style ?? const TextStyle()).copyWith(
+        style: (style ?? const TextStyle()).copyWith(
           fontWeight: fontWeight,
           color: color,
           decoration: decoration,

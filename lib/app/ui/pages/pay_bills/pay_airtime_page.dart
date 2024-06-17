@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/data/models/contact_number.dart';
 import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
 import 'package:nitrobills/app/data/models/transactions.dart';
+import 'package:nitrobills/app/ui/global_widgets/balance_hint_widget.dart';
+import 'package:nitrobills/app/ui/global_widgets/choose_contact_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
@@ -107,6 +108,7 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
                   ),
                   itemBuilder: (context, index) {
                     int curAmount = amounts[index];
+                    bool selected = curAmount.toString() == amountCntr.text;
                     return InkWell(
                       onTap: () {
                         amountCntr.text = curAmount.toString();
@@ -115,10 +117,14 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
                       child: Container(
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.r),
+                          borderRadius: BorderRadius.circular(8.r),
+                          border: selected
+                              ? Border.all(color: NbColors.primary)
+                              : null,
                           color: NbColors.white,
                         ),
-                        child: NbText.sp16("N$curAmount").w500.black,
+                        child: NbText.sp16("₦ $curAmount").w500.setColor(
+                            selected ? NbColors.primary : NbColors.black),
                       ),
                     );
                   },
@@ -129,13 +135,13 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
                   fieldHeight: 78.h,
                   onTap: _setServiceProvider,
                 ),
-                32.verticalSpace,
+                const BalanceHintWidget(),
                 NbField.text(
                   controller: amountCntr,
                   fieldHeight: 78.h,
                   hint: "Amount",
                 ),
-                32.verticalSpace,
+                ChooseContactButton(getContact: _setPhoneNumber),
                 NbField.text(
                   controller: numberCntr,
                   fieldHeight: 78.h,
@@ -176,5 +182,10 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
         transaction: Transaction.sampleMobile,
       ),
     );
+  }
+
+  void _setPhoneNumber(String contact) {
+    numberCntr.text = contact;
+    setState(() {});
   }
 }

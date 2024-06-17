@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/data/models/transactions.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
@@ -107,17 +106,17 @@ class _BulkSMSPageState extends State<BulkSMSPage> {
 
   void _pickContact() async {
     try {
-      final Contact? contact = await FlutterContacts.openExternalPick();
-      if (contact != null) {
-        String name = contact.displayName;
-        String number = contact.phones.first.number;
-        final newContact = (name, number);
-        bool hasContact =
-            selectedContacts.indexWhere((element) => element.$2 == number) !=
-                -1;
-        if (!hasContact) {
-          selectedContacts.add(newContact);
-        }
+      PhoneContact contact =
+          await FlutterContactPicker.pickPhoneContact(askForPermission: true);
+      String phone = contact.phoneNumber?.number ?? "";
+      String name = contact.fullName ?? "";
+      String number = phone.replaceAll(" ", "");
+
+      final newContact = (name, number);
+      bool hasContact =
+          selectedContacts.indexWhere((element) => element.$2 == number) != -1;
+      if (!hasContact) {
+        selectedContacts.add(newContact);
       }
     } catch (e) {
       debugPrint(e.toString());

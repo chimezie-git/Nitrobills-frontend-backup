@@ -1,37 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/data/enums/button_enum.dart';
+import 'package:nitrobills/app/data/repository/auth_repo.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
-import 'package:nitrobills/app/ui/pages/auth/email_code_verification.dart';
-import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
-import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class PhoneNumberPage extends StatefulWidget {
-  const PhoneNumberPage({super.key});
+  final String? phoneNumber;
+
+  /// did user get to this page from the edit button on the
+  ///  otp page or not
+  final bool resetPassword;
+  const PhoneNumberPage({
+    super.key,
+    this.phoneNumber,
+    this.resetPassword = false,
+  });
 
   @override
   State<PhoneNumberPage> createState() => _PhoneNumberPageState();
 }
 
 class _PhoneNumberPageState extends State<PhoneNumberPage> {
-  late TextEditingController numberField;
-  List<String> numCodes = ["+234", "+229", "+124", "+442"];
-  late String numCode;
+  late TextEditingController phoneCntrl;
+  ValueNotifier<ButtonEnum> buttonStatus = ValueNotifier(ButtonEnum.active);
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    numberField = TextEditingController();
-    numCode = numCodes[0];
     super.initState();
+    phoneCntrl = TextEditingController(text: widget.phoneNumber);
   }
 
   @override
   void dispose() {
-    numberField.dispose();
+    phoneCntrl.dispose();
+    buttonStatus.dispose();
     super.dispose();
   }
 
@@ -68,69 +75,37 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      NbButton.backIcon(_back),
-                      60.verticalSpace,
-                      NbText.sp22("Enter Phone Number").w500.darkGrey,
-                      12.verticalSpace,
-                      NbText.sp16(
-                              "Enter the phone number associated with your aount")
-                          .w400
-                          .darkGrey,
-                      32.verticalSpace,
-                      Row(
-                        children: [
-                          Container(
-                            width: 95.w,
-                            height: 62.h,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: NbColors.white,
-                              borderRadius: BorderRadius.circular(16.r),
-                              border: Border.all(
-                                color: const Color(0xFFBBB9B9),
-                                width: 1,
-                              ),
-                            ),
-                            child: DropdownButton(
-                              value: numCode,
-                              items: numCodes
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(right: 8.w),
-                                        child: NbText.sp16(e).w500.darkGrey,
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (code) {
-                                setState(() {
-                                  numCode = code ?? numCode;
-                                });
-                              },
-                              underline: const SizedBox.shrink(),
-                              icon: SvgPicture.asset(
-                                NbSvg.arrowDown,
-                                width: 13.r,
-                              ),
-                            ),
-                          ),
-                          12.horizontalSpace,
-                          Expanded(
-                              child: NbField.text(
-                            hint: "Enter Number",
-                            controller: numberField,
-                          )),
-                        ],
-                      ),
-                      24.verticalSpace,
-                      NbButton.primary(
-                          text: "Reset Password", onTap: _resetPassword),
-                    ],
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        NbButton.backIcon(_back),
+                        55.verticalSpace,
+                        NbText.sp22("Enter Phone Number").w500.darkGrey,
+                        12.verticalSpace,
+                        NbText.sp16(
+                                "Enter the phone number associated with your account")
+                            .w400
+                            .setColor(const Color(0xFF929090)),
+                        32.verticalSpace,
+                        NbField.text(
+                          keyboardType: TextInputType.phone,
+                          hint: "080 - 0000 -0000",
+                          controller: phoneCntrl,
+                        ),
+                        24.verticalSpace,
+                        ValueListenableBuilder(
+                            valueListenable: buttonStatus,
+                            builder: (context, value, child) {
+                              return NbButton.primary(
+                                text: "Reset Password",
+                                onTap: _resetPassword,
+                                status: value,
+                              );
+                            }),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -145,7 +120,11 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
     Get.back();
   }
 
-  void _resetPassword() {
-    AuthModal.show(const EmailCodeVerificationPage());
+  void _resetPassword() async {
+    if (formKey.currentState?.validate() ?? false) {
+      buttonStatus.value = ButtonEnum.loading;
+      await AuthRepo().sendOtpSMS(phoneCntrl.text, widget.resetPassword);
+      buttonStatus.value = ButtonEnum.active;
+    }
   }
 }

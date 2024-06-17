@@ -14,7 +14,11 @@ import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class ServiceTypeModal extends StatelessWidget {
-  const ServiceTypeModal({super.key});
+  final bool onlyServiceType;
+  const ServiceTypeModal({
+    super.key,
+    this.onlyServiceType = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -86,26 +90,30 @@ class ServiceTypeModal extends StatelessWidget {
   }
 
   void _setProvider(ServiceTypesEnum serviceType) async {
-    AbstractServiceProvider? service;
-    switch (serviceType) {
-      case ServiceTypesEnum.airtime:
-      case ServiceTypesEnum.data:
-        service = await _getService(const MobileServiceModal());
-        break;
-      case ServiceTypesEnum.betting:
-        service = await _getService(const BettingServiceProviderModal());
-        break;
-      case ServiceTypesEnum.cable:
-        service = await _getService(const CableServiceProviderModal());
-        break;
-      case ServiceTypesEnum.electricity:
-        service = await _getService(const ElectricityServiceProviderModal());
-        break;
-      default:
-        throw Exception("Not available");
-    }
-    if (service != null) {
-      Get.back(result: (serviceType, service));
+    if (onlyServiceType) {
+      Get.back(result: serviceType);
+    } else {
+      AbstractServiceProvider? service;
+      switch (serviceType) {
+        case ServiceTypesEnum.airtime:
+        case ServiceTypesEnum.data:
+          service = await _getService(const MobileServiceModal());
+          break;
+        case ServiceTypesEnum.betting:
+          service = await _getService(const BettingServiceProviderModal());
+          break;
+        case ServiceTypesEnum.cable:
+          service = await _getService(const CableServiceProviderModal());
+          break;
+        case ServiceTypesEnum.electricity:
+          service = await _getService(const ElectricityServiceProviderModal());
+          break;
+        default:
+          throw Exception("Not available");
+      }
+      if (service != null) {
+        Get.back(result: (serviceType, service));
+      }
     }
   }
 

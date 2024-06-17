@@ -56,8 +56,9 @@ class GroupedListWidget extends StatelessWidget {
               ),
             ),
             20.horizontalSpace,
-            NbText.sp16(groupItem.name).w500.black,
-            const Spacer(),
+            Expanded(
+                child: NbText.sp16(groupItem.name).w500.black.setMaxLines(1)),
+            16.horizontalSpace,
             if (groupItem.arrowIcon)
               RotatedBox(
                 quarterTurns: 3,

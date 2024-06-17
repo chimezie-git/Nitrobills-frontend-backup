@@ -5,7 +5,7 @@ import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class PreviousSigninCard extends StatelessWidget {
-  final DateTime date;
+  final DateTime? date;
   final String name;
   final void Function() onClose;
 
@@ -40,10 +40,13 @@ class PreviousSigninCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   NbText.sp16(name).w500.black,
-                  NbText.sp14(
-                          "Last login ${DateFormat("dd/MM/yyyy").format(date)} ")
-                      .w400
-                      .setColor(const Color(0xFF929090)),
+                  if (date != null)
+                    NbText.sp14(
+                            "Last login ${DateFormat("dd/MM/yyyy").format(date!)} ")
+                        .w400
+                        .setColor(const Color(0xFF929090))
+                  else
+                    const SizedBox.shrink(),
                 ],
               ),
             ),

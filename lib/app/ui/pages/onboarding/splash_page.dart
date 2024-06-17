@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
+import 'package:get/get.dart';
 import 'package:nitrobills/app/ui/pages/onboarding/intro_page.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
@@ -16,8 +16,9 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController controller;
-  final Duration _delay = const Duration(seconds: 1);
-  final Duration _duration = const Duration(milliseconds: 800);
+  final Duration _delay = const Duration(milliseconds: 800);
+  final Duration _duration = const Duration(milliseconds: 1000);
+  final Curve curve = Curves.easeInOutQuad;
 
   @override
   void initState() {
@@ -95,7 +96,8 @@ class _SplashPageState extends State<SplashPage>
                             child: Stack(
                               children: [
                                 AnimatedBuilder(
-                                    animation: controller,
+                                    animation: CurvedAnimation(
+                                        parent: controller, curve: curve),
                                     builder: (context, child) {
                                       return Positioned(
                                         bottom: 35.h *
@@ -109,7 +111,7 @@ class _SplashPageState extends State<SplashPage>
                                             opacity: controller.value,
                                             child: Image.asset(
                                               NbImage.logoSpark,
-                                              width: 14.w,
+                                              width: 11.r,
                                             ),
                                           ),
                                         ),
@@ -122,7 +124,8 @@ class _SplashPageState extends State<SplashPage>
                       ),
                     ),
                     AnimatedBuilder(
-                        animation: controller,
+                        animation:
+                            CurvedAnimation(parent: controller, curve: curve),
                         builder: (context, child) {
                           return Positioned(
                             top: 787.h -
@@ -146,7 +149,11 @@ class _SplashPageState extends State<SplashPage>
     );
   }
 
-  void _nextPage() {
-    AuthModal.show(const IntroPage());
+  void _nextPage() async {
+    await Future.delayed(_delay);
+    Get.off(() => const IntroPage(),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 1500),
+        curve: Curves.easeInOut);
   }
 }

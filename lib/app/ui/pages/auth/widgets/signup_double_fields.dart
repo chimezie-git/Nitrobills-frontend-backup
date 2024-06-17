@@ -56,7 +56,7 @@ class SignupDoubleFields extends StatelessWidget {
       controller: controller,
       style: TextStyle(
         fontSize: 16.sp,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w500,
         color: NbColors.darkGrey,
       ),
       cursorColor: NbColors.darkGrey,

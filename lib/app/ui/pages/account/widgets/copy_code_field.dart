@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
+import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class CopyCodeField extends StatelessWidget {
-  const CopyCodeField({super.key});
+  final String referralCode;
+  const CopyCodeField({
+    super.key,
+    required this.referralCode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +23,7 @@ class CopyCodeField extends StatelessWidget {
       child: Row(
         children: [
           26.horizontalSpace,
-          NbText.sp18("HFD DFJ223").w500.black,
+          NbText.sp18(_referralDisplay).w500.black,
           const Spacer(),
           InkWell(
             onTap: _copyCode,
@@ -39,5 +44,11 @@ class CopyCodeField extends StatelessWidget {
     );
   }
 
-  void _copyCode() {}
+  String get _referralDisplay {
+    return "${referralCode.substring(0, 3)} ${referralCode.substring(3)}";
+  }
+
+  void _copyCode() {
+    NbUtils.copyClipBoard(referralCode, "Referral code copied");
+  }
 }

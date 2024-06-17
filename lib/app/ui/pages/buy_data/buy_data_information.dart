@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:nitrobills/app/data/models/data_plan.dart';
 import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
 import 'package:nitrobills/app/data/models/transactions.dart';
+import 'package:nitrobills/app/ui/global_widgets/choose_contact_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
@@ -78,13 +79,13 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
                   onTap: _serviceProvider,
                   fieldHeight: 78.h,
                 ),
-                34.verticalSpace,
+                30.verticalSpace,
                 NbField.buttonArrowDown(
                   text: dataPlan?.name ?? "Data Plan",
                   onTap: _dataProvider,
                   fieldHeight: 78.h,
                 ),
-                34.verticalSpace,
+                ChooseContactButton(getContact: _getContact),
                 NbField.text(
                   controller: numberCntr,
                   hint: "Phone Number",
@@ -152,5 +153,10 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
     Get.to(() => ConfirmTransactionScreen(
           transaction: Transaction.sampleData,
         ));
+  }
+
+  void _getContact(String value) {
+    numberCntr.text = value;
+    setState(() {});
   }
 }

@@ -7,6 +7,7 @@ import 'package:nitrobills/app/ui/pages/account/widgets/share_icon_button.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
+import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class ContactUsPage extends StatelessWidget {
   const ContactUsPage({super.key});
@@ -108,8 +109,31 @@ class ContactUsPage extends StatelessWidget {
     );
   }
 
-  void _facebook() {}
-  void _instagram() {}
-  void _whatsapp() {}
-  void _twitter() {}
+  void _facebook() {
+    NbUtils.openLink(
+      "https://web.facebook.com/profile.php?id=100095249647149",
+      "Could not open Facebook,\nCheck your network and try Again!",
+    );
+  }
+
+  void _instagram() {
+    NbUtils.openLink(
+      "https://www.instagram.com/nitro_bills/",
+      "Could not open Instagram,\nCheck your network and try Again!",
+    );
+  }
+
+  void _whatsapp() {
+    NbUtils.openLink(
+      "https://api.whatsapp.com/send?phone=2349163897229&text=Im%20in%20need%20of%20assistance.",
+      "Could not open Whatsapp,\nCheck your network and try Again!",
+    );
+  }
+
+  void _twitter() {
+    NbUtils.openLink(
+      "https://twitter.com/Nitrobills",
+      "Could not open Twitter,\nCheck your network and try Again!",
+    );
+  }
 }

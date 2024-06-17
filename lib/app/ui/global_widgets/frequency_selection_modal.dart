@@ -32,7 +32,7 @@ class FrequencySelectionModal extends StatelessWidget {
                 ),
               ],
             ),
-            39.verticalSpace,
+            19.verticalSpace,
             ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -42,7 +42,6 @@ class FrequencySelectionModal extends StatelessWidget {
                   return Container(
                     height: 1,
                     color: const Color(0xFFBBB9B9),
-                    margin: EdgeInsets.symmetric(vertical: 20.h),
                   );
                 },
                 itemCount: periodList.length),
@@ -57,30 +56,34 @@ class FrequencySelectionModal extends StatelessWidget {
       onTap: () {
         Get.back(result: period);
       },
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFF2BBBAD)),
-                    borderRadius: BorderRadius.circular(14.r)),
-                child: NbText.sp16(period.adjective)
-                    .w500
-                    .setColor(const Color(0xFF282828)),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 20.h),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFF2BBBAD)),
+                      borderRadius: BorderRadius.circular(14.r)),
+                  child: NbText.sp16(period.adjective)
+                      .w500
+                      .setColor(const Color(0xFF282828)),
+                ),
               ),
             ),
-          ),
-          Expanded(
-            flex: 2,
-            child: NbText.sp16("Every ${period.name}").w500.setColor(
-                  const Color(0xFF454040),
-                ),
-          )
-        ],
+            Expanded(
+              flex: 2,
+              child: NbText.sp16("Every ${period.name}").w500.setColor(
+                    const Color(0xFF454040),
+                  ),
+            )
+          ],
+        ),
       ),
     );
   }

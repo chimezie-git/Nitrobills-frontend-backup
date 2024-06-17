@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/data/models/electricity_service_provider.dart';
 import 'package:nitrobills/app/data/models/transactions.dart';
+import 'package:nitrobills/app/ui/global_widgets/balance_hint_widget.dart';
+import 'package:nitrobills/app/ui/global_widgets/choose_contact_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
@@ -22,17 +24,23 @@ class _PayElectricityPageState extends State<PayElectricityPage> {
   bool addToBeneficiary = false;
 
   late final TextEditingController nameCntr;
+  late final TextEditingController idCntr;
+  late final TextEditingController amountCntr;
   ElectricityServiceProvider? electricityProvider;
 
   @override
   void initState() {
     super.initState();
     nameCntr = TextEditingController();
+    idCntr = TextEditingController();
+    amountCntr = TextEditingController();
   }
 
   @override
   void dispose() {
     nameCntr.dispose();
+    amountCntr.dispose();
+    idCntr.dispose();
     super.dispose();
   }
 
@@ -64,13 +72,15 @@ class _PayElectricityPageState extends State<PayElectricityPage> {
                 text: electricityProvider?.name ?? "Choose Provider",
                 onTap: _chooseProvider,
               ),
-              32.verticalSpace,
+              ChooseContactButton(getContact: _chooseContact),
               NbField.text(
+                controller: idCntr,
                 fieldHeight: 78.h,
                 hint: "Customer Id",
               ),
-              32.verticalSpace,
+              const BalanceHintWidget(),
               NbField.text(
+                controller: amountCntr,
                 fieldHeight: 78.h,
                 hint: "Amount",
               ),
@@ -128,5 +138,10 @@ class _PayElectricityPageState extends State<PayElectricityPage> {
         transaction: Transaction.sampleElectricity,
       ),
     );
+  }
+
+  void _chooseContact(String contact) {
+    idCntr.text = contact;
+    setState(() {});
   }
 }

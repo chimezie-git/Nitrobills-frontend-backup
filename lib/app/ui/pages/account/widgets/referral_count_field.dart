@@ -4,7 +4,8 @@ import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class ReferralCountField extends StatelessWidget {
-  const ReferralCountField({super.key});
+  final int count;
+  const ReferralCountField({super.key, required this.count});
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +29,10 @@ class ReferralCountField extends StatelessWidget {
               borderRadius: BorderRadius.circular(48.r),
               color: const Color(0xFF5837F3),
             ),
-            child: NbText.sp18("12").w500.white,
+            child: NbText.sp18("$count").w500.white,
           )
         ],
       ),
     );
   }
-
-  void _copyCode() {}
 }

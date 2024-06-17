@@ -9,6 +9,7 @@ import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
+import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class IntroPage extends StatefulWidget {
@@ -28,10 +29,12 @@ class _IntroPageState extends State<IntroPage> {
 
   @override
   void initState() {
+    NbToast.init(context);
     controller = PageController();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initTimer();
     });
+    // Get.find<AuthController>().init();
     super.initState();
   }
 

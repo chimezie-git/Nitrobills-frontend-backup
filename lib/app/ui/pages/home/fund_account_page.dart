@@ -96,7 +96,7 @@ class FundAccountPage extends StatelessWidget {
       onTap: () async {
         ClipboardData data = ClipboardData(text: info);
         await Clipboard.setData(data);
-        NbToast.show("$title copied");
+        NbToast.copy("$title copied");
       },
       child: Row(
         children: [

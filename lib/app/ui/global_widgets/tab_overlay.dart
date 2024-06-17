@@ -1,3 +1,4 @@
+// import 'dart:collection' as col;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,7 +16,7 @@ import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class TabOverlay extends StatelessWidget {
   final Widget child;
-  const TabOverlay({super.key, required this.child});
+  TabOverlay({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,6 @@ class TabOverlay extends StatelessWidget {
         GetX<NavbarController>(
           init: NavbarController(),
           builder: (cntr) {
-            // if (cntr.showTab.value) {
             return AnimatedPositioned(
               duration: NbContants.navDuration,
               bottom: cntr.showTab.value ? 8.h : -70.h,
@@ -77,9 +77,6 @@ class TabOverlay extends StatelessWidget {
                 ),
               ),
             );
-            // } else {
-            //   return const SizedBox.shrink();
-            // }
           },
         ),
       ],
@@ -106,13 +103,9 @@ class TabOverlay extends StatelessWidget {
         },
         child: Center(
           child: SizedBox(
-            // width: 20.w,
             height: 20.w,
-            // child: Icon(Icons.home),
             child: SvgPicture.asset(
               selected ? filledIcon : outlinedIcon,
-              // colorFilter:
-              //     const ColorFilter.mode(NbColors.white, BlendMode.srcIn),
             ),
           ),
         ),

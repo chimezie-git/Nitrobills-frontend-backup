@@ -61,7 +61,7 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
                   height: 60.h,
                 ),
                 30.verticalSpace,
-                NbText.sp20("N${widget.transaction.price.round()}").w600.black,
+                NbText.sp20("₦ ${widget.transaction.price.round()}").w600.black,
                 20.verticalSpace,
                 ConfirmTransactionCardWidget(
                   transaction: widget.transaction,

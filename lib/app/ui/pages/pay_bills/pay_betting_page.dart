@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/data/models/bet_service_provider.dart';
 import 'package:nitrobills/app/data/models/transactions.dart';
+import 'package:nitrobills/app/ui/global_widgets/balance_hint_widget.dart';
+import 'package:nitrobills/app/ui/global_widgets/choose_contact_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
@@ -21,17 +23,20 @@ class PayBettingPage extends StatefulWidget {
 class _PayBettingPageState extends State<PayBettingPage> {
   bool addToBeneficiary = false;
 
+  late final TextEditingController idCntr;
   late final TextEditingController nameCntr;
   BetServiceProvider? betProvider;
 
   @override
   void initState() {
     super.initState();
+    idCntr = TextEditingController();
     nameCntr = TextEditingController();
   }
 
   @override
   void dispose() {
+    idCntr.dispose();
     nameCntr.dispose();
     super.dispose();
   }
@@ -64,12 +69,15 @@ class _PayBettingPageState extends State<PayBettingPage> {
                 text: betProvider?.name ?? "Choose Provider",
                 onTap: _chooseProvider,
               ),
-              32.verticalSpace,
+              ChooseContactButton(
+                getContact: _getContact,
+              ),
               NbField.text(
+                controller: idCntr,
                 fieldHeight: 78.h,
                 hint: "Customer Id",
               ),
-              32.verticalSpace,
+              const BalanceHintWidget(),
               NbField.text(
                 fieldHeight: 78.h,
                 hint: "Amount",
@@ -128,5 +136,10 @@ class _PayBettingPageState extends State<PayBettingPage> {
         transaction: Transaction.sampleBetting,
       ),
     );
+  }
+
+  void _getContact(String contact) {
+    idCntr.text = contact;
+    setState(() {});
   }
 }

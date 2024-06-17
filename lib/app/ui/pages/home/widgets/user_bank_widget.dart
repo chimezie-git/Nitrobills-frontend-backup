@@ -13,7 +13,7 @@ import 'package:nitrobills/app/ui/utils/nb_text.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 
 class UserBanksWidget extends StatefulWidget {
-  final Map<String, dynamic> bankData;
+  final List<BankInfo> bankData;
   const UserBanksWidget({
     super.key,
     required this.bankData,
@@ -25,7 +25,7 @@ class UserBanksWidget extends StatefulWidget {
 
 class _UserBanksWidgetState extends State<UserBanksWidget> {
   late PageController controller;
-  late List<MapEntry<String, dynamic>> bankList;
+  late List<BankInfo> bankList;
   final Duration duration = const Duration(milliseconds: 300);
   final Curve curve = Curves.easeIn;
   int pageIndex = 0;
@@ -33,7 +33,7 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
   @override
   void initState() {
     controller = PageController();
-    bankList = widget.bankData.entries.toList();
+    bankList = widget.bankData;
     super.initState();
   }
 
@@ -98,8 +98,8 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
                           controller.animateToPage(0,
                               duration: duration, curve: curve);
                         },
-                        child:
-                            _selectedText(bankList.first.key, pageIndex == 0),
+                        child: _selectedText(
+                            bankList.first.bankName, pageIndex == 0),
                       )),
                       10.horizontalSpace,
                       Expanded(
@@ -111,7 +111,8 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
                           controller.animateToPage(1,
                               duration: duration, curve: curve);
                         },
-                        child: _selectedText(bankList.last.key, pageIndex == 1),
+                        child: _selectedText(
+                            bankList.last.bankName, pageIndex == 1),
                       )),
                     ],
                   ),
@@ -126,7 +127,7 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
             controller: controller,
             children: bankList
                 .map((e) => _BankTab(
-                      bankInfo: e.value,
+                      bankInfo: e,
                     ))
                 .toList(),
           )),
@@ -279,7 +280,7 @@ class _BankTab extends StatelessWidget {
   void _copyBankDetails() async {
     ClipboardData data = ClipboardData(text: bankInfo!.accountNumber);
     await Clipboard.setData(data);
-    NbToast.show("account number copied");
+    NbToast.copy("account number copied");
   }
 
   Future _fundAccount() async {

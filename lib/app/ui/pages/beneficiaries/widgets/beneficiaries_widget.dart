@@ -76,7 +76,7 @@ class BeneficiariesWidget extends StatelessWidget {
                             "Last payment on ${DateFormat("dd-MM-yyyy").format(beneficiary.lastPayment!)}")
                         .w500
                         .black,
-                    NbText.sp18("N${beneficiary.lastPrice ?? 0}").w600.black,
+                    NbText.sp18("₦${beneficiary.lastPrice ?? 0}").w600.black,
                   ],
                 )
               else

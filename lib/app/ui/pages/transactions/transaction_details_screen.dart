@@ -3,9 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/data/models/transactions.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/confirm_transaction_card_widget.dart';
-import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class TransactionDetailsScreen extends StatelessWidget {
@@ -27,17 +25,9 @@ class TransactionDetailsScreen extends StatelessWidget {
             child: Column(
               children: [
                 36.verticalSpace,
-                NbHeader.backAndTitle(
-                  "Transaction Details",
-                  () {
-                    Get.back();
-                  },
-                  fontSize: 18.w,
-                  fontWeight: FontWeight.w600,
-                  color: NbColors.black,
-                ),
+                NbText.sp18("Transaction Details").w600.black,
                 63.verticalSpace,
-                NbText.sp16("N, ${transaction.price.round()}").w500.black,
+                NbText.sp16("₦  ${transaction.price.round()}").w500.black,
                 28.verticalSpace,
                 Container(
                   width: double.maxFinite,
@@ -65,6 +55,9 @@ class TransactionDetailsScreen extends StatelessWidget {
     );
   }
 
-  void _continue() {}
+  void _continue() {
+    Navigator.popUntil(Get.context!, (route) => route.isFirst);
+  }
+
   void _shareReceipt() {}
 }

@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
+import 'package:nitrobills/app/data/enums/button_enum.dart';
+import 'package:nitrobills/app/data/services/auth/auth_service.dart';
+import 'package:nitrobills/app/data/services/validators.dart';
+import 'package:nitrobills/app/hive_box/auth_data/auth_data.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
+import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 
 class PasswordResetModal extends StatefulWidget {
   const PasswordResetModal({super.key});
@@ -23,9 +30,15 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
   bool oldPasswordVisible = false;
   bool confirmPasswordVisible = false;
 
+  bool loading = false;
+
+  GlobalKey<FormState> formKey = GlobalKey();
+
   @override
   void initState() {
-    oldPasswordCntrl = TextEditingController();
+    oldPasswordCntrl = TextEditingController(
+      text: Get.find<AuthController>().password.value,
+    );
     newPasswordCntrl = TextEditingController();
     confirmPasswordCntrl = TextEditingController();
     super.initState();
@@ -46,45 +59,104 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
       color: NbColors.white,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 19.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            30.verticalSpace,
-            NbText.sp18("Reset Password").w600.black.centerText,
-            24.verticalSpace,
-            NbText.sp16("Set the new password to your account so you"
-                    " can login and access all the features.")
-                .w400
-                .black,
-            30.verticalSpace,
-            _fieldAndLabel(oldPasswordCntrl, "Old Password", oldPasswordVisible,
+        child: Form(
+          key: formKey,
+          child: ListView(
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            // mainAxisSize: MainAxisSize.min,
+            shrinkWrap: true,
+            children: [
+              30.verticalSpace,
+              NbText.sp18("Reset Password").w600.black.centerText,
+              24.verticalSpace,
+              NbText.sp16("Set the new password to your account so you"
+                      " can login and access all the features.")
+                  .w400
+                  .black,
+              30.verticalSpace,
+              _fieldAndLabel(
+                oldPasswordCntrl,
+                "Old Password",
+                oldPasswordVisible,
                 (v) {
-              setState(() {
-                oldPasswordVisible = v;
-              });
-            }),
-            _fieldAndLabel(newPasswordCntrl, "New Password", newPasswordVisible,
-                (v) {
-              setState(() {
-                newPasswordVisible = v;
-              });
-            }),
-            _fieldAndLabel(confirmPasswordCntrl, "Confirm Password",
-                confirmPasswordVisible, (v) {
-              setState(() {
-                confirmPasswordVisible = v;
-              });
-            }),
-            NbButton.primary(text: "Save", onTap: _save),
-          ],
+                  setState(() {
+                    oldPasswordVisible = v;
+                  });
+                },
+                false,
+              ),
+              NbText.sp16("New Password").w600.black,
+              16.verticalSpace,
+              NbField.textAndIcon(
+                  obscureText: true,
+                  controller: newPasswordCntrl,
+                  validator: () {
+                    if (!NbValidators.isPassword(newPasswordCntrl.text)) {
+                      return "Password must be eight characters, with at least one letter and one number";
+                    } else {
+                      return null;
+                    }
+                  },
+                  trailing: InkWell(
+                    onTap: () {
+                      setState(() {
+                        newPasswordVisible = !newPasswordVisible;
+                      });
+                    },
+                    child: SizedBox(
+                      width: 24.r,
+                      height: 24.r,
+                      child: SvgPicture.asset(
+                        newPasswordVisible ? NbSvg.visible : NbSvg.notVisible,
+                      ),
+                    ),
+                  )),
+              30.verticalSpace,
+              NbText.sp16("Confirm Password").w600.black,
+              16.verticalSpace,
+              NbField.textAndIcon(
+                  obscureText: true,
+                  controller: confirmPasswordCntrl,
+                  validator: () {
+                    if (confirmPasswordCntrl.text != newPasswordCntrl.text) {
+                      return "Both Passwords must be same";
+                    } else {
+                      return null;
+                    }
+                  },
+                  trailing: InkWell(
+                    onTap: () {
+                      setState(() {
+                        confirmPasswordVisible = !confirmPasswordVisible;
+                      });
+                    },
+                    child: SizedBox(
+                      width: 24.r,
+                      height: 24.r,
+                      child: SvgPicture.asset(
+                        confirmPasswordVisible
+                            ? NbSvg.visible
+                            : NbSvg.notVisible,
+                      ),
+                    ),
+                  )),
+              30.verticalSpace,
+              NbButton.primary(
+                text: "Save",
+                onTap: _save,
+                status: loading ? ButtonEnum.loading : ButtonEnum.active,
+              ),
+              SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Padding _fieldAndLabel(TextEditingController cntrl, String label,
-      bool visible, void Function(bool) toggleView) {
+      bool visible, void Function(bool) toggleView,
+      [bool enabled = true]) {
     return Padding(
       padding: EdgeInsets.only(bottom: 30.h),
       child: Column(
@@ -97,6 +169,8 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
               controller: cntrl,
               fieldColor: const Color(0xFFF2F2F2),
               borderColor: const Color(0xFFF2F2F2),
+              obscureText: !visible,
+              enabled: enabled,
               trailing: InkWell(
                 onTap: () {
                   toggleView(!visible);
@@ -114,5 +188,26 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
     );
   }
 
-  void _save() {}
+  void _save() async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+    setState(() {
+      loading = true;
+    });
+    final passwordResult = await AuthService.changePassword(
+      newPasswordCntrl.text,
+    );
+    setState(() {
+      loading = false;
+    });
+    if (passwordResult.isRight) {
+      NbToast.info("Password Changed Successfully");
+      Get.find<AuthController>().password.value = newPasswordCntrl.text;
+      AuthData.updateData(password: newPasswordCntrl.text);
+      Get.back();
+    } else {
+      NbToast.error(passwordResult.left.message);
+    }
+  }
 }

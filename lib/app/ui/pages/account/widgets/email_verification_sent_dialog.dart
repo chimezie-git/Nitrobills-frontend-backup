@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -39,12 +41,17 @@ class EmailVerificationSentDialog extends StatelessWidget {
                       49.verticalSpace,
                       NbText.sp20("Email Verification Sent").w600.black,
                       const Spacer(),
-                      NbText.sp14(
-                              "We have sent an email verification to saxxxx89@gmail.com."
-                              " Please click link on te email to continue")
-                          .w500
-                          .setColor(const Color(0xFF4D4D4D))
-                          .centerText,
+                      GetX<UserAccountController>(
+                        init: Get.find<UserAccountController>(),
+                        builder: (cntrl) {
+                          return NbText.sp14(
+                                  "We have sent an email verification to ${cntrl.account.value.email}."
+                                  " Please click link on the email to continue")
+                              .w500
+                              .setColor(const Color(0xFF4D4D4D))
+                              .centerText;
+                        },
+                      ),
                       const Spacer(flex: 2),
                     ],
                   ),
