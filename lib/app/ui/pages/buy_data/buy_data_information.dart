@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:nitrobills/app/data/models/data_plan.dart';
+import 'package:nitrobills/app/controllers/account/beneficiaries_controller.dart';
+import 'package:nitrobills/app/data/enums/service_types_enum.dart';
 import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
-import 'package:nitrobills/app/data/models/transactions.dart';
+import 'package:nitrobills/app/data/services/validators.dart';
 import 'package:nitrobills/app/ui/global_widgets/choose_contact_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
-import 'package:nitrobills/app/ui/pages/buy_data/widgets/data_plans_modal.dart';
-import 'package:nitrobills/app/ui/pages/buy_data/widgets/mobile_service_provider_modal.dart';
+import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_data_plans_modal.dart';
+import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_data_service_provider_modal.dart';
+import 'package:nitrobills/app/ui/pages/pay_bills/models/gb_data_plans.dart';
 import 'package:nitrobills/app/ui/pages/transactions/confirm_transaction_screen.dart';
+import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class BuyDataInformation extends StatefulWidget {
   final String? phoneNumber;
-  final MobileServiceProvider? mobileProvider;
+  final MobileServiceProvider mobileProvider;
   const BuyDataInformation({
     super.key,
     this.phoneNumber,
-    this.mobileProvider,
+    required this.mobileProvider,
   });
 
   @override
@@ -29,16 +32,20 @@ class BuyDataInformation extends StatefulWidget {
 
 class _BuyDataInformationState extends State<BuyDataInformation> {
   bool addBeneficiary = false;
-  MobileServiceProvider? mobileProvider;
-  DataPlan? dataPlan;
+  late MobileServiceProvider mobileProvider;
+  GbDataPlans? dataPlan;
   late final TextEditingController numberCntr;
   late final TextEditingController nameCntr;
+
+  String? planValidator;
+  GlobalKey<FormState> formKey = GlobalKey();
+  bool isLoading = false;
 
   @override
   void initState() {
     mobileProvider = widget.mobileProvider;
     numberCntr = TextEditingController(text: widget.phoneNumber);
-    nameCntr = TextEditingController(text: widget.mobileProvider?.name);
+    nameCntr = TextEditingController();
     mobileProvider = widget.mobileProvider;
     super.initState();
   }
@@ -61,65 +68,84 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
             padding: EdgeInsets.symmetric(
               horizontal: 16.w,
             ),
-            child: Column(
-              children: [
-                36.verticalSpace,
-                NbHeader.backAndTitle(
-                  "Buy Data",
-                  () {
-                    Get.back();
-                  },
-                  fontSize: 18.w,
-                  fontWeight: FontWeight.w600,
-                  color: NbColors.black,
-                ),
-                21.verticalSpace,
-                NbField.buttonArrowDown(
-                  text: mobileProvider?.name ?? "Service Provider",
-                  onTap: _serviceProvider,
-                  fieldHeight: 78.h,
-                ),
-                30.verticalSpace,
-                NbField.buttonArrowDown(
-                  text: dataPlan?.name ?? "Data Plan",
-                  onTap: _dataProvider,
-                  fieldHeight: 78.h,
-                ),
-                ChooseContactButton(getContact: _getContact),
-                NbField.text(
-                  controller: numberCntr,
-                  hint: "Phone Number",
-                  fieldHeight: 78.h,
-                ),
-                if (addBeneficiary) ...[
-                  34.verticalSpace,
-                  NbField.text(
-                    controller: nameCntr,
-                    hint: "Name",
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  36.verticalSpace,
+                  NbHeader.backAndTitle(
+                    "Buy Data",
+                    () {
+                      Get.back();
+                    },
+                    fontSize: 18.w,
+                    fontWeight: FontWeight.w600,
+                    color: NbColors.black,
+                  ),
+                  21.verticalSpace,
+                  NbField.buttonArrowDown(
+                    text: mobileProvider.name,
+                    onTap: _serviceProvider,
                     fieldHeight: 78.h,
-                  )
-                ],
-                29.verticalSpace,
-                Row(
-                  children: [
-                    Expanded(
-                      child: NbText.sp16("Add this number to beneficiary")
-                          .w500
-                          .black,
-                    ),
-                    NbField.check(
-                      value: addBeneficiary,
-                      onChanged: (v) {
-                        setState(() {
-                          addBeneficiary = v;
-                        });
+                  ),
+                  30.verticalSpace,
+                  NbField.buttonArrowDown(
+                      text: dataPlan?.name ?? "Data Plan",
+                      onTap: _dataProvider,
+                      fieldHeight: 78.h,
+                      forcedErrorString: planValidator),
+                  ChooseContactButton(getContact: _getContact),
+                  NbField.text(
+                      controller: numberCntr,
+                      hint: "Phone Number",
+                      fieldHeight: 78.h,
+                      keyboardType: TextInputType.number,
+                      validator: () {
+                        if (!NbValidators.isPhone(numberCntr.text)) {
+                          return "Enter a valid phone number";
+                        }
+                        return null;
+                      }),
+                  if (addBeneficiary) ...[
+                    34.verticalSpace,
+                    NbField.text(
+                      controller: nameCntr,
+                      hint: "Name",
+                      fieldHeight: 78.h,
+                      validator: () {
+                        if (nameCntr.text.length < 2) {
+                          return "Enter a valid name";
+                        }
+                        return null;
                       },
-                    ),
+                    )
                   ],
-                ),
-                22.verticalSpace,
-                NbButton.primary(text: "Continue", onTap: _continue)
-              ],
+                  29.verticalSpace,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: NbText.sp16("Add this number to beneficiary")
+                            .w500
+                            .black,
+                      ),
+                      NbField.check(
+                        value: addBeneficiary,
+                        onChanged: (v) {
+                          setState(() {
+                            addBeneficiary = v;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  22.verticalSpace,
+                  NbButton.primaryBoolLoader(
+                    text: "Continue",
+                    onTap: _continue,
+                    isLoading: isLoading,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -129,7 +155,7 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
 
   Future _serviceProvider() async {
     mobileProvider = await Get.bottomSheet<MobileServiceProvider>(
-          const MobileServiceProviderModal(),
+          const GbDataServiceProviderModal(),
           barrierColor: Colors.black.withOpacity(0.2),
           isScrollControlled: true,
         ) ??
@@ -138,21 +164,52 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
   }
 
   Future<void> _dataProvider() async {
-    if (mobileProvider != null) {
-      dataPlan = await Get.bottomSheet<DataPlan>(
-            DataPlansModal(dataPlans: DataPlan.sample(mobileProvider!)),
-            barrierColor: Colors.black.withOpacity(0.2),
-            isScrollControlled: true,
-          ) ??
-          dataPlan;
-    }
+    dataPlan = await Get.bottomSheet<GbDataPlans>(
+          GbDataPlansModal(provider: mobileProvider),
+          barrierColor: Colors.black.withOpacity(0.2),
+          isScrollControlled: true,
+        ) ??
+        dataPlan;
     setState(() {});
   }
 
-  void _continue() {
-    Get.to(() => ConfirmTransactionScreen(
-          transaction: Transaction.sampleData,
-        ));
+  bool get isValid {
+    bool validForm = true;
+    validForm = formKey.currentState?.validate() ?? false;
+    if (dataPlan == null) {
+      planValidator = "Select a valid data plan";
+    }
+    setState(() {});
+    return validForm;
+  }
+
+  void _continue() async {
+    if (isValid) {
+      setState(() {
+        isLoading = false;
+      });
+      int? id;
+      if (addBeneficiary) {
+        id = await Get.find<BeneficiariesController>().create(
+          name: nameCntr.text,
+          number: numberCntr.text,
+          serviceType: ServiceTypesEnum.data,
+          provider: mobileProvider,
+        );
+      }
+      DataBill bill = DataBill(
+        amount: dataPlan!.amount,
+        name: nameCntr.text,
+        codeNumber: numberCntr.text,
+        provider: mobileProvider,
+        plan: dataPlan!,
+        beneficiaryId: id,
+      );
+      setState(() {
+        isLoading = false;
+      });
+      Get.to(() => ConfirmTransactionScreen(bill: bill));
+    }
   }
 
   void _getContact(String value) {

@@ -20,8 +20,14 @@ class AccountTitleWidget extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFFAFAFA),
+        color: const Color(0xFFfbfbfb),
         borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 0),
+              blurRadius: 27,
+              color: Colors.black.withOpacity(0.08))
+        ],
       ),
       child: Row(
         children: [

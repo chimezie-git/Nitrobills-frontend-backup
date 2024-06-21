@@ -5,10 +5,31 @@ import 'package:nitrobills/app/controllers/account/user_account_controller.dart'
 import 'package:nitrobills/app/data/provider/app_error.dart';
 import 'package:nitrobills/app/data/services/http/http_service.dart';
 import 'package:nitrobills/app/data/services/type_definitions.dart';
+import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class AuthService {
-  static const String _baseUrl =
-      "https://nitrobills-backend.onrender.com/api/auth/";
+  static String get _baseUrl => "${NbUtils.baseUrl}/api/auth/";
+
+  static String _listDictString(var val) {
+    if (val is List) {
+      return val.first.toString();
+    } else if (val is Map) {
+      return val.values.first.toString();
+    } else {
+      return val.toString();
+    }
+  }
+
+  static String _stringFromMap(Map data) {
+    final val = data.values.first;
+    if (val is List) {
+      return val.first.toString();
+    } else if (val is Map) {
+      return val.values.first.toString();
+    } else {
+      return val.toString();
+    }
+  }
 
   /// signin with Username/Email and Password returns token or error
   static AsyncOrError<String> login({
@@ -22,15 +43,19 @@ class AuthService {
     TypeOrError<dio.Response> response =
         await HttpService.post("${_baseUrl}login/", payload);
     if (response.isRight) {
+      Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
-        String token = response.right.data["key"];
+        String token = responseData["key"];
         return Right(token);
-      } else if (response.right.data["non_field_errors"] != null) {
-        return Left(SingleFieldError(
-            "field", response.right.data["non_field_errors"][0]));
-      } else {
+      } else if (responseData.containsKey("non_field_errors")) {
         return Left(
-            AppError(Map.from(response.right.data).values.first.toString()));
+          SingleFieldError(
+            "field",
+            _listDictString(responseData["non_field_errors"]),
+          ),
+        );
+      } else {
+        return Left(AppError(_stringFromMap(responseData)));
       }
     } else {
       return Left(response.left);
@@ -45,7 +70,7 @@ class AuthService {
     required String firstName,
     required String lastName,
     required String phoneNumber,
-    String? referralCode,
+    required String referralCode,
   }) async {
     Map<String, dynamic> payload = {
       "username": userName,
@@ -57,31 +82,42 @@ class AuthService {
       "email_verified": false,
       "phone_verified": false,
       "phone_number": phoneNumber,
-      "referral_code": referralCode,
+      if (referralCode.isNotEmpty) "referral_code": referralCode,
     };
     TypeOrError<dio.Response> response =
         await HttpService.post("${_baseUrl}register/", payload);
 
     if (response.isRight) {
-      if (response.right.statusCode == 200) {
-        String token = response.right.data["key"];
+      Map responseData = Map.from(response.right.data);
+      if (response.right.statusCode == 200 ||
+          response.right.statusCode == 201) {
+        String token = responseData["key"];
         return Right(token);
       } else {
-        List keys = ["email", "username", "phone_number", "password1"];
+        List keys = [
+          "username",
+          "email",
+          "first_name",
+          "last_name",
+          "password1",
+          "password2",
+          "phone_number",
+          "referral_code"
+        ];
         bool keyError = false;
-        Map<String, dynamic> mapData = response.right.data;
         List<(String, String)> fieldMessages = [];
         for (String key in keys) {
-          if (mapData.keys.contains(key)) {
+          if (responseData.containsKey(key)) {
             keyError = true;
-            fieldMessages.add((key, mapData["key"][0].toString()));
+            fieldMessages.add(
+              (key, _listDictString(responseData[key])),
+            );
           }
         }
         if (keyError) {
-          return Left(MultipleFieldError(fieldMessages, "field"));
+          return Left(MultipleFieldError(fieldMessages, "Input Errors"));
         } else {
-          return Left(
-              AppError(Map.from(response.right.data).values.first.toString()));
+          return Left(AppError(_stringFromMap(responseData)));
         }
       }
     } else {
@@ -96,10 +132,14 @@ class AuthService {
     TypeOrError<dio.Response> response =
         await HttpService.post("${_baseUrl}confirm_otp/", payload);
     if (response.isRight) {
+      Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
-        return Right(response.right.data["key"]);
+        return Right(responseData["key"]);
+      } else if (responseData.containsKey("msg")) {
+        String msg = responseData["msg"];
+        return Left(SingleFieldError("", msg));
       } else {
-        String msg = response.right.data["msg"];
+        String msg = _stringFromMap(responseData);
         return Left(AppError(msg));
       }
     } else {
@@ -113,10 +153,14 @@ class AuthService {
     TypeOrError<dio.Response> response =
         await HttpService.post("${_baseUrl}send_sms_otp/", payload);
     if (response.isRight) {
-      String msg = response.right.data["message"];
+      Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
-        return Right(msg);
+        return Right(responseData["msg"]);
+      } else if (responseData.containsKey("msg")) {
+        String msg = responseData["msg"];
+        return Left(SingleFieldError("", msg));
       } else {
+        String msg = _stringFromMap(responseData);
         return Left(AppError(msg));
       }
     } else {
@@ -131,10 +175,61 @@ class AuthService {
     TypeOrError<dio.Response> response =
         await HttpService.post("${_baseUrl}send_email_otp/", payload);
     if (response.isRight) {
-      String msg = response.right.data["msg"];
+      Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
-        return Right(msg);
+        return Right(responseData["msg"]);
+      } else if (responseData.containsKey("msg")) {
+        String msg = responseData["msg"];
+        return Left(SingleFieldError("", msg));
       } else {
+        String msg = _stringFromMap(responseData);
+        return Left(AppError(msg));
+      }
+    } else {
+      return Left(response.left);
+    }
+  }
+
+  /// change Email returns success message or error
+  static AsyncOrError<String> changeEmail(String email) async {
+    Map<String, dynamic> payload = {"email": email};
+
+    TypeOrError<dio.Response> response = await HttpService.post(
+        "${_baseUrl}email/change/", payload,
+        header: _loginHeader());
+    if (response.isRight) {
+      Map responseData = Map.from(response.right.data);
+      if (response.right.statusCode == 200) {
+        return Right(responseData["msg"]);
+      } else if (responseData.containsKey("email")) {
+        String msg = responseData["email"];
+        return Left(SingleFieldError("", msg));
+      } else if (responseData.containsKey("msg")) {
+        String msg = responseData["msg"];
+        return Left(SingleFieldError("", msg));
+      } else {
+        String msg = _stringFromMap(responseData);
+        return Left(AppError(msg));
+      }
+    } else {
+      return Left(response.left);
+    }
+  }
+
+  /// send Otp Email returns success message or error
+  static AsyncOrError<String> resendEmailVerification() async {
+    TypeOrError<dio.Response> response = await HttpService.post(
+        "${_baseUrl}email/verify/", null,
+        header: _loginHeader());
+    if (response.isRight) {
+      Map responseData = Map.from(response.right.data);
+      if (response.right.statusCode == 200) {
+        return Right(responseData["msg"]);
+      } else if (responseData.containsKey("msg")) {
+        String msg = responseData["msg"];
+        return Left(SingleFieldError("", msg));
+      } else {
+        String msg = _stringFromMap(responseData);
         return Left(AppError(msg));
       }
     } else {
@@ -145,19 +240,20 @@ class AuthService {
   /// update password return success message or error
   static AsyncOrError<String> changePassword(String newPassword) async {
     Map<String, dynamic> payload = {"password": newPassword};
-    String token = Get.find<UserAccountController>().authToken.value;
 
-    TypeOrError<dio.Response> response =
-        await HttpService.put("${_baseUrl}change_password/", payload, header: {
-      "Content-Type": "application/json",
-      "Authorization": "Token $token",
-    });
+    TypeOrError<dio.Response> response = await HttpService.post(
+        "${_baseUrl}password_change/", payload,
+        header: _loginHeader());
 
     if (response.isRight) {
-      String msg = response.right.data["msg"];
       if (response.right.statusCode == 200) {
-        return Right(msg);
+        Map responseData = Map.from(response.right.data);
+        return Right(responseData["msg"]);
+      } else if (response.right.data.containsKey("msg")) {
+        String msg = response.right.data["msg"];
+        return Left(AppError(msg));
       } else {
+        String msg = _stringFromMap(response.right.data);
         return Left(AppError(msg));
       }
     } else {
@@ -167,5 +263,14 @@ class AuthService {
 
   static AsyncOrError<void> logout() async {
     return const Right(null);
+  }
+
+  static Map<String, dynamic> _loginHeader() {
+    String token = Get.find<UserAccountController>().authToken.value;
+
+    return {
+      "Content-Type": "application/json",
+      "Authorization": "Token $token",
+    };
   }
 }

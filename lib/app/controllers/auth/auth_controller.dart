@@ -7,11 +7,9 @@ import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class AuthController extends GetxController {
-  late final RxString username = RxString("");
   late final RxString firstName = RxString("");
   late final RxString lastName = RxString("");
   late final RxString email = RxString("");
-  late final RxString phoneNumber = RxString("");
   late final RxString password = RxString("");
   late final Rxn<DateTime> lastLogin = Rxn<DateTime>(null);
   final RxBool authDataAvailable = RxBool(false);
@@ -26,11 +24,9 @@ class AuthController extends GetxController {
   Future _checkLogin() async {
     AuthData? data = AuthData.getData();
     if (data != null) {
-      username.value = data.username;
       lastName.value = data.lastName;
       firstName.value = data.firstName;
       email.value = data.email;
-      phoneNumber.value = data.phoneNumber;
       password.value = data.password;
       lastLogin.value = data.lastLogin;
       // check if biometric is available
@@ -43,18 +39,12 @@ class AuthController extends GetxController {
     }
   }
 
-  Future saveLoginData(String username, String lastName, String firstName,
-      String email, String phoneNumber, String password) async {
-    DateTime now = DateTime.now();
-    this.username.value = username;
+  Future saveName(String lastName, String firstName, String email) async {
     this.lastName.value = lastName;
     this.firstName.value = firstName;
     this.email.value = email;
-    this.phoneNumber.value = phoneNumber;
-    this.password.value = password;
-    lastLogin.value = now;
-    await AuthData.saveData(
-        username, lastName, firstName, email, password, phoneNumber, now);
+    await AuthData.updateData(
+        lastName: lastName, firstName: firstName, email: email);
   }
 
   Future logoutUser() async {
@@ -68,12 +58,10 @@ class AuthController extends GetxController {
   }
 
   Future resetData() async {
-    username.value = "";
     firstName.value = "";
     lastName.value = "";
     email.value = "";
     password.value = "";
-    phoneNumber.value = "";
     lastLogin.value = null;
     authDataAvailable.value = false;
     biometricAvailable.value = false;

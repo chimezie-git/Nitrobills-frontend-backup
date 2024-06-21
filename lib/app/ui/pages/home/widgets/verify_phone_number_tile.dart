@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
-import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
 import 'package:nitrobills/app/ui/pages/auth/otp_code_verification.dart';
 import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
@@ -64,8 +63,8 @@ class VerifyPhoneNumberTile extends StatelessWidget {
   Future _verifyNumber() async {
     NbUtils.removeNav;
     await AuthModal.showWithoutPop(OtpCodeVerificationPage(
-      phoneNumber: Get.find<AuthController>().phoneNumber.value,
-      resetPassword: false,
+      phoneNumber: Get.find<UserAccountController>().account.value.phoneNumber,
+      fromHome: true,
     ));
     NbUtils.showNav;
   }

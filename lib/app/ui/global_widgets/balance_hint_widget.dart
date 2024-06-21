@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
+import 'package:nitrobills/app/data/services/formatter.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class BalanceHintWidget extends StatelessWidget {
@@ -16,7 +17,8 @@ class BalanceHintWidget extends StatelessWidget {
           alignment: Alignment.centerRight,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 7.r, vertical: 7.h),
-            child: NbText.sp14("Balance: ₦ ${cntrl.balance}")
+            child: NbText.sp14(
+                    "Balance: ₦ ${NbFormatter.amount(cntrl.totalAmount)}")
                 .w500
                 .setColor(const Color(0xFF8F8F8F)),
           ),

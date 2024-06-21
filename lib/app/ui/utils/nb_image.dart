@@ -47,10 +47,13 @@ class NbSvg {
   static const String search = "assets/svg/search.svg";
   static const String reloadRotate = "assets/svg/reload_rotate.svg";
   static const String greenCheck = "assets/svg/green_check.svg";
+  static const String n = "assets/svg/n_character.svg";
+  static const String toastSpark = "assets/svg/toast_spark.svg";
   // static const String phone = "assets/svg/phone.svg";
 }
 
 class NbImage {
+  static const String splashBg = "assets/images/splash_bg.png";
   static const String oneXBet = "assets/images/1x_bet.png";
   static const String nineMobile = "assets/images/9mobile.png";
   static const String airtel = "assets/images/airtel.png";
@@ -81,6 +84,18 @@ class NbImage {
   static const String starcomms = "assets/images/starcomms.jpg";
   static const String multilinks = "assets/images/multilinks.jpeg";
   static const String mtel = "assets/images/mtel.png";
+  static const String fundAccount = "assets/images/fund_account.png";
+  static const String spectranet = "assets/images/spectranet.jpeg";
+  static const String abujaElect = "assets/images/abuja_electric.jpeg";
+  static const String kadunaElect = "assets/images/kaduna_electric.jpeg";
+  static const String ibadanElect = "assets/images/ibadan_electric.jpg";
+  static const String josElect = "assets/images/jos_electric.jpg";
+  static const String phElect = "assets/images/ph_electric.jpeg";
+  static const String kanoElect = "assets/images/kano_electric.jpg";
+  static const String ekoElect = "assets/images/eko_electric.jpg";
+  static const String ikejaElect = "assets/images/ikeja_electric.jpg";
+  static const String confetti = "assets/images/confetti.png";
+  static const String homeBgImg = "assets/images/home_bg_color.png";
   // onboarding page
   static const String onboarding1 = "assets/images/onboarding/onboarding1.png";
   static const String onboarding2 = "assets/images/onboarding/onboarding2.png";

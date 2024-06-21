@@ -105,6 +105,42 @@ enum ServiceTypesEnum {
     }
   }
 
+  factory ServiceTypesEnum.fromServer(String serviceType) {
+    switch (serviceType) {
+      case "at":
+        return airtime;
+      case "da":
+        return data;
+      case "ca":
+        return cable;
+      case "bt":
+        return betting;
+      case "el":
+        return electricity;
+      case "bs":
+        return bulkSms;
+      default:
+        throw Exception("Error Invalid Mobile Service");
+    }
+  }
+
+  String get toServerString {
+    switch (this) {
+      case airtime:
+        return 'at';
+      case data:
+        return 'da';
+      case cable:
+        return 'ca';
+      case electricity:
+        return 'el';
+      case betting:
+        return 'bt';
+      case bulkSms:
+        return 'bs';
+    }
+  }
+
   static List<ServiceTypesEnum> all = [
     airtime,
     data,

@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/beneficiaries_controller.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
-import 'package:nitrobills/app/data/models/beneficiary.dart';
+import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
 import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
 import 'package:nitrobills/app/ui/global_widgets/empty_fields_widget.dart';
@@ -60,121 +60,123 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    child: Column(
-                      children: [
-                        18.verticalSpace,
-                        NbText.sp18("Beneficiaries").w600.black,
-                        if (cntrl.status.value.isFailed)
-                          const EmptyFieldsWidget(
-                            image: NbImage.noBeneficiary,
-                            text: "You don't have any Saved beneficiary. ",
-                          )
-                        else
-                          Expanded(
-                            child: Column(
-                              children: [
-                                10.verticalSpace,
-                                Container(
-                                  height: 60.h,
-                                  width: double.maxFinite,
-                                  margin:
-                                      EdgeInsets.symmetric(horizontal: 16.w),
-                                  padding: EdgeInsets.only(left: 16.w),
-                                  decoration: BoxDecoration(
-                                    color: NbColors.white,
-                                    borderRadius: BorderRadius.circular(40.r),
-                                  ),
-                                  child: TextField(
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: NbColors.black,
+                    child: RefreshIndicator(
+                      color: NbColors.primary,
+                      onRefresh: () async {
+                        cntrl.reload();
+                      },
+                      child: Column(
+                        children: [
+                          18.verticalSpace,
+                          NbText.sp18("Beneficiaries").w600.black,
+                          if (cntrl.beneficiaries.isEmpty)
+                            const EmptyFieldsWidget(
+                              image: NbImage.noBeneficiary,
+                              text: "You don't have any Saved beneficiary. ",
+                            )
+                          else
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  10.verticalSpace,
+                                  Container(
+                                    // height: 60.h,
+                                    width: double.maxFinite,
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 16.w),
+                                    padding: EdgeInsets.only(left: 16.w),
+                                    decoration: BoxDecoration(
+                                      color: NbColors.white,
+                                      borderRadius: BorderRadius.circular(40.r),
                                     ),
-                                    decoration: InputDecoration(
-                                      hintText: "Search beneficiaries",
-                                      hintStyle: TextStyle(
+                                    child: TextField(
+                                      style: TextStyle(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.w500,
-                                        color: const Color(0xFF8F8F8F),
+                                        color: NbColors.black,
                                       ),
-                                      border: InputBorder.none,
-                                      suffixIcon: SizedBox(
-                                        height: 60.h,
-                                        width: 20.r,
-                                        child: Center(
-                                          child: SvgPicture.asset(
-                                            NbSvg.search,
-                                            colorFilter: const ColorFilter.mode(
-                                                Color(0xFF8F8F8F),
-                                                BlendMode.srcIn),
-                                            width: 20.r,
-                                            height: 20.r,
+                                      decoration: InputDecoration(
+                                        hintText: "Search beneficiaries",
+                                        hintStyle: TextStyle(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: const Color(0xFF8F8F8F),
+                                        ),
+                                        contentPadding: EdgeInsets.symmetric(
+                                            vertical: 15.r, horizontal: 10.r),
+                                        border: InputBorder.none,
+                                        suffixIcon: SizedBox(
+                                          height: 60.h,
+                                          width: 20.r,
+                                          child: Center(
+                                            child: SvgPicture.asset(
+                                              NbSvg.search,
+                                              colorFilter:
+                                                  const ColorFilter.mode(
+                                                      Color(0xFF8F8F8F),
+                                                      BlendMode.srcIn),
+                                              width: 20.r,
+                                              height: 20.r,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                16.verticalSpace,
-                                SizedBox(
-                                  height: 44.h,
-                                  child: ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    children: [
-                                      16.horizontalSpace,
-                                      AirtimeDropdown(
-                                        serviceType: serviceType,
-                                        active: tabIndex == 0,
-                                        onTap: _pickServiceType,
-                                      ),
-                                      10.horizontalSpace,
-                                      OrderSelectingWidget(
-                                        aToZ: aToZ,
-                                        active: tabIndex == 1,
-                                        onTap: _orderSelect,
-                                      ),
-                                      10.horizontalSpace,
-                                      LastPaymentWidget(
-                                        active: tabIndex == 2,
-                                        onTap: _lastPayment,
-                                      ),
-                                      16.horizontalSpace,
-                                    ],
-                                  ),
-                                ),
-                                16.verticalSpace,
-                                Expanded(
-                                  child: ListView(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 16.w),
-                                    children: [
-                                      ...Beneficiary.all.where((bene) {
-                                        bool sType =
-                                            (bene.serviceType == serviceType);
-                                        if (lastPayment) {
-                                          return (bene.lastPayment != null) &&
-                                              sType;
-                                        }
-                                        return sType;
-                                      }).mapIndexed(
-                                        (idx, ben) => BeneficiariesWidget(
-                                          beneficiary: ben,
-                                          index: idx,
-                                          onTap: () {
-                                            _editBeneficiary(ben);
-                                          },
+                                  16.verticalSpace,
+                                  SizedBox(
+                                    height: 44.h,
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      children: [
+                                        16.horizontalSpace,
+                                        AirtimeDropdown(
+                                          serviceType: serviceType,
+                                          active: tabIndex == 0,
+                                          onTap: _pickServiceType,
                                         ),
-                                      ),
-                                      100.verticalSpace,
-                                    ],
+                                        10.horizontalSpace,
+                                        OrderSelectingWidget(
+                                          aToZ: aToZ,
+                                          active: tabIndex == 1,
+                                          onTap: _orderSelect,
+                                        ),
+                                        10.horizontalSpace,
+                                        LastPaymentWidget(
+                                          active: tabIndex == 2,
+                                          onTap: _lastPayment,
+                                        ),
+                                        16.horizontalSpace,
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          )
-                      ],
+                                  16.verticalSpace,
+                                  Expanded(
+                                    child: ListView(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16.w),
+                                      children: [
+                                        ...cntrl.beneficiaries.mapIndexed(
+                                          (idx, ben) => BeneficiariesWidget(
+                                            beneficiary: ben,
+                                            index: idx,
+                                            onTap: () {
+                                              _editBeneficiary(ben);
+                                            },
+                                          ),
+                                        ),
+                                        100.verticalSpace,
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                        ],
+                      ),
                     ),
                   ),
+                  // floating Action button
                   Positioned(
                     bottom: 100.h,
                     right: 16.w,
@@ -266,6 +268,8 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
           builder: (context) => SetupAutopaymentPage(beneficiary: beneficiary),
         ),
       );
+    } else if (idx == 3) {
+      Get.find<BeneficiariesController>().delete(beneficiary);
     }
 
     NbUtils.showNav;

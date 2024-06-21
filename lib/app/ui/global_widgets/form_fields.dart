@@ -9,11 +9,15 @@ class DoubleTextField extends FormField {
   static const String lastNameHint = "Last name";
   final TextEditingController firstNameCntrl;
   final TextEditingController lastNameCntrl;
+  final bool forcedError;
+  final String? forcedErrorString;
 
   DoubleTextField({
     super.key,
     required this.firstNameCntrl,
     required this.lastNameCntrl,
+    required this.forcedError,
+    required this.forcedErrorString,
   }) : super(validator: (v) {
           if (firstNameCntrl.text.isEmpty) {
             return "Enter a valid First Name";
@@ -25,8 +29,10 @@ class DoubleTextField extends FormField {
           }
         }, builder: (FormFieldState state) {
           final Color borderColor;
-          if (state.hasError) {
+          String? errorText;
+          if (state.hasError || forcedError) {
             borderColor = NbColors.red;
+            errorText = state.errorText ?? forcedErrorString;
           } else {
             borderColor = const Color(0xFFBBB9B9);
           }
@@ -69,8 +75,8 @@ class DoubleTextField extends FormField {
                 child:
                     _textField(lastNameCntrl, lastNameHint, TextInputType.text),
               ),
-              if (state.errorText != null)
-                NbText.sp12(state.errorText ?? "").setColor(borderColor),
+              if (errorText != null)
+                NbText.sp12(errorText).setColor(borderColor),
             ],
           );
         });
@@ -83,12 +89,16 @@ class TrippleTextField extends FormField {
   final TextEditingController userNameCntrl;
   final TextEditingController phoneNumCntrl;
   final TextEditingController emailCntrl;
+  final bool forcedError;
+  final String? forcedErrorString;
 
   TrippleTextField({
     super.key,
     required this.userNameCntrl,
     required this.phoneNumCntrl,
     required this.emailCntrl,
+    required this.forcedError,
+    required this.forcedErrorString,
   }) : super(validator: (v) {
           if (userNameCntrl.text.isEmpty) {
             return "Enter a valid Username";
@@ -101,8 +111,10 @@ class TrippleTextField extends FormField {
           }
         }, builder: (FormFieldState state) {
           final Color borderColor;
-          if (state.hasError) {
+          String? errorText;
+          if (state.hasError || forcedError) {
             borderColor = NbColors.red;
+            errorText = state.errorText ?? forcedErrorString;
           } else {
             borderColor = const Color(0xFFBBB9B9);
           }
@@ -161,8 +173,8 @@ class TrippleTextField extends FormField {
                 child: _textField(
                     emailCntrl, emailHint, TextInputType.emailAddress),
               ),
-              if (state.errorText != null)
-                NbText.sp12(state.errorText ?? "").setColor(borderColor),
+              if (errorText != null)
+                NbText.sp12(errorText).setColor(borderColor),
             ],
           );
         });
@@ -177,6 +189,9 @@ class PlainTextField extends FormField {
   final Color fieldColor;
   final bool enable;
   final String? Function() textValidator;
+  final bool forcedError;
+  final String? forcedErrorString;
+
   PlainTextField({
     super.key,
     required this.cntrl,
@@ -187,12 +202,16 @@ class PlainTextField extends FormField {
     required this.fieldColor,
     required this.enable,
     required this.textValidator,
+    required this.forcedError,
+    required this.forcedErrorString,
   }) : super(validator: (v) {
           return textValidator();
         }, builder: (FormFieldState state) {
           final Color borderColor;
-          if (state.hasError) {
+          String? errorText;
+          if (state.hasError || forcedError) {
             borderColor = NbColors.red;
+            errorText = state.errorText ?? forcedErrorString;
           } else {
             borderColor = const Color(0xFFBBB9B9);
           }
@@ -217,8 +236,8 @@ class PlainTextField extends FormField {
                 child: _textField(cntrl, hint, keyboardType,
                     obscureText: obscureText, enabled: enable),
               ),
-              if (state.errorText != null)
-                NbText.sp12(state.errorText ?? "").setColor(borderColor),
+              if (errorText != null)
+                NbText.sp12(errorText).setColor(borderColor),
             ],
           );
         });
@@ -234,6 +253,8 @@ class IconTextField extends FormField {
   final bool enable;
   final Widget? trailing;
   final String? Function() textValidator;
+  final bool forcedError;
+  final String? forcedErrorString;
 
   IconTextField({
     super.key,
@@ -246,12 +267,16 @@ class IconTextField extends FormField {
     required this.fieldColor,
     required this.enable,
     required this.textValidator,
+    required this.forcedError,
+    required this.forcedErrorString,
   }) : super(validator: (v) {
           return textValidator();
         }, builder: (FormFieldState state) {
           final Color borderColor;
-          if (state.hasError) {
+          String? errorText;
+          if (state.hasError || forcedError) {
             borderColor = NbColors.red;
+            errorText = state.errorText ?? forcedErrorString;
           } else {
             borderColor = const Color(0xFFBBB9B9);
           }
@@ -283,8 +308,8 @@ class IconTextField extends FormField {
                   ],
                 ),
               ),
-              if (state.errorText != null)
-                NbText.sp12(state.errorText ?? "").setColor(borderColor),
+              if (errorText != null)
+                NbText.sp12(errorText).setColor(borderColor),
             ],
           );
         });

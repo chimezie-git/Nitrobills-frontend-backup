@@ -41,9 +41,9 @@ class ManageDataPage extends StatelessWidget {
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          ManageDataCardWidget(),
+                          const ManageDataCardWidget(),
                           32.verticalSpace,
-                          DataChartWidget(),
+                          const DataChartWidget(),
                         ],
                       ),
                   ],

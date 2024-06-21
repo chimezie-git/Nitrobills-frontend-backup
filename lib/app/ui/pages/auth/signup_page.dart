@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
+import 'package:nitrobills/app/data/provider/app_error.dart';
 import 'package:nitrobills/app/data/repository/auth_repo.dart';
 import 'package:nitrobills/app/data/services/validators.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
@@ -32,6 +33,16 @@ class _SignupPageState extends State<SignupPage> {
   late TextEditingController phoneCntrl;
   late TextEditingController referralCodeCntrl;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  // error fields
+  bool namesError = false;
+  String? namesErrorTxt;
+  bool emailPhoneError = false;
+  String? emailPhoneErrorTxt;
+  bool passwordError = false;
+  String? passwordErrorTxt;
+  bool referralError = false;
+  String? referralErrorTxt;
 
   @override
   void initState() {
@@ -100,8 +111,11 @@ class _SignupPageState extends State<SignupPage> {
                         NbHeader.backAndTitle("Sign up", _back),
                         30.verticalSpace,
                         DoubleTextField(
-                            firstNameCntrl: firstNameCntrl,
-                            lastNameCntrl: lastNameCntrl),
+                          firstNameCntrl: firstNameCntrl,
+                          lastNameCntrl: lastNameCntrl,
+                          forcedError: namesError,
+                          forcedErrorString: namesErrorTxt,
+                        ),
                         8.verticalSpace,
                         NbText.sp12(
                                 "This would be used to generate an account to deposit into")
@@ -112,6 +126,8 @@ class _SignupPageState extends State<SignupPage> {
                           userNameCntrl: usernameCntrl,
                           phoneNumCntrl: phoneCntrl,
                           emailCntrl: emailCntrl,
+                          forcedError: emailPhoneError,
+                          forcedErrorString: emailPhoneErrorTxt,
                         ),
                         8.verticalSpace,
                         NbText.sp12("You would need this for recovery access")
@@ -125,6 +141,8 @@ class _SignupPageState extends State<SignupPage> {
                                 controller: passwordCntrl,
                                 hint: "Password",
                                 obscureText: obscure,
+                                forcedError: passwordError,
+                                forcedErrorString: passwordErrorTxt,
                                 validator: () {
                                   if (!NbValidators.isPassword(
                                       passwordCntrl.text)) {
@@ -145,8 +163,11 @@ class _SignupPageState extends State<SignupPage> {
                             }),
                         27.verticalSpace,
                         NbField.text(
-                            controller: referralCodeCntrl,
-                            hint: "Referral Code (Optional)"),
+                          controller: referralCodeCntrl,
+                          hint: "Referral Code (Optional)",
+                          forcedError: referralError,
+                          forcedErrorString: referralErrorTxt,
+                        ),
                         27.verticalSpace,
                         RichText(
                           text: TextSpan(
@@ -213,9 +234,49 @@ class _SignupPageState extends State<SignupPage> {
         referralCodeCntrl.text,
       );
       if (data.isLeft) {
-        data.left;
+        clearForcedErrors();
+        showFieldErrors(data.left);
       }
       buttonStatus.value = ButtonEnum.active;
     }
+  }
+
+  void clearForcedErrors() {
+    namesError = false;
+    namesErrorTxt = null;
+    emailPhoneError = false;
+    emailPhoneErrorTxt = null;
+    passwordError = false;
+    passwordErrorTxt = null;
+    referralError = false;
+    referralErrorTxt = null;
+    setState(() {});
+  }
+
+  void showFieldErrors(MultipleFieldError error) {
+    Set<String> namesSet = {"first_name", "last_name"};
+    Set<String> passwordSet = {"password1", "password2"};
+    Set<String> emailPhoneUserSet = {"username", "email", "phone_number"};
+    Set<String> referralSet = {"referral_code"};
+
+    for (var err in error.fieldMsg) {
+      if (namesSet.contains(err.$1)) {
+        namesError = true;
+        namesErrorTxt = "${namesErrorTxt ?? ""}${err.$2}\n";
+      }
+      if (passwordSet.contains(err.$1)) {
+        passwordError = true;
+        passwordErrorTxt = "${passwordErrorTxt ?? ""}${err.$2}\n";
+      }
+      if (emailPhoneUserSet.contains(err.$1)) {
+        emailPhoneError = true;
+        emailPhoneErrorTxt = "${emailPhoneErrorTxt ?? ""}${err.$2}\n";
+      }
+      if (referralSet.contains(err.$1)) {
+        referralError = true;
+        referralErrorTxt = "${referralErrorTxt ?? ""}${err.$2}\n";
+      }
+    }
+    setState(() {});
   }
 }

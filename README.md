@@ -21,6 +21,11 @@ generate launcher icon
 dart run flutter_launcher_icons
 ```
 
+allow adb for local host
+```bash
+adb reverse tcp:8000 tcp:8000
+```
+
 
 ### Hive Boxes
 | hive boxes | Type id |

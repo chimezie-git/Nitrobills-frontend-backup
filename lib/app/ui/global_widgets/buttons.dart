@@ -118,7 +118,7 @@ class _CircleLoaderButtonState extends State<CircleLoaderButton>
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.status.isLoading ? null : widget.onTap,
+      onTap: widget.status.isDisabled ? widget.onTap : null,
       child: Container(
         height: 60.h,
         width: double.maxFinite,

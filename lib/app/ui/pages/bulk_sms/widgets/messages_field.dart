@@ -9,10 +9,12 @@ import 'package:nitrobills/app/ui/utils/nb_text.dart';
 class MessagesField extends StatelessWidget {
   final TextEditingController controller;
   final void Function(String) onChanged;
+  final String? forcedStringValidator;
   const MessagesField({
     super.key,
     required this.controller,
     required this.onChanged,
+    required this.forcedStringValidator,
   });
 
   @override
@@ -27,7 +29,9 @@ class MessagesField extends StatelessWidget {
             color: NbColors.white,
             borderRadius: BorderRadius.circular(16.r),
             border: Border.all(
-              color: const Color(0xFFBBB9B9),
+              color: forcedStringValidator == null
+                  ? const Color(0xFFBBB9B9)
+                  : NbColors.red,
               width: 1,
             ),
           ),
@@ -74,6 +78,11 @@ class MessagesField extends StatelessWidget {
             ],
           ),
         ),
+        if (forcedStringValidator != null)
+          Align(
+              alignment: Alignment.centerLeft,
+              child:
+                  NbText.sp12(forcedStringValidator!).setColor(NbColors.red)),
         5.verticalSpace,
         NbText.sp16("${controller.text.length}/160").w500.black,
       ],

@@ -50,7 +50,7 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: const Color(0xFFFAFAFA),
+        color: Colors.white,
         border: Border.all(color: const Color(0xFFDDDBDB)),
         borderRadius: BorderRadius.circular(9.r),
       ),
@@ -99,7 +99,7 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
                               duration: duration, curve: curve);
                         },
                         child: _selectedText(
-                            bankList.first.bankName, pageIndex == 0),
+                            bankList.first.bankDisplayName, pageIndex == 0),
                       )),
                       10.horizontalSpace,
                       Expanded(
@@ -112,7 +112,7 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
                               duration: duration, curve: curve);
                         },
                         child: _selectedText(
-                            bankList.last.bankName, pageIndex == 1),
+                            bankList.last.bankDisplayName, pageIndex == 1),
                       )),
                     ],
                   ),

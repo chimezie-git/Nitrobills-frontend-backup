@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/bindings/initial_bindings.dart';
 import 'package:nitrobills/app/ui/pages/onboarding/intro_page.dart';
-import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
@@ -33,6 +35,7 @@ class _SplashPageState extends State<SplashPage>
       }
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      FlutterNativeSplash.remove();
       _startAnimation();
     });
   }
@@ -68,9 +71,12 @@ class _SplashPageState extends State<SplashPage>
               right: 0,
               child: Container(
                 decoration: BoxDecoration(
-                  color: NbColors.primary,
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(16.r),
+                  ),
+                  image: const DecorationImage(
+                    image: AssetImage(NbImage.splashBg),
+                    fit: BoxFit.cover,
                   ),
                 ),
                 child: Stack(
@@ -136,7 +142,18 @@ class _SplashPageState extends State<SplashPage>
                             bottom: 0,
                             child: Align(
                                 alignment: Alignment.topCenter,
-                                child: NbText.sp40("Nitro bills").w700.white),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(NbSvg.n),
+                                    0.5.horizontalSpace,
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 2.r),
+                                      child:
+                                          NbText.sp40("itro bills").w700.white,
+                                    ),
+                                  ],
+                                )),
                           );
                         }),
                   ],
@@ -150,6 +167,7 @@ class _SplashPageState extends State<SplashPage>
   }
 
   void _nextPage() async {
+    InitialBinding.setupCustomBindings();
     await Future.delayed(_delay);
     Get.off(() => const IntroPage(),
         transition: Transition.fadeIn,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/bills/data_controller.dart';
 import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
 import 'package:nitrobills/app/data/models/phone_number.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
@@ -55,23 +56,36 @@ class _BuyDataPageState extends State<BuyDataPage> {
                     .w500
                     .black,
                 35.verticalSpace,
-                GridView(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 0.8,
-                    crossAxisSpacing: 32.w,
-                    mainAxisSpacing: 19.h,
-                  ),
-                  children: [
-                    _providerTile(MobileServiceProvider.mtn, BoxFit.cover),
-                    _providerTile(
-                        MobileServiceProvider.airtel, BoxFit.fitHeight),
-                    _providerTile(
-                        MobileServiceProvider.nineMobile, BoxFit.fitHeight),
-                    _providerTile(MobileServiceProvider.glo, BoxFit.fitHeight),
-                  ],
+                GetBuilder<DataController>(
+                  init: Get.find<DataController>(),
+                  initState: (s) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Get.find<DataController>().initializeProvider();
+                    });
+                  },
+                  builder: (cntrl) {
+                    if (cntrl.status.value.isLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return GridView.builder(
+                      itemCount: cntrl.providers.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 0.8,
+                        crossAxisSpacing: 32.w,
+                        mainAxisSpacing: 19.h,
+                      ),
+                      itemBuilder: (context, index) {
+                        MobileServiceProvider prov = cntrl.providers[index];
+                        return _providerTile(prov,
+                            prov.id == "MTN" ? BoxFit.cover : BoxFit.fitHeight);
+                      },
+                    );
+                  },
                 ),
                 30.verticalSpace,
                 NbText.sp18("Your Accounts").w600.black,
@@ -117,7 +131,7 @@ class _BuyDataPageState extends State<BuyDataPage> {
     );
   }
 
-  void _addInfo({String? number, MobileServiceProvider? provider}) {
+  void _addInfo({String? number, required MobileServiceProvider provider}) {
     Get.to(
       () => BuyDataInformation(
         phoneNumber: number,

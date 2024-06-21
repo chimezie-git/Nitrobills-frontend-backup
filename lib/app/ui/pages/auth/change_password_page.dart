@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/data/repository/auth_repo.dart';
+import 'package:nitrobills/app/data/services/validators.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
@@ -96,6 +97,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                 controller: password1,
                                 hint: "Enter Password",
                                 obscureText: !obscure,
+                                validator: () {
+                                  if (!NbValidators.isPassword(
+                                      password1.text)) {
+                                    return "Password must be eight characters, with at least one letter and one number";
+                                  }
+                                  return null;
+                                },
                                 trailing: InkWell(
                                   onTap: () {
                                     obscurePassword1.value = !obscure;
@@ -114,6 +122,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                 controller: password2,
                                 hint: "Confirm Password",
                                 obscureText: !obscure,
+                                validator: () {
+                                  if (password1.text != password2.text) {
+                                    return "Both passwords must be the same";
+                                  } else {
+                                    return null;
+                                  }
+                                },
                                 trailing: InkWell(
                                   onTap: () {
                                     obscurePassword2.value = !obscure;

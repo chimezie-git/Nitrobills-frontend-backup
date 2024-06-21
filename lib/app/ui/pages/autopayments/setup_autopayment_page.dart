@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nitrobills/app/data/enums/period_enum.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
-import 'package:nitrobills/app/data/models/beneficiary.dart';
-import 'package:nitrobills/app/data/models/transactions.dart';
+import 'package:nitrobills/app/data/models/pay_frequency.dart';
+import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
 import 'package:nitrobills/app/ui/global_widgets/custom_date_picker_dialog.dart';
 import 'package:nitrobills/app/ui/global_widgets/frequency_selection_modal.dart';
@@ -33,7 +33,7 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
   List<Beneficiary> allBeneficiaries = [];
   ServiceTypesEnum? serviceType;
   AbstractServiceProvider? serviceProvider;
-  PeriodEnum? frequency;
+  PayFrequency? frequency;
   DateTime? endDate;
 
   @override
@@ -108,7 +108,7 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
                 32.verticalSpace,
                 NbField.buttonArrowDown(
                   fieldHeight: 78.h,
-                  text: frequency?.adjective ?? "Frequency",
+                  text: frequency?.period.adjective ?? "Frequency",
                   onTap: _chooseFrequency,
                 ),
                 32.verticalSpace,
@@ -168,7 +168,7 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
   }
 
   void _chooseFrequency() async {
-    frequency = await Get.bottomSheet<PeriodEnum>(
+    frequency = await Get.bottomSheet<PayFrequency>(
           const FrequencySelectionModal(),
           backgroundColor: Colors.black.withOpacity(0.2),
           isScrollControlled: true,
@@ -191,10 +191,10 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
   }
 
   void _continue() {
-    Get.to(
-      () => ConfirmTransactionScreen(
-        transaction: Transaction.sampleElectricity,
-      ),
-    );
+    // Get.to(
+    //   () => ConfirmTransactionScreen(
+    //     transaction: Transaction.sampleElectricity,
+    //   ),
+    // );
   }
 }

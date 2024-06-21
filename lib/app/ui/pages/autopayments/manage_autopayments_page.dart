@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:nitrobills/app/data/models/beneficiary.dart';
+import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/autopayments/setup_autopayment_page.dart';
 import 'package:nitrobills/app/ui/pages/autopayments/widgets/autopayment_card_widgets.dart';
@@ -36,21 +36,22 @@ class ManageAutopaymentsPage extends StatelessWidget {
               26.verticalSpace,
               const MyBillsCard(billsDue: "0"),
               40.verticalSpace,
-              Expanded(
-                child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      return AutopaymentCardWidget(
-                        beneficiary: Beneficiary.all[index],
-                        onTap: () {
-                          Get.to(() => SetupAutopaymentPage(
-                                beneficiary: Beneficiary.all[index],
-                              ));
-                        },
-                      );
-                    },
-                    separatorBuilder: (context, index) => 30.verticalSpace,
-                    itemCount: Beneficiary.all.length),
-              ),
+              // Expanded(
+              //   child: ListView.separated(
+              //       itemBuilder: (context, index) {
+
+              //         return AutopaymentCardWidget(
+              //           beneficiary: Beneficiary.all[index],
+              //           onTap: () {
+              //             Get.to(() => SetupAutopaymentPage(
+              //                   beneficiary: Beneficiary.all[index],
+              //                 ));
+              //           },
+              //         );
+              //       },
+              //       separatorBuilder: (context, index) => 30.verticalSpace,
+              //       itemCount: Beneficiary.all.length),
+              // ),
             ],
           ),
         ),

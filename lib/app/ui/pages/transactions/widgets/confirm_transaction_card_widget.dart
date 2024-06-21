@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
-import 'package:nitrobills/app/data/models/transactions.dart';
+import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class ConfirmTransactionCardWidget extends StatelessWidget {
-  final Transaction transaction;
+  final Bill bill;
 
   const ConfirmTransactionCardWidget({
     super.key,
-    required this.transaction,
+    required this.bill,
   });
 
   @override
@@ -30,11 +30,11 @@ class ConfirmTransactionCardWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           NbText.sp16("Transaction Information").w500.black,
-          infoTile("Service", transaction.serviceTypes.name),
+          infoTile("Service", bill.serviceType.name),
           infoTile("Time", "Jun 26, 2023 • 11:49 PM"),
-          if (transaction.serviceTypes == ServiceTypesEnum.betting ||
-              transaction.serviceTypes == ServiceTypesEnum.cable)
-            infoTile("Code", transaction.code),
+          // if (bill.serviceType == ServiceTypesEnum.betting ||
+          //     bill.serviceType == ServiceTypesEnum.cable)
+          //   infoTile("Code", bill.code),
         ],
       ),
     );

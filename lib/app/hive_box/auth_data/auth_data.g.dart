@@ -17,33 +17,27 @@ class AuthDataAdapter extends TypeAdapter<AuthData> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return AuthData(
-      username: fields[0] as String,
-      email: fields[1] as String,
-      password: fields[2] as String,
-      firstName: fields[3] as String,
-      lastName: fields[4] as String,
-      phoneNumber: fields[5] as String,
-      lastLogin: fields[6] as DateTime,
+      email: fields[0] as String,
+      password: fields[1] as String,
+      firstName: fields[2] as String,
+      lastName: fields[3] as String,
+      lastLogin: fields[4] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, AuthData obj) {
     writer
-      ..writeByte(7)
-      ..writeByte(0)
-      ..write(obj.username)
-      ..writeByte(1)
-      ..write(obj.email)
-      ..writeByte(2)
-      ..write(obj.password)
-      ..writeByte(3)
-      ..write(obj.firstName)
-      ..writeByte(4)
-      ..write(obj.lastName)
       ..writeByte(5)
-      ..write(obj.phoneNumber)
-      ..writeByte(6)
+      ..writeByte(0)
+      ..write(obj.email)
+      ..writeByte(1)
+      ..write(obj.password)
+      ..writeByte(2)
+      ..write(obj.firstName)
+      ..writeByte(3)
+      ..write(obj.lastName)
+      ..writeByte(4)
       ..write(obj.lastLogin);
   }
 

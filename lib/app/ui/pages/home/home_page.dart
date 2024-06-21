@@ -42,26 +42,40 @@ class _HomePageState extends State<HomePage> {
           return const HomeLoadingPage();
         } else {
           return Scaffold(
-            backgroundColor: const Color(0xFFEAF5F8),
+            backgroundColor: const Color(0xFFFAFAFA),
             body: SingleChildScrollView(
               child: SafeArea(
                 bottom: false,
                 child: Column(
                   children: [
-                    18.verticalSpace,
-                    AccountTitleWidget(
-                        amount: cntrl.totalAmount.toString(), refresh: refresh),
-                    10.verticalSpace,
-                    const VerifyPhoneNumberTile(),
-                    10.verticalSpace,
-                    UserBanksWidget(
-                      bankData: cntrl.account.value.banks,
+                    Container(
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(NbImage.homeBgImg),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          18.verticalSpace,
+                          AccountTitleWidget(
+                              amount: cntrl.totalAmount.toString(),
+                              refresh: refresh),
+                          10.verticalSpace,
+                          const VerifyPhoneNumberTile(),
+                          10.verticalSpace,
+                          UserBanksWidget(
+                            bankData: cntrl.account.value.banks,
+                          ),
+                          40.verticalSpace,
+                        ],
+                      ),
                     ),
-                    40.verticalSpace,
                     Container(
                       width: double.maxFinite,
                       padding: EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 0),
-                      color: NbColors.white,
+                      // color: NbColors.white,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

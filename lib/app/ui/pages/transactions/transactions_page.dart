@@ -5,6 +5,7 @@ import 'package:nitrobills/app/controllers/account/transactions_controller.dart'
 import 'package:nitrobills/app/ui/global_widgets/empty_fields_widget.dart';
 import 'package:nitrobills/app/ui/pages/transactions/transactions_loading_page.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/transaction_tile.dart';
+import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
@@ -27,30 +28,36 @@ class TransactionsPage extends StatelessWidget {
             backgroundColor: const Color(0xFFEBEBEB),
             body: SafeArea(
               bottom: false,
-              child: Column(
-                children: [
-                  18.verticalSpace,
-                  NbText.sp18("Transactions").w600.black,
-                  16.verticalSpace,
-                  if (cntrl.status.value.isFailed)
-                    const EmptyFieldsWidget(
-                      image: NbImage.noTransactions,
-                      text: "You haven't made any transaction yet.",
-                    )
-                  else
-                    Expanded(
-                      child: ListView.separated(
-                          padding: EdgeInsets.symmetric(horizontal: 14.w),
-                          itemBuilder: (context, index) {
-                            return TransactionTile(
-                              isCredit: index % 2 == 0,
-                            );
-                          },
-                          separatorBuilder: (context, index) =>
-                              30.verticalSpace,
-                          itemCount: 10),
-                    ),
-                ],
+              child: RefreshIndicator(
+                color: NbColors.primary,
+                onRefresh: () async {
+                  cntrl.reload();
+                },
+                child: Column(
+                  children: [
+                    18.verticalSpace,
+                    NbText.sp18("Transactions").w600.black,
+                    16.verticalSpace,
+                    if (cntrl.transactions.isEmpty)
+                      const EmptyFieldsWidget(
+                        image: NbImage.noTransactions,
+                        text: "You haven't made any transaction yet.",
+                      )
+                    else
+                      Expanded(
+                        child: ListView.separated(
+                            padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 100.h),
+                            itemBuilder: (context, index) {
+                              return TransactionTile(
+                                transaction: cntrl.transactions[index],
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                30.verticalSpace,
+                            itemCount: cntrl.transactions.length),
+                      ),
+                  ],
+                ),
               ),
             ),
           );

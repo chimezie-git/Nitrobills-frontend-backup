@@ -65,9 +65,16 @@ class BankInfo extends Equatable {
       accountStatus: TransactionStatusEnum.pending,
       accountNumber: "accountNumber",
       accountName: "accountName",
-      bankName: "bankName",
+      bankName: "Wema",
       bankSlug: "bankSlug",
       currency: "currency");
+
+  String get bankDisplayName {
+    if (accountStatus == TransactionStatusEnum.pending) {
+      return "Pending";
+    }
+    return bankName;
+  }
 
   @override
   List<Object?> get props => [

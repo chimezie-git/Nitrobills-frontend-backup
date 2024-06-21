@@ -6,6 +6,8 @@ import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NbUtils {
+  static String baseUrl = "https://nitrobills-backend.onrender.com";
+
   static GlobalKey<NavigatorState> nav = GlobalKey<NavigatorState>();
 
   static get removeNav {

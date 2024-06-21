@@ -204,7 +204,7 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
     if (passwordResult.isRight) {
       NbToast.info("Password Changed Successfully");
       Get.find<AuthController>().password.value = newPasswordCntrl.text;
-      AuthData.updateData(password: newPasswordCntrl.text);
+      await AuthData.updateData(password: newPasswordCntrl.text);
       Get.back();
     } else {
       NbToast.error(passwordResult.left.message);

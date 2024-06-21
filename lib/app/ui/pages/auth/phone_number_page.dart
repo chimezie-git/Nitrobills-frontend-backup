@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
+import 'package:nitrobills/app/data/provider/app_error.dart';
 import 'package:nitrobills/app/data/repository/auth_repo.dart';
+import 'package:nitrobills/app/data/services/validators.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
@@ -28,6 +30,9 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   late TextEditingController phoneCntrl;
   ValueNotifier<ButtonEnum> buttonStatus = ValueNotifier(ButtonEnum.active);
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  bool errorPhone = false;
+  String? errorPhoneText;
 
   @override
   void initState() {
@@ -90,10 +95,18 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                             .setColor(const Color(0xFF929090)),
                         32.verticalSpace,
                         NbField.text(
-                          keyboardType: TextInputType.phone,
-                          hint: "080 - 0000 -0000",
-                          controller: phoneCntrl,
-                        ),
+                            keyboardType: TextInputType.phone,
+                            hint: "080 - 0000 -0000",
+                            controller: phoneCntrl,
+                            forcedError: errorPhone,
+                            forcedErrorString: errorPhoneText,
+                            validator: () {
+                              if (!NbValidators.isPhone(phoneCntrl.text)) {
+                                return "Enter a valid Phone Number";
+                              } else {
+                                return null;
+                              }
+                            }),
                         24.verticalSpace,
                         ValueListenableBuilder(
                             valueListenable: buttonStatus,
@@ -123,8 +136,17 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   void _resetPassword() async {
     if (formKey.currentState?.validate() ?? false) {
       buttonStatus.value = ButtonEnum.loading;
-      await AuthRepo().sendOtpSMS(phoneCntrl.text, widget.resetPassword);
+      final data =
+          await AuthRepo().sendOtpSMS(phoneCntrl.text, widget.resetPassword);
+      if (data.isLeft) {
+        _setError(data.left);
+      }
       buttonStatus.value = ButtonEnum.active;
     }
+  }
+
+  void _setError(SingleFieldError error) {
+    errorPhone = true;
+    errorPhoneText = error.message;
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:nitrobills/app/data/models/beneficiary.dart';
+import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
@@ -49,7 +49,8 @@ class BeneficiariesWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8.r),
                         color: NbUtils.listColor(index),
                       ),
-                      child: NbText.sp22(beneficiary.name[0]).white,
+                      child:
+                          NbText.sp22(beneficiary.name[0].toUpperCase()).white,
                     ),
                     16.horizontalSpace,
                     Expanded(
@@ -73,10 +74,12 @@ class BeneficiariesWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     NbText.sp16(
-                            "Last payment on ${DateFormat("dd-MM-yyyy").format(beneficiary.lastPayment!)}")
+                            "Last payment on ${DateFormat("dd-MM-yyyy").format(beneficiary.lastPayment!.date)}")
                         .w500
                         .black,
-                    NbText.sp18("₦${beneficiary.lastPrice ?? 0}").w600.black,
+                    NbText.sp18("₦${beneficiary.lastPayment!.amount}")
+                        .w600
+                        .black,
                   ],
                 )
               else

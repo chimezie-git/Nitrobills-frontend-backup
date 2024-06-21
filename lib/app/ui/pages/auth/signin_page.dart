@@ -1,3 +1,4 @@
+import 'package:either_dart/either.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
+import 'package:nitrobills/app/data/provider/app_error.dart';
 import 'package:nitrobills/app/data/repository/auth_repo.dart';
 import 'package:nitrobills/app/data/services/validators.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
@@ -34,6 +36,9 @@ class _SigninPageState extends State<SigninPage> {
   late TextEditingController usernameEmailCntrl;
   late TextEditingController passwordCntrl;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  bool signinError = false;
+  String? signinErrorTxt;
 
   @override
   void initState() {
@@ -104,6 +109,7 @@ class _SigninPageState extends State<SigninPage> {
                               keyboardType: TextInputType.emailAddress,
                               controller: usernameEmailCntrl,
                               hint: "Email or username",
+                              forcedError: signinError,
                               validator: () {
                                 if (usernameEmailCntrl.text.isEmpty) {
                                   return "Enter a valid username or email";
@@ -116,6 +122,7 @@ class _SigninPageState extends State<SigninPage> {
                           obscureText: true,
                           controller: passwordCntrl,
                           hint: "Password",
+                          forcedError: signinError,
                           validator: () {
                             if (!NbValidators.isPassword(passwordCntrl.text)) {
                               return "Password must be eight characters, with at least one letter and one number";
@@ -123,6 +130,11 @@ class _SigninPageState extends State<SigninPage> {
                               return null;
                             }
                           }),
+                      if (signinErrorTxt != null)
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: NbText.sp12(signinErrorTxt!)
+                                .setColor(NbColors.red)),
                       30.verticalSpace,
                       if (userCntrl.biometricAvailable.value && hasUser)
                         Padding(
@@ -205,19 +217,30 @@ class _SigninPageState extends State<SigninPage> {
 
   void biometricLogin() async {
     buttonStatus.value = ButtonEnum.loading;
-    await AuthRepo().biometricLogin();
+    final data = await AuthRepo().biometricLogin();
+    if (data.isLeft) {
+      showFieldErrors(data.left);
+    }
     buttonStatus.value = ButtonEnum.active;
   }
 
   void _login() async {
     NbUtils.removeKeyboard();
+    Either<SingleFieldError, Null> data = Right(null);
     buttonStatus.value = ButtonEnum.loading;
     if (hasUser) {
-      await AuthRepo().onlyPasswordLogin(passwordCntrl.text);
+      usernameEmailCntrl.text = userCntrl.email.value;
+      if (formKey.currentState?.validate() ?? false) {
+        data = await AuthRepo().onlyPasswordLogin(passwordCntrl.text);
+      }
     } else {
       if (formKey.currentState?.validate() ?? false) {
-        await AuthRepo().login(usernameEmailCntrl.text, passwordCntrl.text);
+        data =
+            await AuthRepo().login(usernameEmailCntrl.text, passwordCntrl.text);
       }
+    }
+    if (data.isLeft) {
+      showFieldErrors(data.left);
     }
     buttonStatus.value = ButtonEnum.active;
   }
@@ -227,5 +250,11 @@ class _SigninPageState extends State<SigninPage> {
       phoneNumber: null,
       resetPassword: true,
     ));
+  }
+
+  void showFieldErrors(SingleFieldError error) {
+    signinError = true;
+    signinErrorTxt = error.message;
+    setState(() {});
   }
 }

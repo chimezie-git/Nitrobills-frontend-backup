@@ -8,7 +8,7 @@ import 'package:nitrobills/app/data/services/type_definitions.dart';
 
 class HttpService {
   static AsyncOrError<Response> get(String url,
-      {Map<String, dynamic>? header, int timeout = 20}) async {
+      {Map<String, dynamic>? header, int timeout = 60}) async {
     try {
       // close any previous request before this call
       Dio().close(force: true);
@@ -28,6 +28,9 @@ class HttpService {
       return Left(AppError(e.message));
     } on DioException catch (e) {
       Dio().close(force: true);
+      if (e.response != null) {
+        return Right(e.response!);
+      }
       return Left(AppError(e.message ?? ""));
     } catch (e) {
       Dio().close(force: true);
@@ -36,7 +39,7 @@ class HttpService {
   }
 
   static AsyncOrError<Response> post(String url, Object? body,
-      {Map<String, dynamic>? header, int timeout = 20}) async {
+      {Map<String, dynamic>? header, int timeout = 60}) async {
     try {
       // close any previous request before this call
       Dio().close(force: true);
@@ -57,6 +60,9 @@ class HttpService {
       return Left(AppError(e.message));
     } on DioException catch (e) {
       Dio().close(force: true);
+      if (e.response != null) {
+        return Right(e.response!);
+      }
       return Left(AppError(e.message ?? ""));
     } catch (e) {
       Dio().close(force: true);
@@ -65,7 +71,7 @@ class HttpService {
   }
 
   static AsyncOrError<Response> put(String url, Object? body,
-      {Map<String, dynamic>? header, int timeout = 20}) async {
+      {Map<String, dynamic>? header, int timeout = 60}) async {
     try {
       // close any previous request before this call
       Dio().close(force: true);
@@ -86,6 +92,9 @@ class HttpService {
       return Left(AppError(e.message));
     } on DioException catch (e) {
       Dio().close(force: true);
+      if (e.response != null) {
+        return Right(e.response!);
+      }
       return Left(AppError(e.message ?? ""));
     } catch (e) {
       Dio().close(force: true);
@@ -94,7 +103,7 @@ class HttpService {
   }
 
   static AsyncOrError<Response> delete(String url, Object? body,
-      {Map<String, dynamic>? header, int timeout = 20}) async {
+      {Map<String, dynamic>? header, int timeout = 60}) async {
     try {
       // close any previous request before this call
       Dio().close(force: true);
@@ -115,10 +124,34 @@ class HttpService {
       return Left(AppError(e.message));
     } on DioException catch (e) {
       Dio().close(force: true);
+      if (e.response != null) {
+        return Right(e.response!);
+      }
       return Left(AppError(e.message ?? ""));
     } catch (e) {
       Dio().close(force: true);
       return Left(AppError(e.toString()));
+    }
+  }
+
+  static String stringFromMap(Map data) {
+    final val = data.values.first;
+    if (val is List) {
+      return val.first.toString();
+    } else if (val is Map) {
+      return val.values.first.toString();
+    } else {
+      return val.toString();
+    }
+  }
+
+  static String stringFromAny(var val) {
+    if (val is List) {
+      return val.first.toString();
+    } else if (val is Map) {
+      return val.values.first.toString();
+    } else {
+      return val.toString();
     }
   }
 }

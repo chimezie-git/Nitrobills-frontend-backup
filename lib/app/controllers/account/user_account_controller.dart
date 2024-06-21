@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
 import 'package:nitrobills/app/data/enums/loader_enum.dart';
 import 'package:nitrobills/app/data/models/user_account.dart';
 import 'package:nitrobills/app/data/models/virtual_accounts/customer_model.dart';
@@ -13,12 +14,14 @@ class UserAccountController extends GetxController {
   final RxString authToken = RxString("");
   final RxBool loaded = RxBool(false);
 
-  Future initialize([bool force = false]) async {
+  Future initialize() async {
     if (!loaded.value) {
       //load data and set account value
       status.value = LoaderEnum.loading;
       final result = await UserAccountService.getAccount();
       if (result.isRight) {
+        await Get.find<AuthController>().saveName(
+            result.right.lastName, result.right.firstName, result.right.email);
         account = Rx<UserAccount>(result.right);
         status.value = LoaderEnum.success;
         loaded.value = true;
@@ -26,6 +29,7 @@ class UserAccountController extends GetxController {
         status.value = LoaderEnum.failed;
         NbToast.error(result.left.message);
       }
+      update();
     }
   }
 
@@ -38,6 +42,7 @@ class UserAccountController extends GetxController {
       status.value = LoaderEnum.failed;
       NbToast.error(result.left.message);
     }
+    update();
   }
 
   double get totalAmount =>

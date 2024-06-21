@@ -15,6 +15,18 @@ class NbButton {
     return BallLoaderButton(text: text, onTap: onTap, status: status);
   }
 
+  static Widget primaryBoolLoader({
+    required String text,
+    required void Function() onTap,
+    required bool isLoading,
+  }) {
+    return BallLoaderButton(
+      text: text,
+      onTap: onTap,
+      status: isLoading ? ButtonEnum.loading : ButtonEnum.active,
+    );
+  }
+
   /// button with states of disabled loader and active where disabled
   ///  is the initial state and active is a success state
   static Widget primary3States({
@@ -58,7 +70,7 @@ class NbButton {
         child: Center(
             child: SvgPicture.asset(
           NbSvg.arrowBack,
-          width: 14.w,
+          width: 15.w,
           colorFilter:
               const ColorFilter.mode(Color(0xFF282828), BlendMode.srcIn),
         )),
