@@ -57,7 +57,7 @@ class UserAccount extends Equatable {
       referralCount: json[_referralCountKey],
       firstName: json[_firstNameKey],
       dateJoined: DateTime.parse(json[_dateJoinedKey]),
-      lastLogin: DateTime.parse(json[_lastLoginKey]),
+      lastLogin: DateTime.tryParse(json[_lastLoginKey] ?? "") ?? DateTime.now(),
       lastName: json[_lastNameKey],
       username: json[_usernameKey],
       emailVerified: json[_emailVerifiedKey],

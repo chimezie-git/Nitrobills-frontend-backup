@@ -16,9 +16,9 @@ class EmptyFieldsWidget extends StatelessWidget {
     return Expanded(
         child: Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: Column(
+      child: ListView(
         children: [
-          const Spacer(flex: 1),
+          100.verticalSpace,
           const Row(),
           Image.asset(
             image,
@@ -27,7 +27,6 @@ class EmptyFieldsWidget extends StatelessWidget {
           ),
           24.verticalSpace,
           NbText.sp20(text).w500.black.centerText,
-          const Spacer(flex: 3),
         ],
       ),
     ));
