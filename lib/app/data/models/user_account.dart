@@ -65,7 +65,7 @@ class UserAccount extends Equatable {
       phoneNumber: json[_phoneNumberKey],
       referralCode: json[_referralCodeKey],
       secrets: ApiSecrets.fromJson(json[_secretsKey]),
-      banks: [BankInfo.fromJson(json[_bankKey])],
+      banks: [BankInfo.fromJson(json[_bankKey]), BankInfo.empty()],
     );
   }
 

@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/beneficiaries_controller.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
+import 'package:nitrobills/app/ui/pages/autopayments/models/autopay.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
 import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
@@ -61,9 +62,10 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
                     left: 0,
                     right: 0,
                     child: RefreshIndicator(
-                      color: NbColors.primary,
+                      color: NbColors.black,
+                      backgroundColor: Colors.white,
                       onRefresh: () async {
-                        cntrl.reload();
+                        await cntrl.reload();
                       },
                       child: Column(
                         children: [
@@ -265,7 +267,9 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
     } else if (idx == 2) {
       await NbUtils.nav.currentState?.push(
         MaterialPageRoute(
-          builder: (context) => SetupAutopaymentPage(beneficiary: beneficiary),
+          builder: (context) => SetupAutopaymentPage(
+            autopay: Autopay.fromBeneficiary(beneficiary),
+          ),
         ),
       );
     } else if (idx == 3) {

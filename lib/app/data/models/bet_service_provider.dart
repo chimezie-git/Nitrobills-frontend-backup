@@ -7,7 +7,7 @@ class BetServiceProvider extends AbstractServiceProvider {
   BetServiceProvider._(super.id, super.name, super.image);
 
   factory BetServiceProvider.fromString(String data) {
-    return sportybet;
+    return allMap[data] ?? BetServiceProvider._(data, data, NbImage.buyAirtime);
   }
 
   static BetServiceProvider sportybet =

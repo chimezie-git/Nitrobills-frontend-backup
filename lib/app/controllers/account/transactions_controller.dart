@@ -25,7 +25,7 @@ class TransactionsController extends GetxController {
     }
   }
 
-  Future reload({bool showLoader = false}) async {
+  Future reload({bool showLoader = false, bool showToast = true}) async {
     if (showLoader) {
       status.value = LoaderEnum.loading;
     }
@@ -33,10 +33,11 @@ class TransactionsController extends GetxController {
     if (result.isRight) {
       transactions.value = result.right;
       status.value = LoaderEnum.success;
-      loaded.value = true;
     } else {
       status.value = LoaderEnum.failed;
-      NbToast.error(result.left.message);
+      if (showToast) {
+        NbToast.error(result.left.message);
+      }
     }
     update();
   }

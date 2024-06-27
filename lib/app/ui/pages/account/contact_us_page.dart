@@ -39,12 +39,11 @@ class ContactUsPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(11.r),
                     color: NbColors.white,
                   ),
-                  child: Text(
-                    "Nitro Bills",
-                    style: TextStyle(
-                      fontSize: 30.5.sp,
-                      color: NbColors.primary,
-                      fontWeight: FontWeight.w600,
+                  child: SvgPicture.asset(
+                    NbSvg.nitrobills,
+                    colorFilter: const ColorFilter.mode(
+                      NbColors.primary,
+                      BlendMode.srcIn,
                     ),
                   ),
                 ),
@@ -64,9 +63,9 @@ class ContactUsPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const Spacer(),
-                    _infoList(NbSvg.phone, "+232432423"),
+                    _infoList(NbSvg.phone, "+2349163897229"),
                     const Spacer(),
-                    _infoList(NbSvg.mailThick, "info@mail.com"),
+                    _infoList(NbSvg.mailThick, "info@nitrobills.com"),
                     const Spacer(),
                   ],
                 ),

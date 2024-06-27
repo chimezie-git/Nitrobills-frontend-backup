@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
+import 'package:nitrobills/app/ui/pages/autopayments/models/autopay.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class AutopaymentCardWidget extends StatelessWidget {
   final void Function() onTap;
-  final Beneficiary beneficiary;
+  final Autopay autopay;
   const AutopaymentCardWidget({
     super.key,
     required this.onTap,
-    required this.beneficiary,
+    required this.autopay,
   });
 
   @override
@@ -42,8 +42,7 @@ class AutopaymentCardWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.r),
                         image: DecorationImage(
-                            image:
-                                AssetImage(beneficiary.serviceProvider.image))
+                            image: AssetImage(autopay.serviceProvider.image))
                         // color: NbColors.primary,
                         ),
                   ),
@@ -52,11 +51,11 @@ class AutopaymentCardWidget extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        NbText.sp16(beneficiary.serviceType.name).w600.black,
+                        NbText.sp16(autopay.serviceType.name).w600.black,
                         const Spacer(),
-                        NbText.sp16(beneficiary.name).w500.black,
+                        NbText.sp16(autopay.name).w500.black,
                         const Spacer(),
-                        NbText.sp14(beneficiary.code).w400.black,
+                        NbText.sp14(autopay.number).w400.black,
                         const Spacer(flex: 2),
                       ],
                     ),
@@ -68,7 +67,7 @@ class AutopaymentCardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 NbText.sp16("Last payment on 23-06-2023").w500.black,
-                NbText.sp18("N1200").w600.black,
+                NbText.sp18("₦1200").w600.black,
               ],
             )
           ],

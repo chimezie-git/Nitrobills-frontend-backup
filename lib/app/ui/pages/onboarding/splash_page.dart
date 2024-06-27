@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,9 +19,10 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController controller;
+  late final Animation animation;
   final Duration _delay = const Duration(milliseconds: 800);
-  final Duration _duration = const Duration(milliseconds: 1000);
-  final Curve curve = Curves.easeInOutQuad;
+  final Duration _duration = const Duration(milliseconds: 1600);
+  final Curve curve = Curves.easeInOutExpo;
 
   @override
   void initState() {
@@ -29,6 +31,10 @@ class _SplashPageState extends State<SplashPage>
       duration: _duration,
       vsync: this,
     );
+    animation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      parent: controller,
+      curve: curve,
+    ));
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _nextPage();
@@ -102,19 +108,19 @@ class _SplashPageState extends State<SplashPage>
                             child: Stack(
                               children: [
                                 AnimatedBuilder(
-                                    animation: CurvedAnimation(
-                                        parent: controller, curve: curve),
+                                    animation: controller,
                                     builder: (context, child) {
                                       return Positioned(
                                         bottom: 35.h *
-                                            controller
+                                            animation
                                                 .value, //animate from zero to 35
                                         left: 0,
                                         right: 0,
                                         child: Align(
                                           alignment: Alignment.center,
                                           child: Opacity(
-                                            opacity: controller.value,
+                                            opacity:
+                                                math.max(animation.value, 0),
                                             child: Image.asset(
                                               NbImage.logoSpark,
                                               width: 11.r,
@@ -130,13 +136,12 @@ class _SplashPageState extends State<SplashPage>
                       ),
                     ),
                     AnimatedBuilder(
-                        animation:
-                            CurvedAnimation(parent: controller, curve: curve),
+                        animation: controller,
                         builder: (context, child) {
                           return Positioned(
                             top: 787.h -
                                 (400.h *
-                                    controller.value), // from 700.h to 387.h
+                                    animation.value), // from 700.h to 387.h
                             left: 0,
                             right: 0,
                             bottom: 0,

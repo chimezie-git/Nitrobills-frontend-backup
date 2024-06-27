@@ -15,7 +15,6 @@ import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
-import 'package:nitrobills/app/ui/pages/transactions/models/transaction.dart';
 import 'package:nitrobills/app/ui/pages/transactions/transaction_details_screen.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/confirm_transaction_card_widget.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/make_recurring_payment_modal.dart';

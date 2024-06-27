@@ -65,12 +65,12 @@ class BankInfo extends Equatable {
       accountStatus: TransactionStatusEnum.pending,
       accountNumber: "accountNumber",
       accountName: "accountName",
-      bankName: "Wema",
+      bankName: "Wema Bank",
       bankSlug: "bankSlug",
       currency: "currency");
 
   String get bankDisplayName {
-    if (accountStatus == TransactionStatusEnum.pending) {
+    if (accountStatus == TransactionStatusEnum.pending && bankName.isEmpty) {
       return "Pending";
     }
     return bankName;

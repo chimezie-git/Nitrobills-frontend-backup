@@ -5,6 +5,7 @@ import 'package:nitrobills/app/data/models/user_account.dart';
 import 'package:nitrobills/app/data/models/virtual_accounts/customer_model.dart';
 import 'package:nitrobills/app/data/services/account/user_account_service.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
+import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class UserAccountController extends GetxController {
   final Rxn<CustomerModel> customer = Rxn<CustomerModel>(null);
@@ -23,8 +24,13 @@ class UserAccountController extends GetxController {
         await Get.find<AuthController>().saveName(
             result.right.lastName, result.right.firstName, result.right.email);
         account = Rx<UserAccount>(result.right);
+        if (account.value.banks.first.accountStatus.isPending) {
+          NbToast.fetchAccount();
+        }
+        NbUtils.startNotificationPoll();
         status.value = LoaderEnum.success;
         loaded.value = true;
+        // start notification polling
       } else {
         status.value = LoaderEnum.failed;
         NbToast.error(result.left.message);
@@ -33,14 +39,16 @@ class UserAccountController extends GetxController {
     }
   }
 
-  Future reload() async {
+  Future reload({bool showToast = true}) async {
     final result = await UserAccountService.getAccount();
     if (result.isRight) {
       account.value = result.right;
       status.value = LoaderEnum.success;
     } else {
       status.value = LoaderEnum.failed;
-      NbToast.error(result.left.message);
+      if (showToast) {
+        NbToast.error(result.left.message);
+      }
     }
     update();
   }

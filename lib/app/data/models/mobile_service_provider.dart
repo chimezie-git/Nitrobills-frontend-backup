@@ -7,7 +7,8 @@ class MobileServiceProvider extends AbstractServiceProvider {
 
   factory MobileServiceProvider.fromString(String data) {
     // change this later
-    return mtn;
+    return allAirtimeMap[data] ??
+        MobileServiceProvider._(data, data, NbImage.buyAirtime);
   }
 
   static MobileServiceProvider mtn =

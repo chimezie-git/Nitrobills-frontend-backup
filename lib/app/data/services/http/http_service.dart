@@ -31,6 +31,10 @@ class HttpService {
       if (e.response != null) {
         return Right(e.response!);
       }
+      if (e.error is SocketException) {
+        return const Left(
+            AppError("Please check your internet connection and try again"));
+      }
       return Left(AppError(e.message ?? ""));
     } catch (e) {
       Dio().close(force: true);
@@ -62,6 +66,10 @@ class HttpService {
       Dio().close(force: true);
       if (e.response != null) {
         return Right(e.response!);
+      }
+      if (e.error is SocketException) {
+        return const Left(
+            AppError("Please check your internet connection and try again"));
       }
       return Left(AppError(e.message ?? ""));
     } catch (e) {
@@ -95,6 +103,10 @@ class HttpService {
       if (e.response != null) {
         return Right(e.response!);
       }
+      if (e.error is SocketException) {
+        return const Left(
+            AppError("Please check your internet connection and try again"));
+      }
       return Left(AppError(e.message ?? ""));
     } catch (e) {
       Dio().close(force: true);
@@ -126,6 +138,10 @@ class HttpService {
       Dio().close(force: true);
       if (e.response != null) {
         return Right(e.response!);
+      }
+      if (e.error is SocketException) {
+        return const Left(
+            AppError("Please check your internet connection and try again"));
       }
       return Left(AppError(e.message ?? ""));
     } catch (e) {

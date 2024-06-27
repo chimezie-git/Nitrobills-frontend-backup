@@ -13,7 +13,8 @@ class ElectricityServiceProvider extends AbstractServiceProvider {
   ElectricityServiceProvider._(super.id, super.name, super.image);
 
   factory ElectricityServiceProvider.fromString(String data) {
-    return eedc;
+    return allDataMap[data] ??
+        ElectricityServiceProvider._(data, data, NbImage.buyAirtime);
   }
 
   static ElectricityServiceProvider aedc = ElectricityServiceProvider._(

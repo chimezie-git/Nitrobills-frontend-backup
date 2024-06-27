@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/account/autopay_controller.dart';
 import 'package:nitrobills/app/controllers/account/beneficiaries_controller.dart';
 import 'package:nitrobills/app/controllers/account/manage_data_controller.dart';
 import 'package:nitrobills/app/controllers/account/transactions_controller.dart';
@@ -30,5 +31,6 @@ class InitialBinding implements Bindings {
     Get.put<BettingController>(BettingController(), permanent: true);
     Get.put<CableController>(CableController(), permanent: true);
     Get.put<ElectricityController>(ElectricityController(), permanent: true);
+    Get.put<AutopayController>(AutopayController(), permanent: true);
   }
 }

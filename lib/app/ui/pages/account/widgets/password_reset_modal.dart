@@ -173,7 +173,7 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
               enabled: enabled,
               trailing: InkWell(
                 onTap: () {
-                  toggleView(!visible);
+                  // toggleView(!visible);
                 },
                 child: SizedBox(
                   width: 24.r,

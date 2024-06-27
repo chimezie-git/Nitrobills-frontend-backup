@@ -3,6 +3,10 @@ enum TransactionStatusEnum {
   pending,
   success;
 
+  bool get isPending => this == pending;
+  bool get isFailed => this == failed;
+  bool get isSuccess => this == success;
+
   static TransactionStatusEnum fromString(String status) {
     switch (status.toLowerCase()) {
       case 'p':

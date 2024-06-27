@@ -48,7 +48,15 @@ class NbSvg {
   static const String reloadRotate = "assets/svg/reload_rotate.svg";
   static const String greenCheck = "assets/svg/green_check.svg";
   static const String n = "assets/svg/n_character.svg";
+  static const String nitrobills = "assets/svg/nitrobills.svg";
   static const String toastSpark = "assets/svg/toast_spark.svg";
+  static const String exclamation = "assets/svg/exclamation.svg";
+  static const String wallet = "assets/svg/wallet.svg";
+  // no autopay
+  static const String noAutopay = "assets/svg/empty_autopay.svg";
+  static const String noBeneficiary = "assets/svg/empty_beneficiary.svg";
+  static const String noSubscription = "assets/svg/empty_subscription.svg";
+  static const String noTransactions = "assets/svg/empty_transaction.svg";
   // static const String phone = "assets/svg/phone.svg";
 }
 
@@ -72,10 +80,12 @@ class NbImage {
   static const String sportyBet = "assets/images/sporty_bet.png";
   static const String startimes = "assets/images/startimes.png";
   static const String dstv = "assets/images/dstv.png";
+
   static const String noTransactions = "assets/images/no_transactions.png";
-  static const String noManageData = "assets/images/no_manage_data.png";
+  static const String noManageData = "assets/images/no_subscription.png";
   static const String noAutopay = "assets/images/no_autopay.png";
-  static const String noBeneficiary = "assets/images/no_beneficiaries.png";
+  static const String noBeneficiary = "assets/images/no_beneficiary.png";
+
   static const String buyAirtime = "assets/images/buy_airtime.png";
   static const String eedc = "assets/images/eedc.png";
   static const String bedc = "assets/images/bedc.png";
@@ -100,4 +110,5 @@ class NbImage {
   static const String onboarding1 = "assets/images/onboarding/onboarding1.png";
   static const String onboarding2 = "assets/images/onboarding/onboarding2.png";
   static const String onboarding3 = "assets/images/onboarding/onboarding3.png";
+  static const String onboarding4 = "assets/images/onboarding/onboarding4.png";
 }

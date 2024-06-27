@@ -29,7 +29,9 @@ class GbAirtimeServiceProviderModal extends StatelessWidget {
               return SizedBox(
                 height: 200.h,
                 child: const Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: NbColors.black,
+                  ),
                 ),
               );
             } else {

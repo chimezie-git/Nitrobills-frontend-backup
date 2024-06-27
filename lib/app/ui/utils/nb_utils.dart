@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/navbar_controller.dart';
+import 'package:nitrobills/app/data/models/app_notification.dart';
+import 'package:nitrobills/app/data/services/notification/notification_service.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -9,6 +11,16 @@ class NbUtils {
   static String baseUrl = "https://nitrobills-backend.onrender.com";
 
   static GlobalKey<NavigatorState> nav = GlobalKey<NavigatorState>();
+
+  static late Stream<AppNotification> _notificationPollStream;
+
+  static void startNotificationPoll() {
+    _notificationPollStream = NotificationService.getNotificaitonStream();
+    _notificationPollStream.listen((notify) {
+      NotificationService.showNotification(
+          notify.type.displayName, notify.message);
+    });
+  }
 
   static get removeNav {
     Get.find<NavbarController>().toggleShowTab(false);

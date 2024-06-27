@@ -194,7 +194,7 @@ class _SigninPageState extends State<SigninPage> {
                       ),
                       TextButton(
                         onPressed: _forgetPassword,
-                        child: NbText.sp14("Forget Password").w500.darkGrey,
+                        child: NbText.sp14("Forget Password?").w500.darkGrey,
                       ),
                     ],
                   ),

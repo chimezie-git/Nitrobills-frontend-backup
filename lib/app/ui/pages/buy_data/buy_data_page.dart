@@ -66,7 +66,9 @@ class _BuyDataPageState extends State<BuyDataPage> {
                   builder: (cntrl) {
                     if (cntrl.status.value.isLoading) {
                       return const Center(
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator(
+                          color: NbColors.black,
+                        ),
                       );
                     }
                     return GridView.builder(

@@ -29,9 +29,10 @@ class TransactionsPage extends StatelessWidget {
             body: SafeArea(
               bottom: false,
               child: RefreshIndicator(
-                color: NbColors.primary,
+                color: NbColors.black,
+                backgroundColor: Colors.white,
                 onRefresh: () async {
-                  cntrl.reload();
+                  await cntrl.reload();
                 },
                 child: Column(
                   children: [

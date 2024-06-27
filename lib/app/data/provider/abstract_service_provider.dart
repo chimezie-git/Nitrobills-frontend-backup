@@ -25,7 +25,7 @@ abstract class AbstractServiceProvider {
       case ServiceTypesEnum.betting:
         return BetServiceProvider.fromString(serviceProvider);
       case ServiceTypesEnum.bulkSms:
-        throw Exception("Provider not available in bulk sms");
+        throw Exception("Nitrobills error: provider not available in bulk sms");
     }
   }
 }

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nitrobills/app/data/enums/period_enum.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
 import 'package:nitrobills/app/data/models/pay_frequency.dart';
+import 'package:nitrobills/app/ui/pages/autopayments/models/autopay.dart';
+import 'package:nitrobills/app/ui/pages/autopayments/widgets/recent_autopay_grid_widget.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
 import 'package:nitrobills/app/ui/global_widgets/custom_date_picker_dialog.dart';
@@ -12,16 +13,14 @@ import 'package:nitrobills/app/ui/global_widgets/frequency_selection_modal.dart'
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
-import 'package:nitrobills/app/ui/global_widgets/recent_purchase_grid_widget.dart';
 import 'package:nitrobills/app/ui/global_widgets/servicetype_modal.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/beneficiary_list_page.dart';
-import 'package:nitrobills/app/ui/pages/transactions/confirm_transaction_screen.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 
 class SetupAutopaymentPage extends StatefulWidget {
-  final Beneficiary? beneficiary;
-  const SetupAutopaymentPage({super.key, this.beneficiary});
+  final Autopay? autopay;
+  const SetupAutopaymentPage({super.key, this.autopay});
 
   @override
   State<SetupAutopaymentPage> createState() => _SetupAutopaymentPageState();
@@ -30,7 +29,7 @@ class SetupAutopaymentPage extends StatefulWidget {
 class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
   late final TextEditingController numberCntr;
   late final TextEditingController priceCntr;
-  List<Beneficiary> allBeneficiaries = [];
+  List<Autopay> allAutopay = [];
   ServiceTypesEnum? serviceType;
   AbstractServiceProvider? serviceProvider;
   PayFrequency? frequency;
@@ -39,10 +38,10 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.beneficiary != null) {
-      allBeneficiaries.add(widget.beneficiary!);
-      serviceType = widget.beneficiary?.serviceType;
-      serviceProvider = widget.beneficiary?.serviceProvider;
+    if (widget.autopay != null) {
+      allAutopay.add(widget.autopay!);
+      serviceType = widget.autopay?.serviceType;
+      serviceProvider = widget.autopay?.serviceProvider;
     }
     numberCntr = TextEditingController();
     priceCntr = TextEditingController();
@@ -79,11 +78,11 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
                   color: NbColors.black,
                 ),
                 20.verticalSpace,
-                RecentPurchaseGridWidget(
-                  beneficiaries: allBeneficiaries,
+                RecentAutopayGridWidget(
+                  autopays: allAutopay,
                   onAdd: _addData,
                   onDelete: (index) {
-                    allBeneficiaries.removeAt(index);
+                    allAutopay.removeAt(index);
                     setState(() {});
                   },
                 ),
@@ -144,7 +143,7 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
               serviceProvider: serviceProvider!,
             ));
     if (beneficiary != null) {
-      allBeneficiaries.add(beneficiary);
+      allAutopay.add(Autopay.fromBeneficiary(beneficiary));
       setState(() {});
     }
   }

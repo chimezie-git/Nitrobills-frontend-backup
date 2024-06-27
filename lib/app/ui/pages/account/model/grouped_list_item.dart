@@ -42,7 +42,7 @@ class GroupedListItem {
         }),
     GroupedListItem(
         name: Get.find<UserAccountController>().account.value.email,
-        svg: NbSvg.mailThick,
+        svg: NbSvg.mail,
         onTap: () async {
           NbUtils.removeNav;
           await NbUtils.nav.currentState?.push(MaterialPageRoute(
@@ -51,7 +51,8 @@ class GroupedListItem {
         },
         arrowIcon: true),
     GroupedListItem(
-        name: Get.find<UserAccountController>().account.value.phoneNumber,
+        name: _formatPhone(
+            Get.find<UserAccountController>().account.value.phoneNumber),
         svg: NbSvg.phone,
         arrowIcon: false),
     GroupedListItem(
@@ -97,4 +98,9 @@ class GroupedListItem {
           NbUtils.showNav;
         }),
   ];
+}
+
+String _formatPhone(String phoneNumber) {
+  String phone = phoneNumber.replaceAll("+234", "0");
+  return '${phone.substring(0, 3)}-${phone.substring(3, 6)}-${phone.substring(6, 9)}-${phone.substring(9)}';
 }

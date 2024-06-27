@@ -59,6 +59,13 @@ class NbText {
           fontWeight: FontWeight.w500,
         ),
       );
+  static Text sp15(String text) => Text(
+        text,
+        style: TextStyle(
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w500,
+        ),
+      );
   static Text sp14(String text) => Text(
         text,
         style: TextStyle(

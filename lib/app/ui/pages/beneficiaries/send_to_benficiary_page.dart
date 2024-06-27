@@ -24,7 +24,6 @@ import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_data_service_provide
 import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_electricity_service_provider_modal.dart';
 import 'package:nitrobills/app/ui/pages/pay_bills/models/gb_cable_plans.dart';
 import 'package:nitrobills/app/ui/pages/pay_bills/models/gb_data_plans.dart';
-import 'package:nitrobills/app/ui/pages/transactions/confirm_transaction_screen.dart';
 import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';

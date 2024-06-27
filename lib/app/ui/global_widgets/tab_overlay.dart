@@ -104,8 +104,11 @@ class TabOverlay extends StatelessWidget {
         child: Center(
           child: SizedBox(
             height: 20.w,
-            child: SvgPicture.asset(
-              selected ? filledIcon : outlinedIcon,
+            child: Opacity(
+              opacity: selected ? 1 : 0.6,
+              child: SvgPicture.asset(
+                selected ? filledIcon : outlinedIcon,
+              ),
             ),
           ),
         ),

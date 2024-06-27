@@ -33,7 +33,7 @@ class AccountTitleWidget extends StatelessWidget {
         children: [
           NbText.sp18("Account Balance").w600.setColor(const Color(0xFF6B6969)),
           const Spacer(flex: 2),
-          NbText.sp20(amount).w500.setColor(const Color(0xFF244047)),
+          NbText.sp20("₦ $amount").w500.setColor(const Color(0xFF244047)),
           const Spacer(),
           RotatingRefreshButton(asyncFunction: refresh)
         ],

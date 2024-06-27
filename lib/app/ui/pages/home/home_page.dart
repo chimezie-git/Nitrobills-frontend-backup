@@ -43,10 +43,15 @@ class _HomePageState extends State<HomePage> {
         } else {
           return Scaffold(
             backgroundColor: const Color(0xFFFAFAFA),
-            body: SingleChildScrollView(
+            body: RefreshIndicator(
+              color: NbColors.black,
+              backgroundColor: Colors.white,
+              onRefresh: () async {
+                await cntrl.reload();
+              },
               child: SafeArea(
                 bottom: false,
-                child: Column(
+                child: ListView(
                   children: [
                     Container(
                       decoration: const BoxDecoration(
@@ -135,6 +140,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future refresh() async {
+    NbToast.updateBalance();
     await Get.find<UserAccountController>().reload();
   }
 }

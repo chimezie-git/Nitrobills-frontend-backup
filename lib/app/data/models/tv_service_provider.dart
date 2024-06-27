@@ -6,7 +6,8 @@ class TvServiceProvider extends AbstractServiceProvider {
 
   factory TvServiceProvider.fromString(String data) {
     // change this later
-    return dstv;
+    return allDataMap[data] ??
+        TvServiceProvider._(data, data, NbImage.buyAirtime);
   }
 
   static TvServiceProvider dstv =
