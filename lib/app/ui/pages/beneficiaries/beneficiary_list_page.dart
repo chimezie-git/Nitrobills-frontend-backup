@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/account/beneficiaries_controller.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
-import 'package:nitrobills/app/data/models/beneficiary.dart';
+import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
@@ -77,13 +78,15 @@ class BeneficiaryListPage extends StatelessWidget {
               10.verticalSpace,
               Expanded(
                 child: ListView(children: [
-                  ...Beneficiary.all.where((bene) {
+                  ...Get.find<BeneficiariesController>()
+                      .beneficiaries
+                      .where((bene) {
                     return (bene.serviceType == serviceType) &&
                         (bene.serviceProvider.name == serviceProvider.name);
                   }).mapIndexed((idx, ben) => Padding(
-                        padding: EdgeInsets.only(bottom: 32.h),
-                        child: _beneficiaryListTile(ben, idx),
-                      )),
+                            padding: EdgeInsets.only(bottom: 32.h),
+                            child: _beneficiaryListTile(ben, idx),
+                          )),
                 ]),
               ),
             ],

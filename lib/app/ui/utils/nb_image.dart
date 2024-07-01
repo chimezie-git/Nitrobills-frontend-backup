@@ -43,9 +43,25 @@ class NbSvg {
   static const String autopay = "assets/svg/autopay.svg";
   static const String delete = "assets/svg/delete.svg";
   static const String obscure = "assets/svg/obscure.svg";
+  static const String info = "assets/svg/info.svg";
+  static const String search = "assets/svg/search.svg";
+  static const String reloadRotate = "assets/svg/reload_rotate.svg";
+  static const String greenCheck = "assets/svg/green_check.svg";
+  static const String n = "assets/svg/n_character.svg";
+  static const String nitrobills = "assets/svg/nitrobills.svg";
+  static const String toastSpark = "assets/svg/toast_spark.svg";
+  static const String exclamation = "assets/svg/exclamation.svg";
+  static const String wallet = "assets/svg/wallet.svg";
+  // no autopay
+  static const String noAutopay = "assets/svg/empty_autopay.svg";
+  static const String noBeneficiary = "assets/svg/empty_beneficiary.svg";
+  static const String noSubscription = "assets/svg/empty_subscription.svg";
+  static const String noTransactions = "assets/svg/empty_transaction.svg";
+  // static const String phone = "assets/svg/phone.svg";
 }
 
 class NbImage {
+  static const String splashBg = "assets/images/splash_bg.png";
   static const String oneXBet = "assets/images/1x_bet.png";
   static const String nineMobile = "assets/images/9mobile.png";
   static const String airtel = "assets/images/airtel.png";
@@ -64,16 +80,35 @@ class NbImage {
   static const String sportyBet = "assets/images/sporty_bet.png";
   static const String startimes = "assets/images/startimes.png";
   static const String dstv = "assets/images/dstv.png";
+
   static const String noTransactions = "assets/images/no_transactions.png";
-  static const String noManageData = "assets/images/no_manage_data.png";
+  static const String noManageData = "assets/images/no_subscription.png";
   static const String noAutopay = "assets/images/no_autopay.png";
-  static const String noBeneficiary = "assets/images/no_beneficiaries.png";
+  static const String noBeneficiary = "assets/images/no_beneficiary.png";
+
   static const String buyAirtime = "assets/images/buy_airtime.png";
   static const String eedc = "assets/images/eedc.png";
   static const String bedc = "assets/images/bedc.png";
   static const String apleNg = "assets/images/apleng.png";
+  static const String smileTelecom = "assets/images/smile_telecom.jpeg";
+  static const String starcomms = "assets/images/starcomms.jpg";
+  static const String multilinks = "assets/images/multilinks.jpeg";
+  static const String mtel = "assets/images/mtel.png";
+  static const String fundAccount = "assets/images/fund_account.png";
+  static const String spectranet = "assets/images/spectranet.jpeg";
+  static const String abujaElect = "assets/images/abuja_electric.jpeg";
+  static const String kadunaElect = "assets/images/kaduna_electric.jpeg";
+  static const String ibadanElect = "assets/images/ibadan_electric.jpg";
+  static const String josElect = "assets/images/jos_electric.jpg";
+  static const String phElect = "assets/images/ph_electric.jpeg";
+  static const String kanoElect = "assets/images/kano_electric.jpg";
+  static const String ekoElect = "assets/images/eko_electric.jpg";
+  static const String ikejaElect = "assets/images/ikeja_electric.jpg";
+  static const String confetti = "assets/images/confetti.png";
+  static const String homeBgImg = "assets/images/home_bg_color.png";
   // onboarding page
   static const String onboarding1 = "assets/images/onboarding/onboarding1.png";
   static const String onboarding2 = "assets/images/onboarding/onboarding2.png";
   static const String onboarding3 = "assets/images/onboarding/onboarding3.png";
+  static const String onboarding4 = "assets/images/onboarding/onboarding4.png";
 }

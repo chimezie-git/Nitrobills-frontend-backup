@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/data/enums/button_enum.dart';
+import 'package:nitrobills/app/data/repository/auth_repo.dart';
+import 'package:nitrobills/app/data/services/validators.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
-import 'package:nitrobills/app/ui/pages/auth/signin_page.dart';
-import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -20,11 +21,26 @@ class ChangePasswordPage extends StatefulWidget {
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
   ValueNotifier<bool> obscurePassword1 = ValueNotifier(true);
   ValueNotifier<bool> obscurePassword2 = ValueNotifier(true);
+  ValueNotifier<ButtonEnum> buttonStatus =
+      ValueNotifier<ButtonEnum>(ButtonEnum.active);
+  late TextEditingController password1;
+  late TextEditingController password2;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    password1 = TextEditingController();
+    password2 = TextEditingController();
+  }
 
   @override
   void dispose() {
     obscurePassword1.dispose();
     obscurePassword2.dispose();
+    buttonStatus.dispose();
+    password1.dispose();
+    password2.dispose();
     super.dispose();
   }
 
@@ -61,52 +77,80 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      NbButton.backIcon(_back),
-                      60.verticalSpace,
-                      NbText.sp22("Change password").w500.darkGrey,
-                      12.verticalSpace,
-                      NbText.sp16("Enter a new password and confirm.")
-                          .w400
-                          .darkGrey,
-                      24.verticalSpace,
-                      ValueListenableBuilder(
-                          valueListenable: obscurePassword1,
-                          builder: (context, obscure, child) {
-                            return NbField.textAndIcon(
-                              hint: "Enter Password",
-                              obscureText: obscure,
-                              trailing: InkWell(
-                                onTap: () {
-                                  obscurePassword1.value = !obscure;
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        NbButton.backIcon(_back),
+                        60.verticalSpace,
+                        NbText.sp22("Change password").w500.darkGrey,
+                        12.verticalSpace,
+                        NbText.sp16("Enter a new password and confirm.")
+                            .w400
+                            .darkGrey,
+                        24.verticalSpace,
+                        ValueListenableBuilder(
+                            valueListenable: obscurePassword1,
+                            builder: (context, obscure, child) {
+                              return NbField.textAndIcon(
+                                controller: password1,
+                                hint: "Enter Password",
+                                obscureText: !obscure,
+                                validator: () {
+                                  if (!NbValidators.isPassword(
+                                      password1.text)) {
+                                    return "Password must be eight characters, with at least one letter and one number";
+                                  }
+                                  return null;
                                 },
-                                child: SvgPicture.asset(
-                                    obscure ? NbSvg.visible : NbSvg.notVisible),
-                              ),
-                            );
-                          }),
-                      20.verticalSpace,
-                      ValueListenableBuilder(
-                          valueListenable: obscurePassword2,
-                          builder: (context, obscure, child) {
-                            return NbField.textAndIcon(
-                              hint: "Confirm Password",
-                              obscureText: obscure,
-                              trailing: InkWell(
-                                onTap: () {
-                                  obscurePassword2.value = !obscure;
+                                trailing: InkWell(
+                                  onTap: () {
+                                    obscurePassword1.value = !obscure;
+                                  },
+                                  child: SvgPicture.asset(obscure
+                                      ? NbSvg.visible
+                                      : NbSvg.notVisible),
+                                ),
+                              );
+                            }),
+                        20.verticalSpace,
+                        ValueListenableBuilder(
+                            valueListenable: obscurePassword2,
+                            builder: (context, obscure, child) {
+                              return NbField.textAndIcon(
+                                controller: password2,
+                                hint: "Confirm Password",
+                                obscureText: !obscure,
+                                validator: () {
+                                  if (password1.text != password2.text) {
+                                    return "Both passwords must be the same";
+                                  } else {
+                                    return null;
+                                  }
                                 },
-                                child: SvgPicture.asset(
-                                    obscure ? NbSvg.visible : NbSvg.notVisible),
-                              ),
-                            );
-                          }),
-                      32.verticalSpace,
-                      NbButton.primary(
-                          text: "Reset Password", onTap: _resetPassword),
-                    ],
+                                trailing: InkWell(
+                                  onTap: () {
+                                    obscurePassword2.value = !obscure;
+                                  },
+                                  child: SvgPicture.asset(obscure
+                                      ? NbSvg.visible
+                                      : NbSvg.notVisible),
+                                ),
+                              );
+                            }),
+                        32.verticalSpace,
+                        ValueListenableBuilder(
+                            valueListenable: buttonStatus,
+                            builder: (context, value, child) {
+                              return NbButton.primary(
+                                text: "Reset Password",
+                                onTap: _resetPassword,
+                                status: value,
+                              );
+                            }),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -121,7 +165,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     Get.back();
   }
 
-  void _resetPassword() {
-    AuthModal.show(const SigninPage());
+  void _resetPassword() async {
+    if (formKey.currentState?.validate() ?? false) {
+      buttonStatus.value = ButtonEnum.loading;
+      await AuthRepo().changePassword(password1.text);
+      buttonStatus.value = ButtonEnum.active;
+    }
   }
 }

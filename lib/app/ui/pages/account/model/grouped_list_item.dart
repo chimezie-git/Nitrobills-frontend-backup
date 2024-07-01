@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
+import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
 import 'package:nitrobills/app/ui/pages/account/account_email_page.dart';
 import 'package:nitrobills/app/ui/pages/account/account_referral_page.dart';
 import 'package:nitrobills/app/ui/pages/account/contact_us_page.dart';
 import 'package:nitrobills/app/ui/pages/account/widgets/password_reset_modal.dart';
 import 'package:nitrobills/app/ui/pages/autopayments/manage_autopayments_page.dart';
-import 'package:nitrobills/app/ui/pages/onboarding/intro_page.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_utils.dart';
@@ -23,8 +24,13 @@ class GroupedListItem {
       this.arrowIcon = false});
 
   static List<GroupedListItem> account = [
-    GroupedListItem(name: "Alex Natan", svg: NbSvg.account),
-    GroupedListItem(name: "Username", svg: NbSvg.username),
+    GroupedListItem(
+        name:
+            "${Get.find<UserAccountController>().account.value.firstName} ${Get.find<UserAccountController>().account.value.lastName}",
+        svg: NbSvg.account),
+    GroupedListItem(
+        name: Get.find<UserAccountController>().account.value.username,
+        svg: NbSvg.username),
     GroupedListItem(
         name: "Manage auto payments",
         svg: NbSvg.manageAutopay,
@@ -35,8 +41,8 @@ class GroupedListItem {
           NbUtils.showNav;
         }),
     GroupedListItem(
-        name: "mail@mail.com",
-        svg: NbSvg.mailThick,
+        name: Get.find<UserAccountController>().account.value.email,
+        svg: NbSvg.mail,
         onTap: () async {
           NbUtils.removeNav;
           await NbUtils.nav.currentState?.push(MaterialPageRoute(
@@ -44,6 +50,11 @@ class GroupedListItem {
           NbUtils.showNav;
         },
         arrowIcon: true),
+    GroupedListItem(
+        name: _formatPhone(
+            Get.find<UserAccountController>().account.value.phoneNumber),
+        svg: NbSvg.phone,
+        arrowIcon: false),
     GroupedListItem(
         name: "My Referrals",
         svg: NbSvg.refer,
@@ -73,8 +84,7 @@ class GroupedListItem {
         name: "Sign out",
         svg: NbSvg.signout,
         onTap: () {
-          NbUtils.removeNav;
-          Get.offAll(() => const IntroPage());
+          Get.find<AuthController>().logoutUser();
         }),
   ];
   static List<GroupedListItem> about = [
@@ -88,4 +98,9 @@ class GroupedListItem {
           NbUtils.showNav;
         }),
   ];
+}
+
+String _formatPhone(String phoneNumber) {
+  String phone = phoneNumber.replaceAll("+234", "0");
+  return '${phone.substring(0, 3)}-${phone.substring(3, 6)}-${phone.substring(6, 9)}-${phone.substring(9)}';
 }

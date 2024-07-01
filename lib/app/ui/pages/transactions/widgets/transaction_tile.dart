@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:nitrobills/app/ui/utils/nb_image.dart';
+import 'package:intl/intl.dart';
+import 'package:nitrobills/app/data/services/formatter.dart';
+import 'package:nitrobills/app/ui/pages/transactions/models/transaction.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class TransactionTile extends StatelessWidget {
-  final bool isCredit;
+  final Transaction transaction;
   const TransactionTile({
     super.key,
-    required this.isCredit,
+    required this.transaction,
   });
 
   @override
@@ -26,7 +28,9 @@ class TransactionTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          NbText.sp14("24 MAY 2024").w500.setColor(const Color(0xFF5A5959)),
+          NbText.sp14(DateFormat("MMM, dd yyyy").format(transaction.date))
+              .w500
+              .setColor(const Color(0xFF5A5959)),
           6.verticalSpace,
           Expanded(
             child: Row(
@@ -37,7 +41,7 @@ class TransactionTile extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                      image: AssetImage(NbImage.mtn),
+                      image: AssetImage(transaction.iconImage),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -46,9 +50,11 @@ class TransactionTile extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    NbText.sp16("Buy data").w600.black,
+                    NbText.sp16(transaction.transactionType.displayName)
+                        .w600
+                        .black,
                     const Spacer(),
-                    NbText.sp14("07:20 PM")
+                    NbText.sp14(DateFormat("hh:mm a").format(transaction.date))
                         .w500
                         .setColor(const Color(0xFF5A5959)),
                   ],
@@ -57,14 +63,17 @@ class TransactionTile extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    NbText.sp16("Buy data").w500.black,
+                    NbText.sp14(
+                            "${transaction.isCredit ? '+' : '-'}₦ ${NbFormatter.amount(transaction.amount)}")
+                        .w500
+                        .black,
                     const Spacer(),
                     Container(
                       width: 20.r,
                       height: 20.r,
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: isCredit
+                          color: transaction.isCredit
                               ? const Color(0xFF46D26E)
                               : const Color(0xFFD25746)),
                     ),

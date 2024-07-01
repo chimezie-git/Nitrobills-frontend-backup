@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/account/manage_data_controller.dart';
 import 'package:nitrobills/app/ui/global_widgets/custom_date_range_picker_dialog.dart';
-import 'package:nitrobills/app/ui/pages/manage_data/models/chart_data.dart';
+import 'package:nitrobills/app/ui/pages/manage_data/models/day_data.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -17,8 +18,6 @@ class DataChartWidget extends StatefulWidget {
 }
 
 class _DataChartWidgetState extends State<DataChartWidget> {
-  ChartData chartData = ChartData.sample();
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -31,10 +30,7 @@ class _DataChartWidgetState extends State<DataChartWidget> {
           ],
         ),
         15.verticalSpace,
-        BarChart(
-          xLabels: chartData.xLabels,
-          yValues: chartData.yLabels,
-        )
+        BarChart()
       ],
     );
   }
@@ -72,60 +68,69 @@ class _DataChartWidgetState extends State<DataChartWidget> {
     final data =
         await Get.dialog<(DateTime, DateTime)>(CustomDateRangePickerDialog(
       currentDate: DateTime.now(),
-      selectedRange: chartData.dayRange,
+      selectedRange: Get.find<ManageDataController>().dayRange.value,
     ));
     if (data != null) {
-      chartData = ChartData(dayRange: data);
+      Get.find<ManageDataController>().getPlanRange(data);
       setState(() {});
     }
   }
 }
 
 class BarChart extends StatelessWidget {
-  final List<String> xLabels;
-  final List<double> yValues;
   const BarChart({
     super.key,
-    required this.xLabels,
-    required this.yValues,
-  }) : assert(yValues.length == xLabels.length);
+  });
 
   @override
   Widget build(BuildContext context) {
-    double max =
-        yValues.reduce((value, element) => value > element ? value : element);
-    return SizedBox(
-      width: double.maxFinite,
-      height: 235.h,
-      child: ListView.separated(
-        reverse: true,
-        dragStartBehavior: DragStartBehavior.down,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return _bar(xLabels[index], yValues[index] / max, yValues[index]);
-        },
-        separatorBuilder: (context, index) {
-          return 29.horizontalSpace;
-        },
-        itemCount: xLabels.length,
-      ),
-    );
+    return GetBuilder(
+        init: Get.find<ManageDataController>(),
+        builder: (cntr) {
+          return SizedBox(
+            width: double.maxFinite,
+            height: 235.h,
+            child: ListView.separated(
+              reverse: true,
+              dragStartBehavior: DragStartBehavior.down,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                double ratio = cntr.data[index].data / cntr.maxData.value;
+                bool selected = cntr.data[index] == cntr.selected.value;
+                return _bar(cntr.data[index].weekDay, ratio,
+                    cntr.data[index].data, selected, cntr.data[index]);
+              },
+              separatorBuilder: (context, index) {
+                return 29.horizontalSpace;
+              },
+              itemCount: cntr.data.length,
+            ),
+          );
+        });
   }
 
-  Widget _bar(String label, double value, double data) {
+  Widget _bar(
+      String label, double value, double data, bool selected, DayData dayData) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Container(
-          width: 56.w,
-          height: 200.h * value,
-          alignment: Alignment.bottomCenter,
-          padding: EdgeInsets.only(bottom: 10.h),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(9.r),
-            color: NbColors.black,
+        InkWell(
+          onTap: () {
+            Get.find<ManageDataController>().selected.value = dayData;
+            Get.find<ManageDataController>().update();
+          },
+          child: Container(
+            width: 56.w,
+            height: 200.h * value,
+            alignment: Alignment.bottomCenter,
+            padding: EdgeInsets.only(bottom: 10.h, left: 5.r, right: 6.r),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(9.r),
+              color:
+                  selected ? NbColors.black : NbColors.black.withOpacity(0.1),
+            ),
+            child: NbText.sp12("${data.round()} GB").white.w500.setMaxLines(2),
           ),
-          child: NbText.sp12("${data.round()}").white.w500.setMaxLines(1),
         ),
         5.verticalSpace,
         NbText.sp16(label).black.w500,

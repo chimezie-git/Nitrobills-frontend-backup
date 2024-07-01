@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/navbar_controller.dart';
+import 'package:nitrobills/app/data/models/app_notification.dart';
+import 'package:nitrobills/app/data/services/notification/notification_service.dart';
+import 'package:nitrobills/app/ui/utils/nb_toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NbUtils {
+  static String baseUrl = "https://nitrobills-backend.onrender.com";
+
   static GlobalKey<NavigatorState> nav = GlobalKey<NavigatorState>();
+
+  static late Stream<AppNotification> _notificationPollStream;
+
+  static void startNotificationPoll() {
+    _notificationPollStream = NotificationService.getNotificaitonStream();
+    _notificationPollStream.listen((notify) {
+      NotificationService.showNotification(
+          notify.type.displayName, notify.message);
+    });
+  }
 
   static get removeNav {
     Get.find<NavbarController>().toggleShowTab(false);
@@ -34,5 +51,22 @@ class NbUtils {
   static Color listColor(int index) {
     final allColor = [0xFF897AE5, 0xFF2A6F7E, 0xFFD0119B];
     return Color(allColor[(index % allColor.length)]);
+  }
+
+  static void removeKeyboard() {
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  static void copyClipBoard(String text, String toastMsg) async {
+    ClipboardData data = ClipboardData(text: text);
+    await Clipboard.setData(data);
+    NbToast.copy(toastMsg);
+  }
+
+  static Future<void> openLink(String link, String failMessage) async {
+    final Uri url = Uri.parse(link);
+    if (!await launchUrl(url)) {
+      NbToast.show(failMessage);
+    }
   }
 }

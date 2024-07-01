@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/account/manage_data_controller.dart';
 import 'package:nitrobills/app/ui/global_widgets/empty_fields_widget.dart';
+import 'package:nitrobills/app/ui/pages/manage_data/manage_data_loading_page.dart';
 import 'package:nitrobills/app/ui/pages/manage_data/widget/data_chart_widget.dart';
 import 'package:nitrobills/app/ui/pages/manage_data/widget/manage_data_card_widget.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
@@ -11,30 +14,42 @@ class ManageDataPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((d) {
+      Get.find<ManageDataController>().initialize();
+    });
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 9.w),
-          child: Column(
-            children: [
-              18.verticalSpace,
-              NbText.sp18("Manage Data").w600.black,
-              16.verticalSpace,
-              if (false)
-                const EmptyFieldsWidget(
-                  image: NbImage.noManageData,
-                  text: "You dont have any active data subscription",
-                )
-              else
-                Column(
-                  mainAxisSize: MainAxisSize.min,
+          child: GetX<ManageDataController>(
+            init: Get.find<ManageDataController>(),
+            builder: (cntrl) {
+              if (cntrl.status.value.isLoading) {
+                return const ManageDataLoadingPage();
+              } else {
+                return Column(
                   children: [
-                    ManageDataCardWidget(),
-                    32.verticalSpace,
-                    DataChartWidget(),
+                    18.verticalSpace,
+                    NbText.sp18("Manage Data").w600.black,
+                    16.verticalSpace,
+                    if (cntrl.status.value.isFailed)
+                      const EmptyFieldsWidget(
+                        image: NbImage.noManageData,
+                        text: "You dont have any active data subscription",
+                      )
+                    else
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const ManageDataCardWidget(),
+                          32.verticalSpace,
+                          const DataChartWidget(),
+                        ],
+                      ),
                   ],
-                ),
-            ],
+                );
+              }
+            },
           ),
         ),
       ),

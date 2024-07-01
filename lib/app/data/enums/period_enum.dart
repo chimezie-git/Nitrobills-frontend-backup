@@ -1,10 +1,13 @@
 enum PeriodEnum {
+  custom,
   day,
   month,
   year;
 
   String get adjective {
     switch (this) {
+      case custom:
+        return "Custom";
       case day:
         return "Daily";
       case month:
@@ -14,5 +17,5 @@ enum PeriodEnum {
     }
   }
 
-  static List<PeriodEnum> all = [day, month, year];
+  static List<PeriodEnum> allPeriod = [day, month, year];
 }

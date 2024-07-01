@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -32,29 +34,36 @@ class EmailInfoCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24.r),
                 color: NbColors.white,
               ),
-              padding: EdgeInsets.symmetric(horizontal: 33.w),
-              child: Column(
-                children: [
-                  const Spacer(flex: 5),
-                  NbText.sp18("mail@mail.com").w500.black,
-                  const Spacer(flex: 2),
-                  NbText.sp14("Your emailadress is verified")
-                      .w500
-                      .setColor(const Color(0xFF4D4D4D)),
-                  const Spacer(flex: 1),
-                  Container(
-                    width: double.maxFinite,
-                    height: 1,
-                    color: const Color(0xFFCECECE),
-                  ),
-                  TextButton(
-                    onPressed: onTap,
-                    child: NbText.sp16("Change email adress")
-                        .w500
-                        .setColor(const Color(0xFF0A6E8D)),
-                  ),
-                  const Spacer(flex: 1),
-                ],
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              child: GetX<AuthController>(
+                init: Get.find<AuthController>(),
+                builder: (cntrl) {
+                  return Column(
+                    children: [
+                      const Spacer(flex: 5),
+                      NbText.sp18(cntrl.email.value).w500.black.centerText,
+                      const Spacer(flex: 2),
+                      NbText.sp14(
+                              "Your email address is ${false ? "" : "not"} verified")
+                          .w500
+                          .setColor(const Color(0xFF4D4D4D)),
+                      const Spacer(flex: 1),
+                      Container(
+                        width: double.maxFinite,
+                        height: 1,
+                        color: const Color(0xFFCECECE),
+                      ),
+                      TextButton(
+                        onPressed: onTap,
+                        child: NbText.sp16(
+                                false ? "Change email adress" : "Verify Email")
+                            .w500
+                            .setColor(const Color(0xFF0A6E8D)),
+                      ),
+                      const Spacer(flex: 1),
+                    ],
+                  );
+                },
               ),
             ),
           ),

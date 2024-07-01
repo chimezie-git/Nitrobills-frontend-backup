@@ -5,16 +5,21 @@ import 'package:get/get.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
 import 'package:nitrobills/app/data/models/img_txt_function.dart';
 import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
-import 'package:nitrobills/app/ui/global_widgets/betting_service_provider_modal.dart';
-import 'package:nitrobills/app/ui/global_widgets/cable_service_provider_modal.dart';
-import 'package:nitrobills/app/ui/global_widgets/electricity_service_provider_modal.dart';
-import 'package:nitrobills/app/ui/global_widgets/mobile_service_modal.dart';
+import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_airtime_service_provider_modal.dart';
+import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_bet_service_provider_modal.dart';
+import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_cable_service_provider_modal.dart';
+import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_data_service_provider_modal.dart';
+import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_electricity_service_provider_modal.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class ServiceTypeModal extends StatelessWidget {
-  const ServiceTypeModal({super.key});
+  final bool onlyServiceType;
+  const ServiceTypeModal({
+    super.key,
+    this.onlyServiceType = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -86,26 +91,33 @@ class ServiceTypeModal extends StatelessWidget {
   }
 
   void _setProvider(ServiceTypesEnum serviceType) async {
-    AbstractServiceProvider? service;
-    switch (serviceType) {
-      case ServiceTypesEnum.airtime:
-      case ServiceTypesEnum.data:
-        service = await _getService(const MobileServiceModal());
-        break;
-      case ServiceTypesEnum.betting:
-        service = await _getService(const BettingServiceProviderModal());
-        break;
-      case ServiceTypesEnum.cable:
-        service = await _getService(const CableServiceProviderModal());
-        break;
-      case ServiceTypesEnum.electricity:
-        service = await _getService(const ElectricityServiceProviderModal());
-        break;
-      default:
-        throw Exception("Not available");
-    }
-    if (service != null) {
-      Get.back(result: (serviceType, service));
+    if (onlyServiceType) {
+      Get.back(result: serviceType);
+    } else {
+      AbstractServiceProvider? service;
+      switch (serviceType) {
+        case ServiceTypesEnum.airtime:
+          service = await _getService(const GbAirtimeServiceProviderModal());
+          break;
+        case ServiceTypesEnum.data:
+          service = await _getService(const GbDataServiceProviderModal());
+          break;
+        case ServiceTypesEnum.betting:
+          service = await _getService(const GbBetServiceProviderModal());
+          break;
+        case ServiceTypesEnum.cable:
+          service = await _getService(const GbCableServiceProviderModal());
+          break;
+        case ServiceTypesEnum.electricity:
+          service =
+              await _getService(const GbElectricityServiceProviderModal());
+          break;
+        default:
+          throw Exception("Not available");
+      }
+      if (service != null) {
+        Get.back(result: (serviceType, service));
+      }
     }
   }
 

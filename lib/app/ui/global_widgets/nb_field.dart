@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nitrobills/app/ui/global_widgets/form_fields.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
+import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class NbField {
   static Widget text({
@@ -13,41 +14,23 @@ class NbField {
     bool obscureText = false,
     Color fieldColor = NbColors.white,
     Color borderColor = const Color(0xFFBBB9B9),
+    TextInputType? keyboardType,
+    bool enabled = true,
+    String? Function()? validator,
+    bool forcedError = false,
+    String? forcedErrorString,
   }) {
-    return Container(
-      height: fieldHeight ?? 62.h,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: fieldColor,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: borderColor,
-          width: 1,
-        ),
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.r,
-      ),
-      child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        style: TextStyle(
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w500,
-          color: NbColors.darkGrey,
-        ),
-        cursorColor: NbColors.darkGrey,
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.zero,
-          border: InputBorder.none,
-          hintText: hint,
-          hintStyle: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w400,
-            color: const Color(0xFF929090),
-          ),
-        ),
-      ),
+    return PlainTextField(
+      cntrl: controller,
+      hint: hint,
+      keyboardType: keyboardType,
+      fieldHeight: fieldHeight,
+      obscureText: obscureText,
+      fieldColor: fieldColor,
+      enable: enabled,
+      textValidator: validator ?? () => null,
+      forcedError: forcedError,
+      forcedErrorString: forcedErrorString,
     );
   }
 
@@ -57,50 +40,26 @@ class NbField {
     String? hint,
     Widget? trailing,
     bool obscureText = false,
-    Color fieldColor = NbColors.white,
+    Color fieldColor = const Color.fromRGBO(255, 255, 255, 1),
     Color borderColor = const Color(0xFFBBB9B9),
+    TextInputType? keyboardType,
+    bool enabled = true,
+    String? Function()? validator,
+    bool forcedError = false,
+    String? forcedErrorString,
   }) {
-    return Container(
-      alignment: Alignment.center,
-      height: fieldHeight ?? 62.h,
-      decoration: BoxDecoration(
-        color: fieldColor,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: borderColor,
-          width: 1,
-        ),
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.r,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: controller,
-              obscureText: obscureText,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-                color: NbColors.darkGrey,
-              ),
-              cursorColor: NbColors.darkGrey,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.zero,
-                border: InputBorder.none,
-                hintText: hint,
-                hintStyle: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xFF929090),
-                ),
-              ),
-            ),
-          ),
-          trailing ?? const SizedBox.shrink(),
-        ],
-      ),
+    return IconTextField(
+      cntrl: controller,
+      hint: hint,
+      trailing: trailing,
+      keyboardType: keyboardType,
+      fieldHeight: fieldHeight,
+      obscureText: obscureText,
+      fieldColor: fieldColor,
+      enable: enabled,
+      textValidator: validator ?? () => null,
+      forcedError: forcedError,
+      forcedErrorString: forcedErrorString,
     );
   }
 
@@ -108,43 +67,54 @@ class NbField {
     required String text,
     double? fieldHeight,
     required void Function() onTap,
+    String? forcedErrorString,
   }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        alignment: Alignment.center,
-        height: fieldHeight ?? 62.h,
-        decoration: BoxDecoration(
-          color: NbColors.white,
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: const Color(0xFFBBB9B9),
-            width: 1,
-          ),
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: 16.r,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                text,
-                maxLines: 1,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400,
-                  color: NbColors.darkGrey,
-                ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          onTap: onTap,
+          child: Container(
+            alignment: Alignment.center,
+            height: fieldHeight ?? 62.h,
+            decoration: BoxDecoration(
+              color: NbColors.white,
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(
+                color: forcedErrorString == null
+                    ? const Color(0xFFBBB9B9)
+                    : NbColors.red,
+                width: 1,
               ),
             ),
-            SvgPicture.asset(
-              NbSvg.arrowDown,
-              width: 16.r,
+            padding: EdgeInsets.symmetric(
+              horizontal: 16.r,
             ),
-          ],
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    text,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      color: NbColors.darkGrey,
+                    ),
+                  ),
+                ),
+                SvgPicture.asset(
+                  NbSvg.arrowDown,
+                  width: 16.r,
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+        if (forcedErrorString != null)
+          NbText.sp12(forcedErrorString).setColor(NbColors.red),
+      ],
     );
   }
 

@@ -1,15 +1,15 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/pages/auth/signin_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/signup_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
-import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 
 class IntroPage extends StatefulWidget {
   const IntroPage({super.key});
@@ -18,17 +18,19 @@ class IntroPage extends StatefulWidget {
   State<IntroPage> createState() => _IntroPageState();
 }
 
-class _IntroPageState extends State<IntroPage> {
-  final int pageCount = 3;
+class _IntroPageState extends State<IntroPage>
+    with SingleTickerProviderStateMixin {
+  final int pageCount = 4;
   final Duration _delay = const Duration(seconds: 4);
   final Duration _animation = const Duration(milliseconds: 400);
-  late final PageController controller;
-  late final Timer _timer;
+  late final TabController controller;
+  Timer? _timer;
   int _counter = 0;
 
   @override
   void initState() {
-    controller = PageController();
+    NbToast.init(context);
+    controller = TabController(length: 4, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initTimer();
     });
@@ -40,17 +42,20 @@ class _IntroPageState extends State<IntroPage> {
       _delay,
       (timer) {
         _counter++;
-        controller.animateToPage((_counter % pageCount),
+        controller.animateTo((_counter % pageCount),
             duration: _animation, curve: Curves.easeIn);
       },
     );
   }
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   if (!(_timer?.isActive ?? true)) {
+  //     debugPrint("------------Activate-------------");
+  //     initTimer();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +63,7 @@ class _IntroPageState extends State<IntroPage> {
       canPop: false,
       child: Scaffold(
         backgroundColor: Colors.white.withOpacity(0),
+        resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Stack(
             children: [
@@ -80,50 +86,81 @@ class _IntroPageState extends State<IntroPage> {
                 right: 0,
                 child: Column(
                   children: [
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(16.r)),
-                            child: PageView(
-                              controller: controller,
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: [
-                                Image.asset(
-                                  NbImage.onboarding1,
-                                  fit: BoxFit.cover,
-                                ),
-                                Image.asset(
-                                  NbImage.onboarding2,
-                                  fit: BoxFit.cover,
-                                ),
-                                Image.asset(
-                                  NbImage.onboarding3,
-                                  fit: BoxFit.cover,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            left: 7.w,
-                            right: 7.w,
-                            bottom: 20.h,
-                            child: Container(
-                              padding: EdgeInsets.all(8.r),
-                              decoration: BoxDecoration(
-                                color:
-                                    const Color(0xFF010000).withOpacity(0.36),
-                                borderRadius: BorderRadius.circular(18.r),
+                    SizedBox(
+                      height: 323.h,
+                      width: double.maxFinite,
+                      child: ClipRRect(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(16.r)),
+                        child: Stack(
+                          children: [
+                            SizedBox(
+                              height: double.maxFinite,
+                              width: double.maxFinite,
+                              child: TabBarView(
+                                controller: controller,
+                                physics: const NeverScrollableScrollPhysics(),
+                                children: [
+                                  onboardingImage(NbImage.onboarding1),
+                                  onboardingImage(NbImage.onboarding2),
+                                  onboardingImage(NbImage.onboarding3),
+                                  onboardingImage(NbImage.onboarding4),
+                                ],
                               ),
-                              child: NbText.sp25(
-                                      "Buy Data pay bills and send bulk sms.")
-                                  .white
-                                  .w400
-                                  .centerText,
                             ),
-                          ),
-                        ],
+                            Positioned(
+                              bottom: 10.h,
+                              left: 10.r,
+                              right: 10.r,
+                              child: TabBar(
+                                onTap: (idx) {
+                                  _counter = idx;
+                                  if (_timer == null) {
+                                    initTimer();
+                                  }
+                                },
+                                dividerColor: Colors.transparent,
+                                dividerHeight: 0,
+                                indicatorColor: Colors.white,
+                                controller: controller,
+                                unselectedLabelColor:
+                                    Colors.white.withOpacity(0.6),
+                                labelColor: Colors.white,
+                                labelStyle: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                labelPadding: EdgeInsets.zero,
+                                padding: EdgeInsets.zero,
+                                tabs: [
+                                  tab("Network"),
+                                  tab("Cable"),
+                                  tab("Betting"),
+                                  tab("Electricity"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: double.maxFinite,
+                        color: Colors.white,
+                        child: TabBarView(
+                          controller: controller,
+                          children: [
+                            _textTab("Cheapest Data rates in Nigeria.",
+                                "Use the quickest and most affordable data service for all the major networks"),
+                            _textTab("Fastest Cable TV payments in Nigeria.",
+                                "Enjoy quicker, more affordable, and automated subscription services for all major providers."),
+                            _textTab("Lowest Betting Fees in Nigeria.",
+                                "Enjoy discount account funding in Nigeria. Enjoy automated, fast, and easy transactions across all major betting platforms."),
+                            _textTab("Fastest Electricity Payments in Nigeria.",
+                                "Enjoy quick and easy bill settlements across major providers. Automated, affordable, and reliable."),
+                          ],
+                        ),
                       ),
                     ),
                     Container(
@@ -134,42 +171,33 @@ class _IntroPageState extends State<IntroPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          15.verticalSpace,
-                          SmoothPageIndicator(
-                              controller: controller, // PageController
-                              count: pageCount,
-                              effect: SwapEffect(
-                                dotHeight: 6.r,
-                                dotWidth: 25.r,
-                                spacing: 2.5.r,
-                                dotColor: const Color(0xFFD9D9D9),
-                                activeDotColor: NbColors.black,
-                              ), // your preferred effect
-                              onDotClicked: (index) {}),
-                          15.verticalSpace,
-                          NbButton.primary(text: "Sign up", onTap: _signup),
-                          17.verticalSpace,
-                          InkWell(
-                              onTap: _signin,
-                              child: Container(
-                                padding: EdgeInsets.all(2.r),
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(color: NbColors.primary),
-                                  ),
-                                ),
-                                child: Text(
-                                  " Sign in ",
-                                  style: TextStyle(
-                                    color: NbColors.primary,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              )
-                              // .w500.underline.setColor(NbColors.primary),
+                          NbButton.primary(
+                              text: "Create an account", onTap: _signup),
+                          28.verticalSpace,
+                          RichText(
+                            text: TextSpan(
+                              text: "Already with nitro? ",
+                              style: TextStyle(
+                                color: const Color(0xFF2F3336),
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Satoshi',
                               ),
-                          25.verticalSpace,
+                              children: [
+                                TextSpan(
+                                  text: "Sign In ",
+                                  style: const TextStyle(
+                                    color: Color(0xFF1E92E9),
+                                    fontFamily: 'Satoshi',
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = _signin,
+                                )
+                              ],
+                            ),
+                          ),
+                          35.verticalSpace,
                         ],
                       ),
                     ),
@@ -183,11 +211,41 @@ class _IntroPageState extends State<IntroPage> {
     );
   }
 
+  Tab tab(String label) => Tab(
+        iconMargin: EdgeInsets.zero,
+        text: label,
+      );
+
+  Padding _textTab(String title, String subtitle) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 9.w),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        12.verticalSpace,
+        NbText.sp22(title).w600,
+        24.verticalSpace,
+        NbText.sp18(subtitle).w500,
+      ]),
+    );
+  }
+
+  Image onboardingImage(String img) {
+    return Image.asset(
+      img,
+      height: double.maxFinite,
+      width: double.maxFinite,
+      fit: BoxFit.cover,
+    );
+  }
+
   void _signup() {
+    _timer?.cancel();
+    _timer = null;
     AuthModal.show(const SignupPage());
   }
 
   void _signin() {
+    _timer?.cancel();
+    _timer = null;
     AuthModal.show(const SigninPage());
   }
 }

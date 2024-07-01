@@ -1,13 +1,13 @@
 import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
 
 abstract class AbstractServicePlan {
-  final AbstractServiceProvider provider;
+  final int planId;
   final String name;
-  final double price;
+  final double amount;
 
   AbstractServicePlan({
-    required this.provider,
+    required this.planId,
     required this.name,
-    required this.price,
+    required this.amount,
   });
 }

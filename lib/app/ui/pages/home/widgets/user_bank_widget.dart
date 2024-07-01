@@ -13,7 +13,7 @@ import 'package:nitrobills/app/ui/utils/nb_text.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 
 class UserBanksWidget extends StatefulWidget {
-  final Map<String, dynamic> bankData;
+  final List<BankInfo> bankData;
   const UserBanksWidget({
     super.key,
     required this.bankData,
@@ -25,7 +25,7 @@ class UserBanksWidget extends StatefulWidget {
 
 class _UserBanksWidgetState extends State<UserBanksWidget> {
   late PageController controller;
-  late List<MapEntry<String, dynamic>> bankList;
+  late List<BankInfo> bankList;
   final Duration duration = const Duration(milliseconds: 300);
   final Curve curve = Curves.easeIn;
   int pageIndex = 0;
@@ -33,7 +33,7 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
   @override
   void initState() {
     controller = PageController();
-    bankList = widget.bankData.entries.toList();
+    bankList = widget.bankData;
     super.initState();
   }
 
@@ -50,7 +50,7 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: const Color(0xFFFAFAFA),
+        color: Colors.white,
         border: Border.all(color: const Color(0xFFDDDBDB)),
         borderRadius: BorderRadius.circular(9.r),
       ),
@@ -63,7 +63,7 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
               vertical: 4.w,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFFEBEBEB),
+              color: const Color(0xFFF6F6F6),
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Stack(
@@ -98,8 +98,8 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
                           controller.animateToPage(0,
                               duration: duration, curve: curve);
                         },
-                        child:
-                            _selectedText(bankList.first.key, pageIndex == 0),
+                        child: _selectedText(
+                            bankList.first.bankDisplayName, pageIndex == 0),
                       )),
                       10.horizontalSpace,
                       Expanded(
@@ -111,7 +111,8 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
                           controller.animateToPage(1,
                               duration: duration, curve: curve);
                         },
-                        child: _selectedText(bankList.last.key, pageIndex == 1),
+                        child: _selectedText(
+                            bankList.last.bankDisplayName, pageIndex == 1),
                       )),
                     ],
                   ),
@@ -126,7 +127,7 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
             controller: controller,
             children: bankList
                 .map((e) => _BankTab(
-                      bankInfo: e.value,
+                      bankInfo: e,
                     ))
                 .toList(),
           )),
@@ -151,20 +152,20 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
 }
 
 class _BankTab extends StatelessWidget {
-  final BankInfo? bankInfo;
-  const _BankTab({super.key, this.bankInfo});
+  final BankInfo bankInfo;
+  const _BankTab({required this.bankInfo});
 
   @override
   Widget build(BuildContext context) {
-    if (bankInfo == null) {
+    if (bankInfo.accountStatus.isPending) {
       return Container(
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: const Color(0xFFEBEBEB),
+          color: const Color(0xFFF6F6F6),
           borderRadius: BorderRadius.circular(8.r),
         ),
-        child: NbText.sp16("This Payment methodd is currently unavailable")
+        child: NbText.sp16("This Payment method is currently unavailable")
             .w500
             .centerText
             .setColor(const Color(0xFF090606)),
@@ -177,7 +178,7 @@ class _BankTab extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
             decoration: BoxDecoration(
-              color: const Color(0xFFEBEBEB),
+              color: const Color(0xFFF6F6F6),
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Column(
@@ -187,7 +188,7 @@ class _BankTab extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: NbText.sp16(bankInfo?.accountName ?? "")
+                      child: NbText.sp16(bankInfo.accountName)
                           .setMaxLines(1)
                           .setColor(const Color(0xFF090606))
                           .w500,
@@ -220,10 +221,10 @@ class _BankTab extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF13191B).withOpacity(0.11),
+                        color: const Color(0xFFE6E6E6),
                         borderRadius: BorderRadius.circular(8.r),
                       ),
-                      child: NbText.sp16(bankInfo?.accountNumber ?? "")
+                      child: NbText.sp16(bankInfo.accountNumber)
                           .setColor(const Color(0xFF282828)),
                     ),
                   ],
@@ -277,21 +278,19 @@ class _BankTab extends StatelessWidget {
   }
 
   void _copyBankDetails() async {
-    ClipboardData data = ClipboardData(text: bankInfo!.accountNumber);
+    ClipboardData data = ClipboardData(text: bankInfo.accountNumber);
     await Clipboard.setData(data);
-    NbToast.show("account number copied");
+    NbToast.copy("account number copied");
   }
 
   Future _fundAccount() async {
-    if (bankInfo != null) {
-      NavbarController cntr = Get.find<NavbarController>();
-      cntr.toggleShowTab(false);
-      await Get.to(
-        () => FundAccountPage(bankInfo: bankInfo!),
-        transition: Transition.fadeIn,
-        duration: NbContants.navDuration,
-      );
-      cntr.toggleShowTab(true);
-    }
+    NavbarController cntr = Get.find<NavbarController>();
+    cntr.toggleShowTab(false);
+    await Get.to(
+      () => FundAccountPage(bankInfo: bankInfo),
+      transition: Transition.fadeIn,
+      duration: NbContants.navDuration,
+    );
+    cntr.toggleShowTab(true);
   }
 }

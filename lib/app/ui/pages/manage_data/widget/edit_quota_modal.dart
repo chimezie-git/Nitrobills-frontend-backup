@@ -165,7 +165,7 @@ class _DropdownLabelField extends StatelessWidget {
               ),
               child: SvgPicture.asset(NbSvg.arrowDown),
             ),
-            items: PeriodEnum.all
+            items: PeriodEnum.allPeriod
                 .map(
                   (per) => DropdownMenuItem<PeriodEnum>(
                     value: per,

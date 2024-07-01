@@ -37,7 +37,7 @@ class MyBillsCard extends StatelessWidget {
                       .w500
                       .setColor(const Color(0xFFE7E7E7)),
                   const Spacer(flex: 1),
-                  NbText.sp20("N $billsDue")
+                  NbText.sp20("₦ $billsDue")
                       .w600
                       .setColor(const Color(0xFFE7E7E7)),
                   const Spacer(flex: 1),
