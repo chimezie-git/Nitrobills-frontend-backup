@@ -26,9 +26,11 @@ class ContactUsPage extends StatelessWidget {
             children: [
               36.verticalSpace,
               Row(children: [
-                NbButton.backIcon(() {
-                  Get.back();
-                }),
+                NbButton.backIcon(
+                  () {
+                    Get.back();
+                  },
+                ),
                 const Spacer(),
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -41,10 +43,10 @@ class ContactUsPage extends StatelessWidget {
                   ),
                   child: SvgPicture.asset(
                     NbSvg.nitrobills,
-                    colorFilter: const ColorFilter.mode(
-                      NbColors.primary,
-                      BlendMode.srcIn,
-                    ),
+                    // colorFilter: const ColorFilter.mode(
+                    //   NbColors.primary,
+                    //   BlendMode.srcIn,
+                    // ),
                   ),
                 ),
                 const Spacer(),

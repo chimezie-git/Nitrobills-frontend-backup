@@ -19,6 +19,7 @@ class NbField {
     String? Function()? validator,
     bool forcedError = false,
     String? forcedErrorString,
+    void Function(String?)? onChanged,
   }) {
     return PlainTextField(
       cntrl: controller,
@@ -31,6 +32,7 @@ class NbField {
       textValidator: validator ?? () => null,
       forcedError: forcedError,
       forcedErrorString: forcedErrorString,
+      onChanged: onChanged,
     );
   }
 
@@ -47,6 +49,7 @@ class NbField {
     String? Function()? validator,
     bool forcedError = false,
     String? forcedErrorString,
+    void Function(String?)? onChanged,
   }) {
     return IconTextField(
       cntrl: controller,
@@ -60,6 +63,7 @@ class NbField {
       textValidator: validator ?? () => null,
       forcedError: forcedError,
       forcedErrorString: forcedErrorString,
+      onChanged: onChanged,
     );
   }
 

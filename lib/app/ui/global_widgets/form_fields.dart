@@ -11,6 +11,7 @@ class DoubleTextField extends FormField {
   final TextEditingController lastNameCntrl;
   final bool forcedError;
   final String? forcedErrorString;
+  final void Function(String?)? onChanged;
 
   DoubleTextField({
     super.key,
@@ -18,6 +19,7 @@ class DoubleTextField extends FormField {
     required this.lastNameCntrl,
     required this.forcedError,
     required this.forcedErrorString,
+    required this.onChanged,
   }) : super(validator: (v) {
           if (firstNameCntrl.text.isEmpty) {
             return "Enter a valid First Name";
@@ -55,7 +57,11 @@ class DoubleTextField extends FormField {
                   horizontal: 16.r,
                 ),
                 child: _textField(
-                    firstNameCntrl, firstNameHint, TextInputType.text),
+                  firstNameCntrl,
+                  firstNameHint,
+                  TextInputType.text,
+                  onChanged: onChanged,
+                ),
               ),
               Container(
                 height: 62.h,
@@ -72,8 +78,12 @@ class DoubleTextField extends FormField {
                 padding: EdgeInsets.symmetric(
                   horizontal: 16.r,
                 ),
-                child:
-                    _textField(lastNameCntrl, lastNameHint, TextInputType.text),
+                child: _textField(
+                  lastNameCntrl,
+                  lastNameHint,
+                  TextInputType.text,
+                  onChanged: onChanged,
+                ),
               ),
               if (errorText != null)
                 NbText.sp12(errorText).setColor(borderColor),
@@ -91,6 +101,7 @@ class TrippleTextField extends FormField {
   final TextEditingController emailCntrl;
   final bool forcedError;
   final String? forcedErrorString;
+  final void Function(String?)? onChanged;
 
   TrippleTextField({
     super.key,
@@ -99,12 +110,13 @@ class TrippleTextField extends FormField {
     required this.emailCntrl,
     required this.forcedError,
     required this.forcedErrorString,
+    required this.onChanged,
   }) : super(validator: (v) {
           if (userNameCntrl.text.isEmpty) {
             return "Enter a valid Username";
-          } else if (!NbValidators.isPhone(phoneNumCntrl.text)) {
+          } else if (!NbValidators.isPhone(phoneNumCntrl.text.trim())) {
             return "Enter a valid Phone Number";
-          } else if (!NbValidators.isEmail(emailCntrl.text)) {
+          } else if (!NbValidators.isEmail(emailCntrl.text.trim())) {
             return "Enter a valid Email Address";
           } else {
             return null;
@@ -136,8 +148,12 @@ class TrippleTextField extends FormField {
                 padding: EdgeInsets.symmetric(
                   horizontal: 16.r,
                 ),
-                child:
-                    _textField(userNameCntrl, userNameHint, TextInputType.text),
+                child: _textField(
+                  userNameCntrl,
+                  userNameHint,
+                  TextInputType.text,
+                  onChanged: onChanged,
+                ),
               ),
               Container(
                 height: 62.h,
@@ -152,8 +168,12 @@ class TrippleTextField extends FormField {
                 padding: EdgeInsets.symmetric(
                   horizontal: 16.r,
                 ),
-                child:
-                    _textField(phoneNumCntrl, phoneHint, TextInputType.phone),
+                child: _textField(
+                  phoneNumCntrl,
+                  phoneHint,
+                  TextInputType.phone,
+                  onChanged: onChanged,
+                ),
               ),
               Container(
                 height: 62.h,
@@ -171,7 +191,11 @@ class TrippleTextField extends FormField {
                   horizontal: 16.r,
                 ),
                 child: _textField(
-                    emailCntrl, emailHint, TextInputType.emailAddress),
+                  emailCntrl,
+                  emailHint,
+                  TextInputType.emailAddress,
+                  onChanged: onChanged,
+                ),
               ),
               if (errorText != null)
                 NbText.sp12(errorText).setColor(borderColor),
@@ -191,6 +215,7 @@ class PlainTextField extends FormField {
   final String? Function() textValidator;
   final bool forcedError;
   final String? forcedErrorString;
+  final void Function(String?)? onChanged;
 
   PlainTextField({
     super.key,
@@ -204,6 +229,7 @@ class PlainTextField extends FormField {
     required this.textValidator,
     required this.forcedError,
     required this.forcedErrorString,
+    required this.onChanged,
   }) : super(validator: (v) {
           return textValidator();
         }, builder: (FormFieldState state) {
@@ -233,8 +259,14 @@ class PlainTextField extends FormField {
                 padding: EdgeInsets.symmetric(
                   horizontal: 16.r,
                 ),
-                child: _textField(cntrl, hint, keyboardType,
-                    obscureText: obscureText, enabled: enable),
+                child: _textField(
+                  cntrl,
+                  hint,
+                  keyboardType,
+                  obscureText: obscureText,
+                  enabled: enable,
+                  onChanged: onChanged,
+                ),
               ),
               if (errorText != null)
                 NbText.sp12(errorText).setColor(borderColor),
@@ -255,6 +287,7 @@ class IconTextField extends FormField {
   final String? Function() textValidator;
   final bool forcedError;
   final String? forcedErrorString;
+  final void Function(String?)? onChanged;
 
   IconTextField({
     super.key,
@@ -269,6 +302,7 @@ class IconTextField extends FormField {
     required this.textValidator,
     required this.forcedError,
     required this.forcedErrorString,
+    required this.onChanged,
   }) : super(validator: (v) {
           return textValidator();
         }, builder: (FormFieldState state) {
@@ -302,7 +336,9 @@ class IconTextField extends FormField {
                   children: [
                     Expanded(
                       child: _textField(cntrl, hint, keyboardType,
-                          obscureText: obscureText, enabled: enable),
+                          obscureText: obscureText,
+                          enabled: enable,
+                          onChanged: onChanged),
                     ),
                     trailing ?? const SizedBox.shrink(),
                   ],
@@ -321,6 +357,7 @@ TextField _textField(
   TextInputType? keyboardType, {
   bool obscureText = false,
   bool enabled = true,
+  required void Function(String?)? onChanged,
 }) {
   return TextField(
     controller: controller,
@@ -334,6 +371,7 @@ TextField _textField(
       color: NbColors.darkGrey,
     ),
     cursorColor: NbColors.darkGrey,
+    onChanged: onChanged,
     decoration: InputDecoration(
       contentPadding: EdgeInsets.zero,
       border: InputBorder.none,

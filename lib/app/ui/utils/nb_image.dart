@@ -52,11 +52,7 @@ class NbSvg {
   static const String toastSpark = "assets/svg/toast_spark.svg";
   static const String exclamation = "assets/svg/exclamation.svg";
   static const String wallet = "assets/svg/wallet.svg";
-  // no autopay
-  static const String noAutopay = "assets/svg/empty_autopay.svg";
-  static const String noBeneficiary = "assets/svg/empty_beneficiary.svg";
-  static const String noSubscription = "assets/svg/empty_subscription.svg";
-  static const String noTransactions = "assets/svg/empty_transaction.svg";
+  static const String trashCan = "assets/svg/trash_can.svg";
   // static const String phone = "assets/svg/phone.svg";
 }
 
@@ -95,7 +91,7 @@ class NbImage {
   static const String multilinks = "assets/images/multilinks.jpeg";
   static const String mtel = "assets/images/mtel.png";
   static const String fundAccount = "assets/images/fund_account.png";
-  static const String spectranet = "assets/images/spectranet.jpeg";
+  static const String spectranet = "assets/images/spectranet.png";
   static const String abujaElect = "assets/images/abuja_electric.jpeg";
   static const String kadunaElect = "assets/images/kaduna_electric.jpeg";
   static const String ibadanElect = "assets/images/ibadan_electric.jpg";
