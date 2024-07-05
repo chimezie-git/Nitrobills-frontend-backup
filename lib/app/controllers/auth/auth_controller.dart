@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
 import 'package:nitrobills/app/data/services/auth/auth_service.dart';
 import 'package:nitrobills/app/hive_box/auth_data/auth_data.dart';
 import 'package:nitrobills/app/ui/pages/onboarding/intro_page.dart';
@@ -50,6 +51,7 @@ class AuthController extends GetxController {
   Future logoutUser() async {
     final logoutData = await AuthService.logout();
     if (logoutData.isRight) {
+      Get.find<UserAccountController>().loaded.value = false;
       NbUtils.removeNav;
       Get.offAll(() => const IntroPage());
     } else {

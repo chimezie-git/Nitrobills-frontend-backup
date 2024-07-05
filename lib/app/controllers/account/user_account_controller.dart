@@ -9,7 +9,7 @@ import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class UserAccountController extends GetxController {
   final Rxn<CustomerModel> customer = Rxn<CustomerModel>(null);
-  late final Rx<UserAccount> account;
+  late Rx<UserAccount> account;
   final RxDouble balance = RxDouble(0);
   final Rx<LoaderEnum> status = Rx<LoaderEnum>(LoaderEnum.loading);
   final RxString authToken = RxString("");
@@ -39,8 +39,16 @@ class UserAccountController extends GetxController {
     }
   }
 
-  Future reload({bool showToast = true}) async {
+  Future reload({
+    bool showToast = true,
+    bool showLoading = false,
+  }) async {
+    if (showLoading) {
+      status.value = LoaderEnum.loading;
+      update();
+    }
     final result = await UserAccountService.getAccount();
+
     if (result.isRight) {
       account.value = result.right;
       status.value = LoaderEnum.success;

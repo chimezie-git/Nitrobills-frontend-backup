@@ -22,19 +22,19 @@ class AccountPage extends StatelessWidget {
                 NbText.sp18("Account").w500.black,
                 16.verticalSpace,
                 GroupedListWidget(
-                  items: GroupedListItem.account,
+                  items: GroupedListItem.account(),
                 ),
                 18.verticalSpace,
                 NbText.sp18("Security").w500.black,
                 16.verticalSpace,
                 GroupedListWidget(
-                  items: GroupedListItem.security,
+                  items: GroupedListItem.security(),
                 ),
                 18.verticalSpace,
                 NbText.sp18("About").w500.black,
                 16.verticalSpace,
                 GroupedListWidget(
-                  items: GroupedListItem.about,
+                  items: GroupedListItem.about(),
                 ),
                 100.verticalSpace,
               ],

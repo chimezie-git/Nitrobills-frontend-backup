@@ -23,81 +23,81 @@ class GroupedListItem {
       this.onTap,
       this.arrowIcon = false});
 
-  static List<GroupedListItem> account = [
-    GroupedListItem(
-        name:
-            "${Get.find<UserAccountController>().account.value.firstName} ${Get.find<UserAccountController>().account.value.lastName}",
-        svg: NbSvg.account),
-    GroupedListItem(
-        name: Get.find<UserAccountController>().account.value.username,
-        svg: NbSvg.username),
-    GroupedListItem(
-        name: "Manage auto payments",
-        svg: NbSvg.manageAutopay,
-        onTap: () async {
-          NbUtils.removeNav;
-          await NbUtils.nav.currentState?.push(MaterialPageRoute(
-              builder: (context) => const ManageAutopaymentsPage()));
-          NbUtils.showNav;
-        }),
-    GroupedListItem(
-        name: Get.find<UserAccountController>().account.value.email,
-        svg: NbSvg.mail,
-        onTap: () async {
-          NbUtils.removeNav;
-          await NbUtils.nav.currentState?.push(MaterialPageRoute(
-              builder: (context) => const AccountEmailPage()));
-          NbUtils.showNav;
-        },
-        arrowIcon: true),
-    GroupedListItem(
-        name: _formatPhone(
-            Get.find<UserAccountController>().account.value.phoneNumber),
-        svg: NbSvg.phone,
-        arrowIcon: false),
-    GroupedListItem(
-        name: "My Referrals",
-        svg: NbSvg.refer,
-        onTap: () async {
-          NbUtils.removeNav;
-          await NbUtils.nav.currentState?.push(MaterialPageRoute(
-              builder: (context) => const AccountReferralPage()));
-          NbUtils.showNav;
-        },
-        arrowIcon: true),
-  ];
-  static List<GroupedListItem> security = [
-    GroupedListItem(
-        name: "Change password",
-        svg: NbSvg.password,
-        onTap: () async {
-          NbUtils.removeNav;
-          await showModalBottomSheet(
-            context: NbUtils.nav.currentContext!,
-            builder: (context) => const PasswordResetModal(),
-            backgroundColor: NbColors.black.withOpacity(0.2),
-            isScrollControlled: true,
-          );
-          NbUtils.showNav;
-        }),
-    GroupedListItem(
-        name: "Sign out",
-        svg: NbSvg.signout,
-        onTap: () {
-          Get.find<AuthController>().logoutUser();
-        }),
-  ];
-  static List<GroupedListItem> about = [
-    GroupedListItem(
-        name: "Contact Us",
-        svg: NbSvg.contactUs,
-        onTap: () async {
-          NbUtils.removeNav;
-          await NbUtils.nav.currentState?.push(
-              MaterialPageRoute(builder: (context) => const ContactUsPage()));
-          NbUtils.showNav;
-        }),
-  ];
+  static List<GroupedListItem> account() => [
+        GroupedListItem(
+            name:
+                "${Get.find<UserAccountController>().account.value.firstName} ${Get.find<UserAccountController>().account.value.lastName}",
+            svg: NbSvg.account),
+        GroupedListItem(
+            name: Get.find<UserAccountController>().account.value.username,
+            svg: NbSvg.username),
+        GroupedListItem(
+            name: "Manage auto payments",
+            svg: NbSvg.manageAutopay,
+            onTap: () async {
+              NbUtils.removeNav;
+              await NbUtils.nav.currentState?.push(MaterialPageRoute(
+                  builder: (context) => const ManageAutopaymentsPage()));
+              NbUtils.showNav;
+            }),
+        GroupedListItem(
+            name: Get.find<UserAccountController>().account.value.email,
+            svg: NbSvg.mail,
+            onTap: () async {
+              NbUtils.removeNav;
+              await NbUtils.nav.currentState?.push(MaterialPageRoute(
+                  builder: (context) => const AccountEmailPage()));
+              NbUtils.showNav;
+            },
+            arrowIcon: true),
+        GroupedListItem(
+            name: _formatPhone(
+                Get.find<UserAccountController>().account.value.phoneNumber),
+            svg: NbSvg.phone,
+            arrowIcon: false),
+        GroupedListItem(
+            name: "My Referrals",
+            svg: NbSvg.refer,
+            onTap: () async {
+              NbUtils.removeNav;
+              await NbUtils.nav.currentState?.push(MaterialPageRoute(
+                  builder: (context) => const AccountReferralPage()));
+              NbUtils.showNav;
+            },
+            arrowIcon: true),
+      ];
+  static List<GroupedListItem> security() => [
+        GroupedListItem(
+            name: "Change password",
+            svg: NbSvg.password,
+            onTap: () async {
+              NbUtils.removeNav;
+              await showModalBottomSheet(
+                context: NbUtils.nav.currentContext!,
+                builder: (context) => const PasswordResetModal(),
+                backgroundColor: NbColors.black.withOpacity(0.2),
+                isScrollControlled: true,
+              );
+              NbUtils.showNav;
+            }),
+        GroupedListItem(
+            name: "Sign out",
+            svg: NbSvg.signout,
+            onTap: () {
+              Get.find<AuthController>().logoutUser();
+            }),
+      ];
+  static List<GroupedListItem> about() => [
+        GroupedListItem(
+            name: "Contact Us",
+            svg: NbSvg.contactUs,
+            onTap: () async {
+              NbUtils.removeNav;
+              await NbUtils.nav.currentState?.push(MaterialPageRoute(
+                  builder: (context) => const ContactUsPage()));
+              NbUtils.showNav;
+            }),
+      ];
 }
 
 String _formatPhone(String phoneNumber) {

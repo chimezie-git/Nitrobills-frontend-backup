@@ -110,6 +110,7 @@ class _SigninPageState extends State<SigninPage> {
                               controller: usernameEmailCntrl,
                               hint: "Email or username",
                               forcedError: signinError,
+                              onChanged: _onChanged,
                               validator: () {
                                 if (usernameEmailCntrl.text.isEmpty) {
                                   return "Enter a valid username or email";
@@ -123,8 +124,10 @@ class _SigninPageState extends State<SigninPage> {
                           controller: passwordCntrl,
                           hint: "Password",
                           forcedError: signinError,
+                          onChanged: _onChanged,
                           validator: () {
-                            if (!NbValidators.isPassword(passwordCntrl.text)) {
+                            if (!NbValidators.isPassword(
+                                passwordCntrl.text.trim())) {
                               return "Password must be eight characters, with at least one letter and one number";
                             } else {
                               return null;
@@ -252,9 +255,20 @@ class _SigninPageState extends State<SigninPage> {
     ));
   }
 
+  void _onChanged(String? val) {
+    formKey.currentState?.reset();
+    clearForcedErrors();
+  }
+
+  void clearForcedErrors() {
+    signinError = false;
+    signinErrorTxt = null;
+    setState(() {});
+  }
+
   void showFieldErrors(SingleFieldError error) {
     signinError = true;
-    signinErrorTxt = error.message;
+    signinErrorTxt = "login and password incorrect";
     setState(() {});
   }
 }

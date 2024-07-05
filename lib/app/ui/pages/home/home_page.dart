@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
               color: NbColors.black,
               backgroundColor: Colors.white,
               onRefresh: () async {
-                await cntrl.reload();
+                await refresh();
               },
               child: SafeArea(
                 bottom: false,
@@ -141,6 +141,6 @@ class _HomePageState extends State<HomePage> {
 
   Future refresh() async {
     NbToast.updateBalance();
-    await Get.find<UserAccountController>().reload();
+    await Get.find<UserAccountController>().reload(showLoading: true);
   }
 }

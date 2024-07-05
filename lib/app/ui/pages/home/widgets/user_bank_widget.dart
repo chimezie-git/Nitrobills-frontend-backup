@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
 import 'package:nitrobills/app/controllers/navbar_controller.dart';
 import 'package:nitrobills/app/ui/pages/home/fund_account_page.dart';
 import 'package:nitrobills/app/ui/pages/home/models/bank_info.dart';
@@ -25,7 +26,6 @@ class UserBanksWidget extends StatefulWidget {
 
 class _UserBanksWidgetState extends State<UserBanksWidget> {
   late PageController controller;
-  late List<BankInfo> bankList;
   final Duration duration = const Duration(milliseconds: 300);
   final Curve curve = Curves.easeIn;
   int pageIndex = 0;
@@ -33,7 +33,6 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
   @override
   void initState() {
     controller = PageController();
-    bankList = widget.bankData;
     super.initState();
   }
 
@@ -45,95 +44,102 @@ class _UserBanksWidgetState extends State<UserBanksWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 280.h,
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFDDDBDB)),
-        borderRadius: BorderRadius.circular(9.r),
-      ),
-      child: Column(
-        children: [
-          Container(
-            height: 46.h,
-            padding: EdgeInsets.symmetric(
-              horizontal: 4.w,
-              vertical: 4.w,
-            ),
+    return GetBuilder<UserAccountController>(
+        init: Get.find<UserAccountController>(),
+        builder: (cntrl) {
+          List<BankInfo> bankList = cntrl.account.value.banks;
+          return Container(
+            height: 280.h,
+            margin: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: const Color(0xFFF6F6F6),
-              borderRadius: BorderRadius.circular(8.r),
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFDDDBDB)),
+              borderRadius: BorderRadius.circular(9.r),
             ),
-            child: Stack(
+            child: Column(
               children: [
-                AnimatedPositioned(
-                    duration: duration,
-                    curve: curve,
-                    top: 0,
-                    bottom: 0,
-                    left: pageIndex == 0 ? 0 : 150.w,
-                    // right: 0,
-                    width: 150.w,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: NbColors.white,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                    )),
-                Positioned(
-                  top: 0,
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Row(
+                Container(
+                  height: 46.h,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 4.w,
+                    vertical: 4.w,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF6F6F6),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Stack(
                     children: [
-                      Expanded(
-                          child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            pageIndex = 0;
-                          });
-                          controller.animateToPage(0,
-                              duration: duration, curve: curve);
-                        },
-                        child: _selectedText(
-                            bankList.first.bankDisplayName, pageIndex == 0),
-                      )),
-                      10.horizontalSpace,
-                      Expanded(
-                          child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            pageIndex = 1;
-                          });
-                          controller.animateToPage(1,
-                              duration: duration, curve: curve);
-                        },
-                        child: _selectedText(
-                            bankList.last.bankDisplayName, pageIndex == 1),
-                      )),
+                      AnimatedPositioned(
+                          duration: duration,
+                          curve: curve,
+                          top: 0,
+                          bottom: 0,
+                          left: pageIndex == 0 ? 0 : 150.w,
+                          // right: 0,
+                          width: 150.w,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: NbColors.white,
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                          )),
+                      Positioned(
+                        top: 0,
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  pageIndex = 0;
+                                });
+                                controller.animateToPage(0,
+                                    duration: duration, curve: curve);
+                              },
+                              child: _selectedText(
+                                  bankList.first.bankDisplayName,
+                                  pageIndex == 0),
+                            )),
+                            10.horizontalSpace,
+                            Expanded(
+                                child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  pageIndex = 1;
+                                });
+                                controller.animateToPage(1,
+                                    duration: duration, curve: curve);
+                              },
+                              child: _selectedText(
+                                  bankList.last.bankDisplayName,
+                                  pageIndex == 1),
+                            )),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
+                12.verticalSpace,
+                Expanded(
+                    child: PageView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: controller,
+                  children: bankList
+                      .map((e) => _BankTab(
+                            bankInfo: e,
+                          ))
+                      .toList(),
+                )),
               ],
             ),
-          ),
-          12.verticalSpace,
-          Expanded(
-              child: PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: controller,
-            children: bankList
-                .map((e) => _BankTab(
-                      bankInfo: e,
-                    ))
-                .toList(),
-          )),
-        ],
-      ),
-    );
+          );
+        });
   }
 
   Widget _selectedText(String txt, bool selected) {

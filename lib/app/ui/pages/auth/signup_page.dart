@@ -115,6 +115,7 @@ class _SignupPageState extends State<SignupPage> {
                           lastNameCntrl: lastNameCntrl,
                           forcedError: namesError,
                           forcedErrorString: namesErrorTxt,
+                          onChanged: _onChanged,
                         ),
                         8.verticalSpace,
                         NbText.sp12(
@@ -128,6 +129,7 @@ class _SignupPageState extends State<SignupPage> {
                           emailCntrl: emailCntrl,
                           forcedError: emailPhoneError,
                           forcedErrorString: emailPhoneErrorTxt,
+                          onChanged: _onChanged,
                         ),
                         8.verticalSpace,
                         NbText.sp12("You would need this for recovery access")
@@ -143,6 +145,7 @@ class _SignupPageState extends State<SignupPage> {
                                 obscureText: obscure,
                                 forcedError: passwordError,
                                 forcedErrorString: passwordErrorTxt,
+                                onChanged: _onChanged,
                                 validator: () {
                                   if (!NbValidators.isPassword(
                                       passwordCntrl.text)) {
@@ -217,6 +220,11 @@ class _SignupPageState extends State<SignupPage> {
 
   void _back() {
     Get.back();
+  }
+
+  _onChanged(String? val) {
+    formKey.currentState?.reset();
+    clearForcedErrors();
   }
 
   void _privacyPolicy() {}
