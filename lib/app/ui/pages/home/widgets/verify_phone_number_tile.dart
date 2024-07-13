@@ -3,11 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
-import 'package:nitrobills/app/ui/pages/auth/otp_code_verification.dart';
-import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
-import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class VerifyPhoneNumberTile extends StatelessWidget {
   const VerifyPhoneNumberTile({
@@ -25,7 +22,7 @@ class VerifyPhoneNumberTile extends StatelessWidget {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: InkWell(
-              onTap: _verifyNumber,
+              // onTap: _verifyNumber,
               child: Container(
                 height: 70.h,
                 width: double.maxFinite,
@@ -60,12 +57,12 @@ class VerifyPhoneNumberTile extends StatelessWidget {
     );
   }
 
-  Future _verifyNumber() async {
-    NbUtils.removeNav;
-    await AuthModal.showWithoutPop(OtpCodeVerificationPage(
-      phoneNumber: Get.find<UserAccountController>().account.value.phoneNumber,
-      fromHome: true,
-    ));
-    NbUtils.showNav;
-  }
+  // Future _verifyNumber() async {
+  //   NbUtils.removeNav;
+  //   await AuthModal.showWithoutPop(OtpCodeVerificationPage(
+  //     phoneNumber: Get.find<UserAccountController>().account.value.phoneNumber,
+  //     fromHome: true,
+  //   ));
+  //   NbUtils.showNav;
+  // }
 }

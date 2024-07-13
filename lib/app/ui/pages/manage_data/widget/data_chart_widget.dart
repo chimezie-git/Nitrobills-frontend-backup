@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/manage_data_controller.dart';
+import 'package:nitrobills/app/hive_box/data_management/day_data.dart';
 import 'package:nitrobills/app/ui/global_widgets/custom_date_range_picker_dialog.dart';
-import 'package:nitrobills/app/ui/pages/manage_data/models/day_data.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -30,7 +30,10 @@ class _DataChartWidgetState extends State<DataChartWidget> {
           ],
         ),
         15.verticalSpace,
-        BarChart()
+        const BarChart(
+          duration: Duration(milliseconds: 800),
+          curves: Curves.bounceOut,
+        ),
       ],
     );
   }
@@ -71,15 +74,19 @@ class _DataChartWidgetState extends State<DataChartWidget> {
       selectedRange: Get.find<ManageDataController>().dayRange.value,
     ));
     if (data != null) {
-      Get.find<ManageDataController>().getPlanRange(data);
+      Get.find<ManageDataController>().updatePlansWithDate(data);
       setState(() {});
     }
   }
 }
 
 class BarChart extends StatelessWidget {
+  final Duration duration;
+  final Curve curves;
   const BarChart({
     super.key,
+    required this.duration,
+    required this.curves,
   });
 
   @override
@@ -95,10 +102,14 @@ class BarChart extends StatelessWidget {
               dragStartBehavior: DragStartBehavior.down,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                double ratio = cntr.data[index].data / cntr.maxData.value;
-                bool selected = cntr.data[index] == cntr.selected.value;
-                return _bar(cntr.data[index].weekDay, ratio,
-                    cntr.data[index].data, selected, cntr.data[index]);
+                DayData dData = cntr.data[index];
+                double ratio = (cntr.maxData.value > 0)
+                    ? (dData.data / cntr.maxData.value)
+                    : 0;
+
+                bool selected = dData.day == cntr.selected.value;
+                return _bar(
+                    dData.weekDay, ratio, dData.data, selected, dData.day);
               },
               separatorBuilder: (context, index) {
                 return 29.horizontalSpace;
@@ -110,26 +121,57 @@ class BarChart extends StatelessWidget {
   }
 
   Widget _bar(
-      String label, double value, double data, bool selected, DayData dayData) {
+      String label, double value, int data, bool selected, DateTime day) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         InkWell(
           onTap: () {
-            Get.find<ManageDataController>().selected.value = dayData;
+            Get.find<ManageDataController>().selected.value = day;
             Get.find<ManageDataController>().update();
           },
-          child: Container(
+          child: SizedBox(
             width: 56.w,
             height: 200.h * value,
-            alignment: Alignment.bottomCenter,
-            padding: EdgeInsets.only(bottom: 10.h, left: 5.r, right: 6.r),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(9.r),
-              color:
-                  selected ? NbColors.black : NbColors.black.withOpacity(0.1),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  left: 0,
+                  bottom: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(9.r),
+                      color: NbColors.black.withOpacity(0.1),
+                    ),
+                  ),
+                ),
+                AnimatedPositioned(
+                  duration: duration,
+                  curve: curves,
+                  height: selected ? (200.h * value) : 0,
+                  right: 0,
+                  left: 0,
+                  bottom: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(9.r),
+                      color: NbColors.black,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 10.h,
+                  left: 5.r,
+                  right: 6.r,
+                  child: NbText.sp12("${data.round()} GB")
+                      .white
+                      .w500
+                      .setMaxLines(2),
+                )
+              ],
             ),
-            child: NbText.sp12("${data.round()} GB").white.w500.setMaxLines(2),
           ),
         ),
         5.verticalSpace,

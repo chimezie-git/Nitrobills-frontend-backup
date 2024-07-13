@@ -3,7 +3,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/account/manage_data_controller.dart';
 import 'package:nitrobills/app/data/enums/period_enum.dart';
+import 'package:nitrobills/app/hive_box/data_management/data_management.dart';
 import 'package:nitrobills/app/ui/pages/manage_data/widget/edit_quota_modal.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
@@ -28,59 +31,65 @@ class ManageDataCardWidget extends StatelessWidget {
         horizontal: 15.w,
         vertical: 23.h,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(child: NbText.sp16("Active Plan").w600.white),
-              _EditQuotaButton(onTap: _edit),
-            ],
-          ),
-          15.verticalSpace,
-          NbText.sp16("MTN 4.2/10GB, GLO 2.32/3GB")
-              .w500
-              .setColor(const Color(0xFF929090)),
-          15.verticalSpace,
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
+      child: GetBuilder<ManageDataController>(
+          init: Get.find<ManageDataController>(),
+          builder: (cntrl) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    NbText.sp16("Account").w600.white,
-                    16.verticalSpace,
-                    Row(
-                      children: [
-                        numberChip("MTN 2392"),
-                        10.horizontalSpace,
-                        numberChip("MTN 2384"),
-                      ],
-                    )
+                    Expanded(child: NbText.sp16("Active Plan").w600.white),
+                    _EditQuotaButton(onTap: _edit),
                   ],
                 ),
-              ),
-              SizedBox(
-                width: 120.r,
-                height: 120.r,
-                child: CustomPaint(
-                  painter: ArcPainter(
-                    angle: 230,
-                    thickness: 14.r,
-                    backgroundColor: NbColors.white,
-                    borderColor: NbColors.primary,
-                  ),
-                  child: Center(
-                    child: NbText.sp22("20%").w400.white,
-                  ),
+                15.verticalSpace,
+                NbText.sp16("MTN 4.2/10GB, GLO 2.32/3GB")
+                    .w500
+                    .setColor(const Color(0xFF929090)),
+                15.verticalSpace,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          NbText.sp16("Account").w600.white,
+                          16.verticalSpace,
+                          Row(
+                            children: [
+                              numberChip("MTN 2392"),
+                              10.horizontalSpace,
+                              numberChip("MTN 2384"),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 120.r,
+                      height: 120.r,
+                      child: CustomPaint(
+                        painter: ArcPainter(
+                          angle: 230,
+                          thickness: 14.r,
+                          backgroundColor: NbColors.white,
+                          borderColor: NbColors.primary,
+                        ),
+                        child: Center(
+                          child: NbText.sp22(percent(cntrl.dataManager.value))
+                              .w400
+                              .white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            );
+          }),
     );
   }
 
@@ -110,6 +119,22 @@ class ManageDataCardWidget extends StatelessWidget {
       isScrollControlled: true,
     );
     NbUtils.showNav;
+  }
+
+  String percent(DataManagement data) {
+    int total = 0;
+    int remaining = 0;
+    for (var dt in data.simData) {
+      total += dt.totalData;
+      remaining += dt.remainingData;
+    }
+    double ratio;
+    if (total <= 0) {
+      ratio = 0;
+    } else {
+      ratio = remaining / total;
+    }
+    return "${ratio.round()}%";
   }
 }
 

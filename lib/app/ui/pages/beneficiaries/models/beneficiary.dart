@@ -1,8 +1,18 @@
+import 'package:flutter/material.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
 import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
 import 'package:nitrobills/app/ui/pages/transactions/models/transaction.dart';
+import 'package:nitrobills/app/ui/utils/nb_image.dart';
+import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class Beneficiary {
+  static const List<Color> bgColor = [
+    Color(0xFF5BF0C3),
+    Color(0xFF897AE5),
+    Color(0xFF897AE5),
+    Color(0xFF7E2A3E),
+  ];
+
   static const String _idKey = "id";
   static const String _nameKey = "name";
   static const String _providerKey = "provider";
@@ -46,4 +56,14 @@ class Beneficiary {
 
   AbstractServiceProvider get serviceProvider =>
       AbstractServiceProvider.fromServer(provider, serviceType);
+
+  static Widget avatarImage(int idx) {
+    if (idx == 0) {
+      return NbText.sp28("A").w500.black;
+    } else if (idx == 1) {
+      return Image.asset(NbImage.avatar1);
+    } else {
+      return Image.asset(NbImage.avatar2);
+    }
+  }
 }

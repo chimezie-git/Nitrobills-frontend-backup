@@ -45,9 +45,12 @@ class ManageAutopaymentsPage extends StatelessWidget {
                         color: NbColors.black,
                       ),
                       if (cntrl.autopay.isEmpty)
-                        const EmptyFieldsWidget(
+                        EmptyFieldsWidget(
                           image: NbImage.noAutopay,
                           text: "You don't have auto-payments set up yet.",
+                          onTap: () {},
+                          postfix: NbSvg.questionMark,
+                          btnText: "Click the plus button to add",
                         )
                       else
                         Expanded(

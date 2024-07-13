@@ -190,22 +190,22 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
       setState(() {
         isLoading = false;
       });
-      int? id;
-      if (addToBeneficiary) {
-        id = await Get.find<BeneficiariesController>().create(
-          name: nameCntr.text,
-          number: codeCntr.text,
-          serviceType: ServiceTypesEnum.cable,
-          provider: cableProvider!,
-        );
-      }
+      // int? id;
+      // if (addToBeneficiary) {
+      //   id = await Get.find<BeneficiariesController>().create(
+      //     name: nameCntr.text,
+      //     number: codeCntr.text,
+      //     serviceType: ServiceTypesEnum.cable,
+      //     provider: cableProvider!,
+      //   );
+      // }
       CableBill bill = CableBill(
         amount: plan!.amount,
         name: nameCntr.text,
         codeNumber: codeCntr.text,
         provider: cableProvider!,
         plan: plan!,
-        beneficiaryId: id,
+        saveBeneficiary: addToBeneficiary,
       );
       setState(() {
         isLoading = false;

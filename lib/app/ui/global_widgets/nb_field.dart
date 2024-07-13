@@ -122,20 +122,29 @@ class NbField {
     );
   }
 
-  static Widget check(
-      {required bool value, required void Function(bool) onChanged}) {
+  static Widget check({
+    required bool value,
+    required void Function(bool) onChanged,
+    double? size,
+    double? radius,
+    double? border,
+    int? bgColor,
+  }) {
     return InkWell(
       onTap: () {
         onChanged(!value);
       },
       child: Container(
-        width: 32.r,
-        height: 32.r,
+        width: size ?? 32.r,
+        height: size ?? 32.r,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.r),
-          color: value ? const Color(0xFF505050) : null,
-          border: Border.all(color: const Color(0xFF505050)),
+          borderRadius: BorderRadius.circular(radius ?? 8.r),
+          color: value ? Color(bgColor ?? 0xFF505050) : null,
+          border: Border.all(
+            color: Color(bgColor ?? 0xFF505050),
+            width: border ?? 1.0,
+          ),
         ),
         child: value
             ? SvgPicture.asset(

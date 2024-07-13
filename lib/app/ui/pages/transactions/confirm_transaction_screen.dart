@@ -9,17 +9,15 @@ import 'package:nitrobills/app/controllers/bills/cable_controller.dart';
 import 'package:nitrobills/app/controllers/bills/data_controller.dart';
 import 'package:nitrobills/app/controllers/bills/electricity_controller.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
-import 'package:nitrobills/app/data/enums/service_types_enum.dart';
 import 'package:nitrobills/app/data/services/bills/bulk_sms_service.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/pages/transactions/transaction_details_screen.dart';
-import 'package:nitrobills/app/ui/pages/transactions/widgets/confirm_transaction_card_widget.dart';
+import 'package:nitrobills/app/ui/pages/transactions/widgets/instant_transaction_tile.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/make_recurring_payment_modal.dart';
+import 'package:nitrobills/app/ui/pages/transactions/widgets/overview_provider_tile.dart';
+import 'package:nitrobills/app/ui/pages/transactions/widgets/transaction_payment_preference_widget.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
-import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 
@@ -42,86 +40,80 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
 
   ButtonEnum btnStatus = ButtonEnum.disabled;
 
+  int? avatarColor;
+  int? avatarIdx;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          bottom: false,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.w,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            36.verticalSpace,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: NbHeader.backAndTitle(
+                "Transaction overview",
+                () {
+                  Get.back();
+                },
+                fontSize: 18.w,
+                fontWeight: FontWeight.w600,
+                color: NbColors.black,
+              ),
             ),
-            child: Column(
-              children: [
-                36.verticalSpace,
-                NbHeader.backAndTitle(
-                  "Confirm Transaction",
-                  () {
-                    Get.back();
-                  },
-                  fontSize: 18.w,
-                  fontWeight: FontWeight.w600,
-                  color: NbColors.black,
-                ),
-                21.verticalSpace,
-                SvgPicture.asset(
-                  NbSvg.transactionsTitle,
-                  width: 98.w,
-                  height: 60.h,
-                ),
-                30.verticalSpace,
-                NbText.sp20("₦ ${widget.bill.amount.round()}").w600.black,
-                20.verticalSpace,
-                ConfirmTransactionCardWidget(
-                  bill: widget.bill,
-                ),
-                31.verticalSpace,
-                Row(
-                  children: [
-                    Expanded(
-                      child: NbText.sp16("Make this a recurring payment")
-                          .w500
-                          .black,
-                    ),
-                    NbField.check(
-                      value: makeAutopay,
-                      onChanged: (v) {
-                        _makeRecurringPayment(v);
-                      },
-                    ),
-                  ],
-                ),
-                if (widget.bill.serviceType == ServiceTypesEnum.data) ...[
-                  31.verticalSpace,
-                  Row(
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                  ),
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: NbText.sp16("Enable Data mangement for this SIM")
-                            .w500
-                            .black,
-                      ),
-                      NbField.check(
-                        value: enableDataManagement,
-                        onChanged: (v) {
+                      21.verticalSpace,
+                      OverviewProviderTile(
+                        bill: widget.bill,
+                        colorIdx: avatarColor,
+                        avatarIdx: avatarIdx,
+                        onSetAvatar: (col, idx) {
                           setState(() {
-                            enableDataManagement = v;
+                            avatarColor = col;
+                            avatarIdx = idx;
                           });
                         },
                       ),
+                      6.verticalSpace,
+                      Row(
+                        children: [
+                          16.horizontalSpace,
+                          NbText.sp13("Available balance")
+                              .w500
+                              .setColor(const Color(0xFF7F7F7F)),
+                          8.horizontalSpace,
+                          NbText.sp13("NGN ${widget.bill.amount}").w500.black,
+                        ],
+                      ),
+                      InstantTransactionTile(bill: widget.bill),
+                      30.verticalSpace,
+                      TransactionPaymentPreferenceWidget(
+                        bill: widget.bill,
+                        autopayment: makeAutopay,
+                        dataManagement: enableDataManagement,
+                        onSetAutopayment: (v) {
+                          _makeRecurringPayment(v);
+                        },
+                        onSetDataManagement: (v) {
+                          _setDataManagement(v);
+                        },
+                      )
                     ],
-                  )
-                ],
-                28.verticalSpace,
-                NbButton.primary3States(
-                  text: "Continue",
-                  onTap: _continue,
-                  status: btnStatus,
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -146,6 +138,8 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
       });
     }
   }
+
+  Future _setDataManagement(bool value) async {}
 
   void _continue() async {
     btnStatus = ButtonEnum.loading;

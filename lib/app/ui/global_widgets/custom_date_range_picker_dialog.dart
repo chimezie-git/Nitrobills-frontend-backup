@@ -14,6 +14,8 @@ final DateTime _faresttimeConst = DateTime(4100);
 class CustomDateRangePickerDialog extends StatefulWidget {
   final DateTime currentDate;
   final DateTime? lastDate;
+
+  /// (minDate, maxDate)
   final (DateTime, DateTime)? selectedRange;
   CustomDateRangePickerDialog({
     super.key,
@@ -253,7 +255,13 @@ class _CustomDatePickerDialogState extends State<CustomDateRangePickerDialog> {
   }
 
   void _returnData(DateTime fDay, DateTime lDay) {
-    Get.back(result: (fDay, lDay));
+    (DateTime, DateTime) result;
+    if (fDay.isBefore(lDay)) {
+      result = (fDay, lDay);
+    } else {
+      result = (lDay, fDay);
+    }
+    Get.back(result: result);
   }
 
   void _nextMonth() {

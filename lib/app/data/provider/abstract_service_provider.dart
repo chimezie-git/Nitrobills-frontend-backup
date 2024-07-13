@@ -29,3 +29,7 @@ abstract class AbstractServiceProvider {
     }
   }
 }
+
+class BulkSmsServiceProvider extends AbstractServiceProvider {
+  BulkSmsServiceProvider() : super("", "", "");
+}

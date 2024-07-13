@@ -80,7 +80,7 @@ class DataService {
       "number": bill.codeNumber,
       "amount": "${bill.amount}",
       "plan": bill.plan.id,
-      if (bill.beneficiaryId != null) "beneficiary_id": bill.beneficiaryId,
+      // if (bill.beneficiaryId != null) "beneficiary_id": bill.beneficiaryId,
     };
 
     TypeOrError<dio.Response> response = await HttpService.post(

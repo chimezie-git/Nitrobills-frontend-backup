@@ -30,4 +30,7 @@ adb reverse tcp:8000 tcp:8000
 ### Hive Boxes
 | hive boxes | Type id |
 |------------|---------|
-|AuthData | 0|
+|AuthData | 0 |
+|DataManagement | 1 |
+|DayData | 2 |
+|Recent Payment | 3|

@@ -10,6 +10,12 @@ class BeneficiariesController extends GetxController {
   final RxBool loaded = RxBool(false);
   final RxList<Beneficiary> beneficiaries = RxList<Beneficiary>();
   final Rx<LoaderEnum> status = Rx<LoaderEnum>(LoaderEnum.loading);
+  // sorting
+  final RxList<Beneficiary> filtered = RxList<Beneficiary>();
+  final RxBool sortAtoZ = RxBool(true);
+  final RxBool sortLastPay = RxBool(false);
+  final Rx<ServiceTypesEnum> serviceTypeSort =
+      Rx<ServiceTypesEnum>(ServiceTypesEnum.airtime);
 
   Future initialize() async {
     if (!loaded.value) {
@@ -17,13 +23,16 @@ class BeneficiariesController extends GetxController {
       final result = await BeneficiaryService.getBeneficiary();
       if (result.isRight) {
         beneficiaries.value = result.right;
+        filtered.value = result.right;
         status.value = LoaderEnum.success;
         loaded.value = true;
+        update();
+        sort();
       } else {
         status.value = LoaderEnum.failed;
         NbToast.error(result.left.message);
+        update();
       }
-      update();
     }
   }
 
@@ -48,9 +57,11 @@ class BeneficiariesController extends GetxController {
     required String number,
     required ServiceTypesEnum serviceType,
     required AbstractServiceProvider provider,
+    required int colorId,
+    required int avatarId,
   }) async {
     final result = await BeneficiaryService.createBeneficiary(
-        name, serviceType, provider, number);
+        name, serviceType, provider, number, colorId, avatarId);
     if (result.isRight) {
       beneficiaries.add(result.right);
       NbToast.success("Beneficiary Saved");
@@ -74,5 +85,52 @@ class BeneficiariesController extends GetxController {
       NbToast.error(result.left.message);
       return false;
     }
+  }
+
+  void sort({
+    ServiceTypesEnum? serviceType,
+    bool? aToZ,
+    bool? lastPay,
+  }) async {
+    serviceTypeSort.value = serviceType ?? serviceTypeSort.value;
+    sortAtoZ.value = aToZ ?? sortAtoZ.value;
+    sortLastPay.value = lastPay ?? sortLastPay.value;
+    List<Beneficiary> filter = beneficiaries
+        .where((ben) => ben.serviceType == serviceTypeSort.value)
+        .toList();
+    // sort items
+    filter.sort((a, b) {
+      if (sortAtoZ.value) {
+        return a.name.compareTo(b.name);
+      } else {
+        return b.name.compareTo(a.name);
+      }
+    });
+    if (sortLastPay.value) {
+      filter.sort(
+        (a, b) {
+          if (a.lastPayment == null) {
+            return 1;
+          } else if (b.lastPayment == null) {
+            return 0;
+          } else {
+            return a.lastPayment!.date.compareTo(b.lastPayment!.date);
+          }
+        },
+      );
+    }
+    filtered.value = filter;
+    update();
+  }
+
+  void serch(String query) {
+    filtered.value = filtered.where((ben) {
+      if (ben.name.toLowerCase().contains(query.toLowerCase())) {
+        return true;
+      } else {
+        return false;
+      }
+    }).toList();
+    update();
   }
 }

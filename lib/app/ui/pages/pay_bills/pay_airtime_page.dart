@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:nitrobills/app/data/models/contact_number.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nitrobills/app/data/enums/service_types_enum.dart';
 import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
 import 'package:nitrobills/app/data/services/validators.dart';
+import 'package:nitrobills/app/hive_box/recent_payments/recent_payment.dart';
 import 'package:nitrobills/app/ui/global_widgets/balance_hint_widget.dart';
 import 'package:nitrobills/app/ui/global_widgets/choose_contact_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
@@ -15,6 +17,7 @@ import 'package:nitrobills/app/ui/pages/transactions/confirm_transaction_screen.
 import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_contants.dart';
+import 'package:nitrobills/app/ui/utils/nb_hive_box.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class PayAirtimePage extends StatefulWidget {
@@ -77,26 +80,48 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
                     fontWeight: FontWeight.w600,
                     color: NbColors.black,
                   ),
-                  29.verticalSpace,
-                  NbText.sp16("Most recent").w500.black,
-                  15.verticalSpace,
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: ContactNumber.sample.length, //recentNums.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      childAspectRatio: 0.67,
-                      crossAxisSpacing: 24.w,
-                      mainAxisSpacing: 20.h,
-                    ),
-                    itemBuilder: (context, index) {
-                      ContactNumber contact = ContactNumber.sample[index];
-                      return ContactItemCell(
-                        contact: contact,
-                        onTap: () {
-                          _setContact(contact);
-                        },
+                  ValueListenableBuilder(
+                    valueListenable: NbHiveBox.recentPayBox.listenable(),
+                    builder: (context, value, child) {
+                      List<RecentPayment> recent = NbHiveBox.recentPayBox.values
+                          .where((pay) =>
+                              pay.serviceTypesEnum == ServiceTypesEnum.airtime)
+                          .toList();
+                      if (recent.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+                      if (recent.length > 8) {
+                        recent = recent.sublist(8 - recent.length);
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          29.verticalSpace,
+                          NbText.sp16("Most recent").w500.black,
+                          15.verticalSpace,
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: recent.length, //recentNums.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              childAspectRatio: 0.67,
+                              crossAxisSpacing: 24.w,
+                              mainAxisSpacing: 20.h,
+                            ),
+                            itemBuilder: (context, index) {
+                              final rItem = recent[index];
+                              return ContactItemCell(
+                                payment: rItem,
+                                onTap: () {
+                                  _setContact(rItem);
+                                },
+                              );
+                            },
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -202,9 +227,11 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
     setState(() {});
   }
 
-  void _setContact(ContactNumber contact) {
-    numberCntr.text = contact.number;
-    // mobileProvider = contact.provider;
+  void _setContact(RecentPayment payment) {
+    numberCntr.text = payment.number;
+    final mobileProv =
+        MobileServiceProvider.allDataMap[payment.serviceProvider];
+    mobileProvider = mobileProv;
     setState(() {});
   }
 
@@ -226,6 +253,7 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
         name: '',
         codeNumber: numberCntr.text,
         provider: mobileProvider!,
+        saveBeneficiary: false,
       );
       Get.to(
         () => ConfirmTransactionScreen(bill: bill),

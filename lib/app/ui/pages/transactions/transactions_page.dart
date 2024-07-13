@@ -40,9 +40,12 @@ class TransactionsPage extends StatelessWidget {
                     NbText.sp18("Transactions").w600.black,
                     16.verticalSpace,
                     if (cntrl.transactions.isEmpty)
-                      const EmptyFieldsWidget(
+                      EmptyFieldsWidget(
                         image: NbImage.noTransactions,
                         text: "You haven't made any transaction yet.",
+                        btnText: "View top payments",
+                        prefix: NbSvg.card,
+                        onTap: () {},
                       )
                     else
                       Expanded(

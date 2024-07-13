@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:nitrobills/app/data/models/contact_number.dart';
+import 'package:nitrobills/app/hive_box/recent_payments/recent_payment.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class ContactItemCell extends StatelessWidget {
-  final ContactNumber contact;
+  final RecentPayment payment;
   final void Function() onTap;
 
   const ContactItemCell({
     super.key,
-    required this.contact,
+    required this.payment,
     required this.onTap,
   });
 
@@ -30,13 +30,26 @@ class ContactItemCell extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: Colors.blue,
                 ),
-                child: NbText.sp16(contact.name[0]).w500.white,
+                child: NbText.sp16(name).w500.white,
               ),
             ),
           ),
-          NbText.sp16(contact.shortNum).w500.black
+          NbText.sp16(shortNum).w500.black
         ],
       ),
     );
+  }
+
+  String get name {
+    if (payment.name.isEmpty) {
+      return payment.serviceProvider[0];
+    } else {
+      return payment.name[0];
+    }
+  }
+
+  String get shortNum {
+    int numLen = payment.number.length;
+    return "***${payment.number.substring(numLen - 4)}";
   }
 }

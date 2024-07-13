@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,8 +6,6 @@ import 'package:nitrobills/app/controllers/account/beneficiaries_controller.dart
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
 import 'package:nitrobills/app/ui/pages/autopayments/models/autopay.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
-import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
-import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
 import 'package:nitrobills/app/ui/global_widgets/empty_fields_widget.dart';
 import 'package:nitrobills/app/ui/global_widgets/servicetype_modal.dart';
 import 'package:nitrobills/app/ui/pages/autopayments/setup_autopayment_page.dart';
@@ -26,22 +23,12 @@ import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
-class BeneficiariesPage extends StatefulWidget {
+class BeneficiariesPage extends StatelessWidget {
   const BeneficiariesPage({super.key});
 
   @override
-  State<BeneficiariesPage> createState() => _BeneficiariesPageState();
-}
-
-class _BeneficiariesPageState extends State<BeneficiariesPage> {
-  int tabIndex = 0;
-  ServiceTypesEnum serviceType = ServiceTypesEnum.airtime;
-  bool aToZ = true;
-  bool lastPayment = true;
-  AbstractServiceProvider serviceProvider = MobileServiceProvider.mtn;
-
-  @override
   Widget build(BuildContext context) {
+    int tabIndex = 0;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Get.find<BeneficiariesController>().initialize();
     });
@@ -72,9 +59,12 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
                           18.verticalSpace,
                           NbText.sp18("Beneficiaries").w600.black,
                           if (cntrl.beneficiaries.isEmpty)
-                            const EmptyFieldsWidget(
+                            EmptyFieldsWidget(
                               image: NbImage.noBeneficiary,
                               text: "You don't have any Saved beneficiary. ",
+                              onTap: () {},
+                              postfix: NbSvg.iSvg,
+                              btnText: "Click the plus button to add",
                             )
                           else
                             Expanded(
@@ -92,6 +82,14 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
                                       borderRadius: BorderRadius.circular(40.r),
                                     ),
                                     child: TextField(
+                                      onChanged: (v) {
+                                        Get.find<BeneficiariesController>()
+                                            .serch(v);
+                                      },
+                                      onSubmitted: (v) {
+                                        Get.find<BeneficiariesController>()
+                                            .serch(v);
+                                      },
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.w500,
@@ -133,20 +131,30 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
                                       children: [
                                         16.horizontalSpace,
                                         AirtimeDropdown(
-                                          serviceType: serviceType,
+                                          serviceType:
+                                              cntrl.serviceTypeSort.value,
                                           active: tabIndex == 0,
-                                          onTap: _pickServiceType,
+                                          onTap: () {
+                                            tabIndex = 0;
+                                            _pickServiceType();
+                                          },
                                         ),
                                         10.horizontalSpace,
                                         OrderSelectingWidget(
-                                          aToZ: aToZ,
+                                          aToZ: cntrl.sortAtoZ.value,
                                           active: tabIndex == 1,
-                                          onTap: _orderSelect,
+                                          onTap: () {
+                                            tabIndex = 1;
+                                            _orderSelect();
+                                          },
                                         ),
                                         10.horizontalSpace,
                                         LastPaymentWidget(
                                           active: tabIndex == 2,
-                                          onTap: _lastPayment,
+                                          onTap: () {
+                                            tabIndex = 2;
+                                            _lastPayment();
+                                          },
                                         ),
                                         16.horizontalSpace,
                                       ],
@@ -154,22 +162,30 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
                                   ),
                                   16.verticalSpace,
                                   Expanded(
-                                    child: ListView(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16.w),
-                                      children: [
-                                        ...cntrl.beneficiaries.mapIndexed(
-                                          (idx, ben) => BeneficiariesWidget(
-                                            beneficiary: ben,
-                                            index: idx,
-                                            onTap: () {
-                                              _editBeneficiary(ben);
+                                    child: cntrl.filtered.isEmpty
+                                        ? ListView(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 16.w),
+                                            children: [
+                                              200.verticalSpace,
+                                              NbText.sp16(
+                                                      'No beneficiary saved for \n${cntrl.serviceTypeSort.value.shortName}')
+                                                  .centerText,
+                                            ],
+                                          )
+                                        : ListView.builder(
+                                            itemCount: cntrl.filtered.length,
+                                            padding: EdgeInsets.fromLTRB(
+                                                16.w, 0, 16.w, 100.h),
+                                            itemBuilder: (context, index) {
+                                              final ben = cntrl.filtered[index];
+                                              return BeneficiariesWidget(
+                                                  onTap: () =>
+                                                      _editBeneficiary(ben),
+                                                  beneficiary: ben,
+                                                  index: index);
                                             },
                                           ),
-                                        ),
-                                        100.verticalSpace,
-                                      ],
-                                    ),
                                   ),
                                 ],
                               ),
@@ -210,33 +226,28 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
   }
 
   void _lastPayment() {
-    tabIndex = 2;
-    lastPayment = !lastPayment;
-    setState(() {});
+    bool lastPay = Get.find<BeneficiariesController>().sortLastPay.value;
+    Get.find<BeneficiariesController>().sort(lastPay: lastPay);
   }
 
   void _orderSelect() async {
-    tabIndex = 1;
     NbUtils.removeNav;
-    aToZ = await Get.bottomSheet<bool>(const AtoZModal(),
-            isScrollControlled: true) ??
-        aToZ;
+    final aToZ = await Get.bottomSheet<bool>(const AtoZModal(),
+        isScrollControlled: true);
+    Get.find<BeneficiariesController>().sort(aToZ: aToZ);
     NbUtils.showNav;
-    setState(() {});
   }
 
   void _pickServiceType() async {
-    tabIndex = 0;
     NbUtils.removeNav;
-    serviceType = await Get.bottomSheet<ServiceTypesEnum>(
-          const ServiceTypeModal(
-            onlyServiceType: true,
-          ),
-          isScrollControlled: true,
-        ) ??
-        serviceType;
+    final serviceType = await Get.bottomSheet<ServiceTypesEnum>(
+      const ServiceTypeModal(
+        onlyServiceType: true,
+      ),
+      isScrollControlled: true,
+    );
+    Get.find<BeneficiariesController>().sort(serviceType: serviceType);
     NbUtils.showNav;
-    setState(() {});
   }
 
   void _addBeneficiary() async {

@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/data/provider/app_error.dart';
 import 'package:nitrobills/app/data/repository/auth_repo.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
-import 'package:nitrobills/app/ui/pages/auth/phone_number_page.dart';
+import 'package:nitrobills/app/ui/pages/auth/edit_phone_number_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
@@ -17,13 +16,17 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpCodeVerificationPage extends StatefulWidget {
   final String phoneNumber;
+  final String email;
+  final String username;
   final bool resetPassword;
-  final bool fromHome;
+  final bool showBack;
   const OtpCodeVerificationPage({
     super.key,
     required this.phoneNumber,
-    this.fromHome = false,
-    this.resetPassword = false,
+    required this.email,
+    required this.username,
+    required this.resetPassword,
+    this.showBack = false,
   });
 
   @override
@@ -33,7 +36,7 @@ class OtpCodeVerificationPage extends StatefulWidget {
 
 class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
   String otpCode = '';
-  ValueNotifier<ButtonEnum> buttonStatus = ValueNotifier(ButtonEnum.active);
+  ValueNotifier<ButtonEnum> buttonStatus = ValueNotifier(ButtonEnum.disabled);
   late String phoneNumber;
   bool otpError = false;
   String? otpErrorText;
@@ -86,7 +89,7 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    if (widget.fromHome)
+                    if (widget.resetPassword || widget.showBack)
                       Align(
                         alignment: Alignment.centerLeft,
                         child: NbButton.backIcon(_back),
@@ -111,17 +114,16 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
                             fontFamily: 'Satoshi',
                             fontWeight: FontWeight.w600),
                         children: [
-                          if (!widget.fromHome)
-                            TextSpan(
-                              text: "Edit?",
-                              style: const TextStyle(
-                                color: Color(0xFF1E92E9),
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Satoshi',
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = _editPhoneNumber,
-                            )
+                          TextSpan(
+                            text: "Edit?",
+                            style: const TextStyle(
+                              color: Color(0xFF1E92E9),
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Satoshi',
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = _editPhoneNumber,
+                          )
                         ],
                       ),
                     ),
@@ -131,7 +133,13 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
                       child: PinCodeTextField(
                         scrollPadding: EdgeInsets.zero,
                         onChanged: (v) {
+                          if (v.length < 6) {
+                            buttonStatus.value = ButtonEnum.disabled;
+                          } else {
+                            buttonStatus.value = ButtonEnum.active;
+                          }
                           otpCode = v;
+                          _clearForcedErrors();
                         },
                         keyboardType: TextInputType.number,
                         appContext: context,
@@ -190,27 +198,6 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
                       ),
                     ),
                     24.verticalSpace,
-                    InkWell(
-                      onTap: _useEmail,
-                      child: Container(
-                        padding: EdgeInsets.all(2.r),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom:
-                                BorderSide(color: NbColors.blue, width: 1.5),
-                          ),
-                        ),
-                        child: Text(
-                          " Send to mail instead ",
-                          style: TextStyle(
-                            color: NbColors.blue,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                    32.verticalSpace,
                     ValueListenableBuilder(
                         valueListenable: buttonStatus,
                         builder: (context, value, child) {
@@ -221,25 +208,6 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
                           );
                         }),
                     32.verticalSpace,
-                    if (!widget.resetPassword)
-                      InkWell(
-                          onTap: _skipVefication,
-                          child: Container(
-                            padding: EdgeInsets.all(2.r),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(color: NbColors.red),
-                              ),
-                            ),
-                            child: Text(
-                              " Skip Verification ",
-                              style: TextStyle(
-                                color: NbColors.red,
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          )),
                   ],
                 ),
               ),
@@ -262,26 +230,10 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
     buttonStatus.value = ButtonEnum.active;
   }
 
-  void _useEmail() async {
-    buttonStatus.value = ButtonEnum.loading;
-    String email = Get.find<AuthController>().email.value;
-    final data = await AuthRepo().sendOtpEmail(email);
-    if (data.isLeft) {
-      _showErrors(data.left);
-    }
-    buttonStatus.value = ButtonEnum.active;
-  }
-
-  void _skipVefication() {
-    if (widget.fromHome) {
-      Get.back();
-    } else {
-      AuthRepo().skipVerification();
-    }
-  }
-
   void _editPhoneNumber() async {
-    phoneNumber = await AuthModal.show<String?>(PhoneNumberPage(
+    phoneNumber = await AuthModal.show<String?>(EditPhoneNumberPage(
+          username: widget.username,
+          email: widget.email,
           phoneNumber: phoneNumber,
         )) ??
         phoneNumber;
@@ -290,12 +242,8 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
 
   void _verifyNumber() async {
     buttonStatus.value = ButtonEnum.loading;
-    final result = await AuthRepo().confirmOtp(
-      otpCode,
-      phoneNumber,
-      widget.resetPassword,
-      widget.fromHome,
-    );
+    final result = await AuthRepo()
+        .confirmOtpPhone(otpCode, phoneNumber, widget.resetPassword);
     if (result.isLeft) {
       _showErrors(result.left);
     }
@@ -309,6 +257,12 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
   void _showErrors(SingleFieldError error) {
     otpError = true;
     otpErrorText = error.message;
+    setState(() {});
+  }
+
+  void _clearForcedErrors() {
+    otpError = false;
+    otpErrorText = null;
     setState(() {});
   }
 }

@@ -13,6 +13,18 @@ enum ButtonEnum {
       case loading:
         return NbColors.black;
       case disabled:
+        return const Color(0xFFDDDDDD);
+      // return const Color(0xFF8F8F8F);
+    }
+  }
+
+  Color get textColor {
+    switch (this) {
+      case active:
+        return NbColors.white;
+      case loading:
+        return NbColors.white;
+      case disabled:
         return NbColors.black;
       // return const Color(0xFF8F8F8F);
     }

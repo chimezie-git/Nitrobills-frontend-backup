@@ -32,7 +32,7 @@ class AuthService {
   }
 
   /// signin with Username/Email and Password returns token or error
-  static AsyncOrError<String> login({
+  static AsyncOrError<Map> login({
     required String emailUsername,
     required String password,
   }) async {
@@ -45,8 +45,7 @@ class AuthService {
     if (response.isRight) {
       Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
-        String token = responseData["key"];
-        return Right(token);
+        return Right(responseData);
       } else if (responseData.containsKey("non_field_errors")) {
         return Left(
           SingleFieldError(
@@ -63,7 +62,7 @@ class AuthService {
   }
 
   ///register user returns token or error
-  static AsyncOrError<String> register({
+  static AsyncOrError<Map> register({
     required String email,
     required String password,
     required String userName,
@@ -91,8 +90,7 @@ class AuthService {
       Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200 ||
           response.right.statusCode == 201) {
-        String token = responseData["key"];
-        return Right(token);
+        return Right(responseData);
       } else {
         List keys = [
           "username",
@@ -126,17 +124,18 @@ class AuthService {
   }
 
   /// signin with Phone Credential returns token key or error
-  static AsyncOrError<String> confirmOtp(String phone, String otpCode) async {
+  static AsyncOrError<String> confirmOtpPhone(
+      String phone, String otpCode) async {
     Map<String, dynamic> payload = {"otp_code": otpCode, "phone_number": phone};
 
     TypeOrError<dio.Response> response =
-        await HttpService.post("${_baseUrl}confirm_otp/", payload);
+        await HttpService.post("${_baseUrl}confirm_otp/phone/", payload);
     if (response.isRight) {
       Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
         return Right(responseData["key"]);
-      } else if (responseData.containsKey("msg")) {
-        String msg = responseData["msg"];
+      } else if (responseData.containsKey("otp")) {
+        String msg = responseData["otp"];
         return Left(SingleFieldError("", msg));
       } else {
         String msg = _stringFromMap(responseData);
@@ -263,6 +262,85 @@ class AuthService {
 
   static AsyncOrError<void> logout() async {
     return const Right(null);
+  }
+
+  static AsyncOrError<String> changePhoneNumber({
+    required String email,
+    required String username,
+    required String phone,
+  }) async {
+    Map<String, dynamic> payload = {
+      "username": username,
+      "email": email,
+      "phone_number": phone,
+    };
+    TypeOrError<dio.Response> response =
+        await HttpService.post("${_baseUrl}change_phone/", payload);
+    if (response.isRight) {
+      Map responseData = Map.from(response.right.data);
+      if (response.right.statusCode == 200) {
+        return Right(responseData["msg"]);
+      } else if (responseData.containsKey("phone")) {
+        return Left(
+          SingleFieldError(
+            "field",
+            _listDictString(responseData["phone"]),
+          ),
+        );
+      } else {
+        return Left(AppError(_stringFromMap(responseData)));
+      }
+    } else {
+      return Left(response.left);
+    }
+  }
+
+  static AsyncOrError<Map> forgetPassword({
+    required String phone,
+  }) async {
+    Map<String, dynamic> payload = {
+      "phone_number": phone,
+    };
+    TypeOrError<dio.Response> response =
+        await HttpService.post("${_baseUrl}forget_password/", payload);
+    if (response.isRight) {
+      Map responseData = Map.from(response.right.data);
+      if (response.right.statusCode == 200) {
+        return Right(responseData);
+      } else if (responseData.containsKey("phone")) {
+        return Left(
+          SingleFieldError(
+            "field",
+            _listDictString(responseData["phone"]),
+          ),
+        );
+      } else {
+        return Left(AppError(_stringFromMap(responseData)));
+      }
+    } else {
+      return Left(response.left);
+    }
+  }
+
+  static AsyncOrError<String> setPin({
+    required String pin,
+  }) async {
+    Map<String, dynamic> payload = {
+      "pin": pin,
+    };
+    TypeOrError<dio.Response> response = await HttpService.post(
+        "${_baseUrl}pin_code/update/", payload,
+        header: _loginHeader());
+    if (response.isRight) {
+      Map responseData = Map.from(response.right.data);
+      if (response.right.statusCode == 200) {
+        return Right(responseData['msg']);
+      } else {
+        return Left(AppError(_stringFromMap(responseData)));
+      }
+    } else {
+      return Left(response.left);
+    }
   }
 
   static Map<String, dynamic> _loginHeader() {

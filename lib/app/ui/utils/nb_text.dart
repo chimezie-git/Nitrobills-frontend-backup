@@ -10,6 +10,13 @@ class NbText {
           fontWeight: FontWeight.w500,
         ),
       );
+  static Text sp28(String text) => Text(
+        text,
+        style: TextStyle(
+          fontSize: 28.sp,
+          fontWeight: FontWeight.w500,
+        ),
+      );
   static Text sp26(String text) => Text(
         text,
         style: TextStyle(
@@ -73,6 +80,13 @@ class NbText {
           fontWeight: FontWeight.w400,
         ),
       );
+  static Text sp13(String text) => Text(
+        text,
+        style: TextStyle(
+          fontSize: 13.sp,
+          fontWeight: FontWeight.w400,
+        ),
+      );
   static Text sp12(String text) => Text(
         text,
         style: TextStyle(
@@ -104,6 +118,7 @@ extension HtTextExtensions on Text {
 
   Text get white => copyWith(color: NbColors.white);
   Text get black => copyWith(color: NbColors.black);
+  Text get primary => copyWith(color: NbColors.primary);
   Text get darkGrey => copyWith(color: NbColors.black);
   Text setColor(Color color) => copyWith(color: color);
   Text get centerText => copyWith(textAlign: TextAlign.center);

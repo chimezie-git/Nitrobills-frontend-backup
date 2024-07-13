@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nitrobills/app/controllers/bills/data_controller.dart';
+import 'package:nitrobills/app/data/enums/service_types_enum.dart';
 import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
-import 'package:nitrobills/app/data/models/phone_number.dart';
+import 'package:nitrobills/app/hive_box/recent_payments/recent_payment.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/buy_data/buy_data_information.dart';
 import 'package:nitrobills/app/ui/pages/buy_data/widgets/your_accounts_list_tile.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
+import 'package:nitrobills/app/ui/utils/nb_hive_box.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class BuyDataPage extends StatefulWidget {
@@ -19,11 +22,6 @@ class BuyDataPage extends StatefulWidget {
 
 class _BuyDataPageState extends State<BuyDataPage> {
   bool addBeneficiary = false;
-
-  List<PhoneNumber> numbers = [
-    PhoneNumber(number: "23243423423", provider: MobileServiceProvider.mtn),
-    PhoneNumber(number: "23243423423", provider: MobileServiceProvider.airtel),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -90,14 +88,44 @@ class _BuyDataPageState extends State<BuyDataPage> {
                   },
                 ),
                 30.verticalSpace,
-                NbText.sp18("Your Accounts").w600.black,
-                10.verticalSpace,
-                ...numbers.map((p) => YourAccountsListTile(
-                      phoneNumber: p,
-                      onTap: () {
-                        _addInfo(provider: p.provider, number: p.number);
-                      },
-                    )),
+                ValueListenableBuilder(
+                  valueListenable: NbHiveBox.recentPayBox.listenable(),
+                  builder: (context, value, child) {
+                    List<RecentPayment> recents = NbHiveBox.recentPayBox.values
+                        .where((rPay) =>
+                            rPay.serviceTypesEnum == ServiceTypesEnum.data)
+                        .toList();
+                    if (recents.isEmpty) {
+                      return const SizedBox.shrink();
+                    } else {
+                      if (recents.length > 5) {
+                        recents = recents.sublist(recents.length - 5);
+                      }
+                      return Column(
+                        children: [
+                          NbText.sp18("Your Accounts").w600.black,
+                          10.verticalSpace,
+                          ...List.generate(
+                            recents.length,
+                            (index) {
+                              RecentPayment rPay = recents[index];
+                              final provider = MobileServiceProvider
+                                  .allDataMap[rPay.serviceProvider]!;
+                              return YourAccountsListTile(
+                                  recentPayment: rPay,
+                                  provider: provider,
+                                  onTap: () {
+                                    _addInfo(
+                                        provider: provider,
+                                        number: rPay.number);
+                                  });
+                            },
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
               ],
             ),
           ),

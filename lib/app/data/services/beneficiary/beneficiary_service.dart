@@ -51,12 +51,16 @@ class BeneficiaryService {
     ServiceTypesEnum serviceType,
     AbstractServiceProvider provider,
     String number,
+    int colorId,
+    int avatarId,
   ) async {
     Map<String, dynamic> payload = {
       "name": name,
       "user_code": number,
       "provider": provider.id,
       "transaction_type": serviceType.toServerString,
+      "color_id": colorId,
+      "avatar_id": avatarId,
     };
 
     TypeOrError<dio.Response> response = await HttpService.post(

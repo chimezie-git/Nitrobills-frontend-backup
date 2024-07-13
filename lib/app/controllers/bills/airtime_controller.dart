@@ -3,6 +3,7 @@ import 'package:nitrobills/app/controllers/account/transactions_controller.dart'
 import 'package:nitrobills/app/data/enums/loader_enum.dart';
 import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
 import 'package:nitrobills/app/data/services/bills/airtime_service.dart';
+import 'package:nitrobills/app/hive_box/recent_payments/recent_payment.dart';
 import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 
@@ -46,10 +47,23 @@ class AirtimeController extends GetxController {
     final result = await AirtimeService.buy(bill);
     if (result.isRight) {
       Get.find<TransactionsController>().addTransaction(result.right);
+
+      RecentPayment.add(
+        name: bill.name,
+        serviceType: bill.serviceType.toInt,
+        serviceProvider: bill.provider.id,
+        number: bill.codeNumber,
+      );
       return true;
     } else {
       NbToast.error(result.left.message);
       return false;
     }
   }
+
+  // List<RecentPayment> recentPayments() {
+  //   return NbHiveBox.recentPayBox.values
+  //       .where((pay) => pay.serviceTypesEnum == ServiceTypesEnum.airtime)
+  //       .toList();
+  // }
 }

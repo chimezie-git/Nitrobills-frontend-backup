@@ -57,7 +57,7 @@ class AirtimeService {
       "provider": bill.provider.id,
       "number": bill.codeNumber,
       "amount": "${bill.amount}",
-      if (bill.beneficiaryId != null) "beneficiary_id": bill.beneficiaryId,
+      // if (bill.beneficiaryId != null) "beneficiary_id": bill.beneficiaryId,
     };
 
     TypeOrError<dio.Response> response = await HttpService.post(

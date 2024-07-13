@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:nitrobills/app/data/models/phone_number.dart';
+import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
+import 'package:nitrobills/app/hive_box/recent_payments/recent_payment.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class YourAccountsListTile extends StatelessWidget {
-  final PhoneNumber phoneNumber;
+  final RecentPayment recentPayment;
+  final MobileServiceProvider provider;
   final void Function() onTap;
+
   const YourAccountsListTile({
     super.key,
-    required this.phoneNumber,
+    required this.recentPayment,
     required this.onTap,
+    required this.provider,
   });
 
   @override
@@ -38,7 +42,7 @@ class YourAccountsListTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage(phoneNumber.provider.image),
+                    image: AssetImage(provider.image),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -48,8 +52,8 @@ class YourAccountsListTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    NbText.sp14(phoneNumber.provider.name).w500.black,
-                    NbText.sp14(phoneNumber.number).w500.black,
+                    NbText.sp14(provider.name).w500.black,
+                    NbText.sp14(recentPayment.number).w500.black,
                   ],
                 ),
               ),

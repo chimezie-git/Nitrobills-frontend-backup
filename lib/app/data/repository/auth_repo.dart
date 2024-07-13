@@ -11,6 +11,7 @@ import 'package:nitrobills/app/data/services/type_definitions.dart';
 import 'package:nitrobills/app/hive_box/auth_data/auth_data.dart';
 import 'package:nitrobills/app/ui/pages/auth/change_password_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/otp_code_verification.dart';
+import 'package:nitrobills/app/ui/pages/auth/pin_code_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
 import 'package:nitrobills/app/ui/pages/home/home_page.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
@@ -27,18 +28,19 @@ class AuthRepo {
     }
   }
 
-  Future<NullOrSingleFieldError> confirmOtp(
-      String otp, String phoneNum, bool resetPassword, bool fromHome) async {
-    final response = await AuthService.confirmOtp(phoneNum, otp);
+  Future<NullOrSingleFieldError> confirmOtpPhone(
+      String otp, String phoneNum, bool resetPassword) async {
+    final response = await AuthService.confirmOtpPhone(phoneNum, otp);
     if (response.isRight) {
+      Get.find<UserAccountController>().authToken.value = response.right;
       if (resetPassword) {
-        Get.find<UserAccountController>().authToken.value = response.right;
         AuthModal.showWithoutPop(const ChangePasswordPage());
-      } else if (fromHome) {
-        Get.find<UserAccountController>().reload();
-        Get.back();
       } else {
-        _gotToHome();
+        Get.to(
+          const PinCodePage(),
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeOut,
+        );
       }
       return const Right(null);
     } else if (response.left is SingleFieldError) {
@@ -49,8 +51,7 @@ class AuthRepo {
     }
   }
 
-  Future<NullOrSingleFieldError> sendOtpSMS(
-      String phoneNumber, bool resetPassword) async {
+  Future<NullOrSingleFieldError> sendOtpSMS(String phoneNumber) async {
     final String phone;
     try {
       phone = NbFormatter.phone(phoneNumber);
@@ -60,14 +61,6 @@ class AuthRepo {
     }
     final response = await AuthService.sendOTPSMS(phone);
     if (response.isRight) {
-      if (resetPassword) {
-        AuthModal.showWithoutPop(OtpCodeVerificationPage(
-          phoneNumber: phone,
-          resetPassword: resetPassword,
-        ));
-      } else {
-        Get.back(result: phoneNumber);
-      }
       NbToast.success(response.right);
       return const Right(null);
     } else if (response.left is SingleFieldError) {
@@ -154,9 +147,13 @@ class AuthRepo {
         referralCode: referalCode);
 
     if (response.isRight) {
-      Get.find<UserAccountController>().authToken.value = response.right;
       await _saveLoginPassword(email, password);
-      AuthModal.showWithoutPop(OtpCodeVerificationPage(phoneNumber: phone));
+      AuthModal.showWithoutPop(OtpCodeVerificationPage(
+        phoneNumber: phone,
+        email: email,
+        username: username,
+        resetPassword: false,
+      ));
       return const Right(null);
     } else if (response.left is MultipleFieldError) {
       return Left(response.left as MultipleFieldError);
@@ -171,9 +168,25 @@ class AuthRepo {
     final request = await AuthService.login(
         emailUsername: emailUsername, password: password);
     if (request.isRight) {
-      Get.find<UserAccountController>().authToken.value = request.right;
-      await _saveLoginPassword(emailUsername, password);
-      _gotToHome();
+      final data = request.right;
+      if (data['verified'] ?? false) {
+        Get.find<UserAccountController>().authToken.value = data["key"];
+        await _saveLoginPassword(emailUsername, password);
+        _gotToHome();
+      } else {
+        String username = data["username"];
+        String email = data["email"];
+        String phoneNumber = data["phone_number"];
+        AuthModal.showWithoutPop(
+          OtpCodeVerificationPage(
+            phoneNumber: phoneNumber,
+            email: email,
+            username: username,
+            resetPassword: false,
+            showBack: true,
+          ),
+        );
+      }
       return const Right(null);
     } else if (request.left is SingleFieldError) {
       return Left(request.left as SingleFieldError);
@@ -199,6 +212,69 @@ class AuthRepo {
     } else {
       NbToast.error("biometric Login Failed");
       return const Right(null);
+    }
+  }
+
+  Future<NullOrSingleFieldError> changePhoneNumber(
+    String phoneNumber,
+    String email,
+    String username,
+  ) async {
+    final String phone;
+    try {
+      phone = NbFormatter.phone(phoneNumber);
+    } catch (e) {
+      NbToast.error(e.toString());
+      return const Right(null);
+    }
+    final response = await AuthService.changePhoneNumber(
+        email: email, phone: phone, username: username);
+    if (response.isRight) {
+      NbToast.success(response.right);
+      Get.back(result: phoneNumber);
+      return const Right(null);
+    } else if (response.left is SingleFieldError) {
+      return Left(response.left as SingleFieldError);
+    } else {
+      NbToast.error(response.left.message);
+      return const Right(null);
+    }
+  }
+
+  Future<NullOrSingleFieldError> forgetPassword(String phoneNumber) async {
+    final String phone;
+    try {
+      phone = NbFormatter.phone(phoneNumber);
+    } catch (e) {
+      NbToast.error(e.toString());
+      return const Right(null);
+    }
+    final response = await AuthService.forgetPassword(phone: phone);
+    if (response.isRight) {
+      String username = response.right["username"];
+      String email = response.right["email"];
+      AuthModal.showWithoutPop(
+        OtpCodeVerificationPage(
+            phoneNumber: phoneNumber,
+            email: email,
+            username: username,
+            resetPassword: true),
+      );
+      return const Right(null);
+    } else if (response.left is SingleFieldError) {
+      return Left(response.left as SingleFieldError);
+    } else {
+      NbToast.error(response.left.message);
+      return const Right(null);
+    }
+  }
+
+  Future<void> setPin(String pin) async {
+    final response = await AuthService.setPin(pin: pin);
+    if (response.isRight) {
+      _gotToHome();
+    } else {
+      NbToast.error(response.left.message);
     }
   }
 

@@ -24,7 +24,7 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   ValueNotifier<bool> obscurePassword = ValueNotifier(true);
-  ValueNotifier<ButtonEnum> buttonStatus = ValueNotifier(ButtonEnum.active);
+  ValueNotifier<ButtonEnum> buttonStatus = ValueNotifier(ButtonEnum.disabled);
   late TextEditingController firstNameCntrl;
   late TextEditingController lastNameCntrl;
   late TextEditingController usernameCntrl;
@@ -101,7 +101,7 @@ class _SignupPageState extends State<SignupPage> {
                     top: Radius.circular(16.r),
                   ),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 12.h),
+                padding: EdgeInsets.fromLTRB(9.w, 12.h, 9.w, 0),
                 child: SingleChildScrollView(
                   child: Form(
                     key: formKey,
@@ -218,6 +218,24 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  bool validators() {
+    if (!NbValidators.isPassword(passwordCntrl.text)) {
+      return false;
+    } else if (usernameCntrl.text.isEmpty) {
+      return false;
+    } else if (!NbValidators.isPhone(phoneCntrl.text.trim())) {
+      return false;
+    } else if (!NbValidators.isEmail(emailCntrl.text.trim())) {
+      return false;
+    } else if (firstNameCntrl.text.isEmpty) {
+      return false;
+    } else if (lastNameCntrl.text.isEmpty) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   void _back() {
     Get.back();
   }
@@ -225,6 +243,11 @@ class _SignupPageState extends State<SignupPage> {
   _onChanged(String? val) {
     formKey.currentState?.reset();
     clearForcedErrors();
+    if (validators()) {
+      buttonStatus.value = ButtonEnum.active;
+    } else {
+      buttonStatus.value = ButtonEnum.disabled;
+    }
   }
 
   void _privacyPolicy() {}

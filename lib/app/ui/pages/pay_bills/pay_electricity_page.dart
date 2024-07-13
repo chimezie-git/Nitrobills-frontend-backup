@@ -182,21 +182,21 @@ class _PayElectricityPageState extends State<PayElectricityPage> {
       setState(() {
         isLoading = false;
       });
-      int? id;
-      if (addToBeneficiary) {
-        id = await Get.find<BeneficiariesController>().create(
-          name: nameCntr.text,
-          number: idCntr.text,
-          serviceType: ServiceTypesEnum.electricity,
-          provider: electricityProvider!,
-        );
-      }
+      // int? id;
+      // if (addToBeneficiary) {
+      //   id = await Get.find<BeneficiariesController>().create(
+      //     name: nameCntr.text,
+      //     number: idCntr.text,
+      //     serviceType: ServiceTypesEnum.electricity,
+      //     provider: electricityProvider!,
+      //   );
+      // }
       ElectricityBill bill = ElectricityBill(
         amount: double.parse(amountCntr.text),
         name: nameCntr.text,
         codeNumber: idCntr.text,
         provider: electricityProvider!,
-        beneficiaryId: id,
+        saveBeneficiary: addToBeneficiary,
       );
       setState(() {
         isLoading = false;

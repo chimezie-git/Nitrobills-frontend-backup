@@ -322,7 +322,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
           name: ben.name,
           codeNumber: ben.code,
           provider: serviceProvider as MobileServiceProvider,
-          beneficiaryId: ben.id,
+          saveBeneficiary: false,
         );
       case ServiceTypesEnum.data:
         return DataBill(
@@ -331,7 +331,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
           codeNumber: ben.code,
           provider: serviceProvider as MobileServiceProvider,
           plan: servicePlan as GbDataPlans,
-          beneficiaryId: ben.id,
+          saveBeneficiary: false,
         );
       case ServiceTypesEnum.electricity:
         return ElectricityBill(
@@ -339,7 +339,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
           name: ben.name,
           codeNumber: ben.code,
           provider: serviceProvider as ElectricityServiceProvider,
-          beneficiaryId: ben.id,
+          saveBeneficiary: false,
         );
       case ServiceTypesEnum.cable:
         return CableBill(
@@ -348,7 +348,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
           codeNumber: ben.code,
           provider: serviceProvider as TvServiceProvider,
           plan: servicePlan as GbCablePlans,
-          beneficiaryId: ben.id,
+          saveBeneficiary: false,
         );
       case ServiceTypesEnum.betting:
         return BetBill(
@@ -356,7 +356,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
           name: ben.name,
           codeNumber: ben.code,
           provider: serviceProvider as BetServiceProvider,
-          beneficiaryId: ben.id,
+          saveBeneficiary: false,
         );
       default:
         throw Exception("Nitrobills error: Bulk sms is not a valid type");
