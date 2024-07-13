@@ -6,6 +6,7 @@ import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_json.dart';
+import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class BallLoaderButton extends StatefulWidget {
   final String text;
@@ -45,37 +46,139 @@ class _BallLoaderButtonState extends State<BallLoaderButton>
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: widget.status.isLoading ? null : widget.onTap,
-      child: Container(
-        height: 60.h,
-        width: double.maxFinite,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
-          color: widget.status.bgColor,
+    return Material(
+      color: widget.status.bgColor,
+      borderRadius: BorderRadius.circular(16.r),
+      child: InkWell(
+        onDoubleTap: null,
+        borderRadius: BorderRadius.circular(16.r),
+        overlayColor: WidgetStatePropertyAll(
+          const Color(0xFF0E9ECA).withOpacity(0.13),
         ),
-        child: widget.status.isLoading
-            ? Lottie.asset(
-                NbLottie.ballLoader,
-                height: 60.h,
-                alignment: Alignment.center,
-                fit: BoxFit.cover,
-                controller: _controller,
-                onLoaded: (composition) {
-                  _controller
-                    ..duration = composition.duration
-                    ..forward();
-                },
-              )
-            : Text(
-                widget.text,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400,
-                  color: NbColors.white,
+        splashFactory: InkRipple.splashFactory,
+        onTap: widget.status.isActive ? widget.onTap : null,
+        child: Container(
+          height: 60.h,
+          width: double.maxFinite,
+          alignment: Alignment.center,
+          child: widget.status.isLoading
+              ? Lottie.asset(
+                  NbLottie.ballLoader,
+                  height: 60.h,
+                  alignment: Alignment.center,
+                  fit: BoxFit.cover,
+                  controller: _controller,
+                  onLoaded: (composition) {
+                    _controller
+                      ..duration = composition.duration
+                      ..forward();
+                  },
+                )
+              : Text(
+                  widget.text,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w400,
+                    color: widget.status.textColor,
+                  ),
                 ),
+        ),
+      ),
+    );
+  }
+}
+
+class GreyDoubleTextButton extends StatelessWidget {
+  final void Function() onTap;
+  final String text1;
+  final String text2;
+
+  const GreyDoubleTextButton(
+      {super.key,
+      required this.onTap,
+      required this.text1,
+      required this.text2});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: const Color(0xFFE8E7E7),
+      borderRadius: BorderRadius.circular(16.r),
+      child: InkWell(
+        onDoubleTap: null,
+        borderRadius: BorderRadius.circular(16.r),
+        overlayColor: WidgetStatePropertyAll(
+          const Color(0xFF0E9ECA).withOpacity(0.13),
+        ),
+        splashFactory: InkRipple.splashFactory,
+        onTap: onTap,
+        child: Container(
+          height: 60.h,
+          width: double.maxFinite,
+          alignment: Alignment.center,
+          child: RichText(
+            text: TextSpan(
+              text: "$text1 ",
+              style: TextStyle(
+                color: const Color(0xFF2F3336),
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Satoshi',
               ),
+              children: [
+                TextSpan(
+                    text: "$text2 ",
+                    style: const TextStyle(
+                      color: Color(0xFF1E92E9),
+                      fontFamily: 'Satoshi',
+                      decoration: TextDecoration.underline,
+                    ))
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class GreyTextSvgButton extends StatelessWidget {
+  final void Function() onTap;
+  final String text;
+  final String svg;
+
+  const GreyTextSvgButton(
+      {super.key, required this.onTap, required this.text, required this.svg});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: const Color(0xFFE8E7E7),
+      borderRadius: BorderRadius.circular(16.r),
+      child: InkWell(
+        onDoubleTap: null,
+        borderRadius: BorderRadius.circular(16.r),
+        overlayColor: WidgetStatePropertyAll(
+          const Color(0xFF0E9ECA).withOpacity(0.13),
+        ),
+        splashFactory: InkRipple.splashFactory,
+        onTap: onTap,
+        child: Container(
+          height: 60.h,
+          width: double.maxFinite,
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                svg,
+                width: 24.r,
+              ),
+              24.horizontalSpace,
+              NbText.sp16(text).w500.setColor(const Color(0xFF282828)),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -156,6 +259,41 @@ class _CircleLoaderButtonState extends State<CircleLoaderButton>
                       child: SvgPicture.asset(NbSvg.greenCheck),
                     ),
                   )),
+      ),
+    );
+  }
+}
+
+class BlackWidgetButton extends StatelessWidget {
+  const BlackWidgetButton(
+      {super.key,
+      required this.child,
+      required this.onTap,
+      required this.status});
+
+  final Widget child;
+  final void Function() onTap;
+  final ButtonEnum status;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: status.bgColor,
+      borderRadius: BorderRadius.circular(16.r),
+      child: InkWell(
+        onDoubleTap: null,
+        borderRadius: BorderRadius.circular(16.r),
+        overlayColor: WidgetStatePropertyAll(
+          const Color(0xFF0E9ECA).withOpacity(0.13),
+        ),
+        splashFactory: InkRipple.splashFactory,
+        onTap: status.isActive ? onTap : null,
+        child: Container(
+          height: 60.h,
+          width: double.maxFinite,
+          alignment: Alignment.center,
+          child: child,
+        ),
       ),
     );
   }

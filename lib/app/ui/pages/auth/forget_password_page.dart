@@ -10,25 +10,18 @@ import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
-class PhoneNumberPage extends StatefulWidget {
-  final String? phoneNumber;
-
-  /// did user get to this page from the edit button on the
-  ///  otp page or not
-  final bool resetPassword;
-  const PhoneNumberPage({
+class ForgetPasswordPage extends StatefulWidget {
+  const ForgetPasswordPage({
     super.key,
-    this.phoneNumber,
-    this.resetPassword = false,
   });
 
   @override
-  State<PhoneNumberPage> createState() => _PhoneNumberPageState();
+  State<ForgetPasswordPage> createState() => _PhoneNumberPageState();
 }
 
-class _PhoneNumberPageState extends State<PhoneNumberPage> {
+class _PhoneNumberPageState extends State<ForgetPasswordPage> {
   late TextEditingController phoneCntrl;
-  ValueNotifier<ButtonEnum> buttonStatus = ValueNotifier(ButtonEnum.active);
+  ValueNotifier<ButtonEnum> buttonStatus = ValueNotifier(ButtonEnum.disabled);
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   bool errorPhone = false;
@@ -37,7 +30,8 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   @override
   void initState() {
     super.initState();
-    phoneCntrl = TextEditingController(text: widget.phoneNumber);
+
+    phoneCntrl = TextEditingController();
   }
 
   @override
@@ -100,6 +94,7 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                             controller: phoneCntrl,
                             forcedError: errorPhone,
                             forcedErrorString: errorPhoneText,
+                            onChanged: _onChange,
                             validator: () {
                               if (!NbValidators.isPhone(phoneCntrl.text)) {
                                 return "Enter a valid Phone Number";
@@ -133,11 +128,20 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
     Get.back();
   }
 
+  void _onChange(String? v) {
+    if (NbValidators.isPhone(phoneCntrl.text)) {
+      buttonStatus.value = ButtonEnum.active;
+    } else {
+      buttonStatus.value = ButtonEnum.disabled;
+    }
+    formKey.currentState?.reset();
+    _resetForcedError();
+  }
+
   void _resetPassword() async {
     if (formKey.currentState?.validate() ?? false) {
       buttonStatus.value = ButtonEnum.loading;
-      final data =
-          await AuthRepo().sendOtpSMS(phoneCntrl.text, widget.resetPassword);
+      final data = await AuthRepo().forgetPassword(phoneCntrl.text);
       if (data.isLeft) {
         _setError(data.left);
       }
@@ -148,5 +152,12 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   void _setError(SingleFieldError error) {
     errorPhone = true;
     errorPhoneText = error.message;
+    setState(() {});
+  }
+
+  void _resetForcedError() {
+    errorPhone = false;
+    errorPhoneText = null;
+    setState(() {});
   }
 }

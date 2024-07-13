@@ -28,7 +28,7 @@ class BeneficiariesActionsModal extends StatelessWidget {
             _divider(),
             _frequencyTile(NbSvg.autopay, "Setup auto pay", _autopay),
             _divider(),
-            _frequencyTile(NbSvg.delete, "Delete Beneficiart", _delete),
+            _frequencyTile(NbSvg.delete, "Delete Beneficiary", _delete),
           ],
         ),
       ),
@@ -53,7 +53,7 @@ class BeneficiariesActionsModal extends StatelessWidget {
               child: Center(
                   child: SvgPicture.asset(
                 svg,
-                width: 25.r,
+                height: 25.r,
               )),
             ),
             13.horizontalSpace,

@@ -1,62 +1,69 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nitrobills/app/data/enums/loader_enum.dart';
-import 'package:nitrobills/app/ui/pages/manage_data/models/day_data.dart';
+import 'package:nitrobills/app/data/extensions/datetime_extension.dart';
+import 'package:nitrobills/app/data/services/manage_data/manage_data_service.dart';
+import 'package:nitrobills/app/hive_box/data_management/data_management.dart';
+import 'package:nitrobills/app/hive_box/data_management/day_data.dart';
 
 class ManageDataController extends GetxController {
-  final Rx<LoaderEnum> status = Rx<LoaderEnum>(LoaderEnum.loading);
-  Rx<DayData> selected = Rx(DayData(2, DateTime.now()));
+  final Rx<DateTime> selected = Rx<DateTime>(DateTime.now());
   final RxBool loaded = RxBool(false);
-  final RxDouble maxData = RxDouble(100);
-  late Rx<(DateTime, DateTime)> dayRange;
+  final RxInt maxData = RxInt(100);
   final RxList<DayData> data = RxList<DayData>();
+  late final Rx<DataManagement> dataManager;
+  late final Rx<(DateTime, DateTime)> dayRange;
 
   Future initialize() async {
     if (!loaded.value) {
-      //load data
-      await Future.delayed(const Duration(seconds: 1));
-      loaded.value = true;
-      final now = DateTime.now();
-      final lastDay = now.subtract(const Duration(days: 7));
-      dayRange = Rx((lastDay, now));
-      getPlanRange(dayRange.value, doUpdate: false);
+      // first update dayData and data management
+      await ManageDataService.updateData();
+      dataManager = Rx(DataManagement.getData());
+      dayRange = Rx(_getDefaultRange());
 
+      if (dataManager.value.enabled) {
+        updatePlansWithDate(_getDefaultRange(), doUpdate: false);
+      }
+      loaded.value = true;
       update();
     }
-    status.value = LoaderEnum.success;
   }
 
-  Future getPlanRange((DateTime, DateTime) dayRange,
+  Future reload() async {
+    await ManageDataService.updateData();
+    dataManager = Rx(DataManagement.getData());
+    dayRange = Rx(_getDefaultRange());
+
+    if (dataManager.value.enabled) {
+      updatePlansWithDate(_getDefaultRange(), doUpdate: false);
+    }
+    update();
+  }
+
+  Future updatePlansWithDate((DateTime, DateTime) dayRange,
       {bool doUpdate = true}) async {
+    // get mobile data between day range
     List<DayData> range = [];
     this.dayRange.value = dayRange;
-    int daysLength =
-        DateTimeRange(start: dayRange.$1, end: dayRange.$2).duration.inDays + 1;
-    List<DateTime> daysList = List.generate(
-      daysLength,
-      (index) => dayRange.$2.subtract(
-        Duration(days: index),
-      ),
-    );
-    final rand = Random();
-    for (int i = 0; i < daysLength; i++) {
-      range.add(DayData(rand.nextDouble() * 500.0, daysList[i]));
+    for (DayData dData in DayData.getAll()) {
+      if (dData.day.isInRange(dayRange.$1, dayRange.$2)) {
+        range.add(dData);
+      }
     }
-    data.clear();
-    print("----------------${range.length}------------");
-    data.addAll(range);
-    selected.value = data[2];
-    _setMax();
+    data.value = range;
+
+    // set maximum value
+    DayData max = data.reduce(
+        (value, element) => value.data > element.data ? value : element);
+    maxData.value = max.data;
+
+    // update data
     if (doUpdate) {
       update();
     }
   }
 
-  void _setMax() {
-    DayData max = data.reduce(
-        (value, element) => value.data > element.data ? value : element);
-    maxData.value = max.data;
+  (DateTime, DateTime) _getDefaultRange() {
+    final now = DateTime.now();
+    final lastDay = now.subtract(const Duration(days: 6));
+    return (lastDay, now);
   }
 }

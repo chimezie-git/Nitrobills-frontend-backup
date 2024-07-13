@@ -186,21 +186,21 @@ class _PayBettingPageState extends State<PayBettingPage> {
       setState(() {
         btnLoading = true;
       });
-      int? id;
-      if (addToBeneficiary) {
-        id = await Get.find<BeneficiariesController>().create(
-          name: nameCntr.text,
-          number: idCntr.text,
-          serviceType: ServiceTypesEnum.betting,
-          provider: betProvider!,
-        );
-      }
+      // int? id;
+      // if (addToBeneficiary) {
+      //   id = await Get.find<BeneficiariesController>().create(
+      //     name: nameCntr.text,
+      //     number: idCntr.text,
+      //     serviceType: ServiceTypesEnum.betting,
+      //     provider: betProvider!,
+      //   );
+      // }
       BetBill bill = BetBill(
         amount: double.parse(amountCntr.text),
         name: nameCntr.text,
         codeNumber: idCntr.text,
         provider: betProvider!,
-        beneficiaryId: id,
+        saveBeneficiary: addToBeneficiary,
       );
       setState(() {
         btnLoading = false;

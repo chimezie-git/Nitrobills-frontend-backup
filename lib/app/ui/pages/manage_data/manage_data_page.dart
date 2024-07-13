@@ -24,7 +24,7 @@ class ManageDataPage extends StatelessWidget {
           child: GetX<ManageDataController>(
             init: Get.find<ManageDataController>(),
             builder: (cntrl) {
-              if (cntrl.status.value.isLoading) {
+              if (!cntrl.loaded.value) {
                 return const ManageDataLoadingPage();
               } else {
                 return Column(
@@ -32,12 +32,7 @@ class ManageDataPage extends StatelessWidget {
                     18.verticalSpace,
                     NbText.sp18("Manage Data").w600.black,
                     16.verticalSpace,
-                    if (cntrl.status.value.isFailed)
-                      const EmptyFieldsWidget(
-                        image: NbImage.noManageData,
-                        text: "You dont have any active data subscription",
-                      )
-                    else
+                    if (cntrl.dataManager.value.enabled)
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -45,6 +40,14 @@ class ManageDataPage extends StatelessWidget {
                           32.verticalSpace,
                           const DataChartWidget(),
                         ],
+                      )
+                    else
+                      EmptyFieldsWidget(
+                        image: NbImage.noManageData,
+                        text: "You dont have any active data subscription",
+                        prefix: NbSvg.buyData,
+                        onTap: () {},
+                        btnText: "Access our data providers",
                       ),
                   ],
                 );

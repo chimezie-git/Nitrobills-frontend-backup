@@ -116,6 +116,8 @@ class _AddNewBeneficiaryPageState extends State<AddNewBeneficiaryPage> {
         number: numberCntrl.text,
         serviceType: serviceType!,
         provider: serviceProvider!,
+        colorId: 0,
+        avatarId: 0,
       );
       if (result != null) {
         Get.back();

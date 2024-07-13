@@ -185,29 +185,20 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
 
   void _continue() async {
     if (isValid) {
-      setState(() {
-        isLoading = false;
-      });
-      int? id;
-      if (addBeneficiary) {
-        id = await Get.find<BeneficiariesController>().create(
-          name: nameCntr.text,
-          number: numberCntr.text,
-          serviceType: ServiceTypesEnum.data,
-          provider: mobileProvider,
-        );
-      }
+      // setState(() {
+      //   isLoading = false;
+      // });
       DataBill bill = DataBill(
         amount: dataPlan!.amount,
         name: nameCntr.text,
         codeNumber: numberCntr.text,
         provider: mobileProvider,
         plan: dataPlan!,
-        beneficiaryId: id,
+        saveBeneficiary: addBeneficiary,
       );
-      setState(() {
-        isLoading = false;
-      });
+      // setState(() {
+      //   isLoading = false;
+      // });
       Get.to(() => ConfirmTransactionScreen(bill: bill));
     }
   }

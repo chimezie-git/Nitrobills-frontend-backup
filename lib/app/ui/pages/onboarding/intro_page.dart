@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/pages/auth/signin_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/signup_page.dart';
@@ -171,31 +171,40 @@ class _IntroPageState extends State<IntroPage>
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          // Theme(
+                          //   data: ThemeData(
+                          //       elevatedButtonTheme: ElevatedButtonThemeData(
+                          //         style: ButtonStyle(
+                          //           foregroundColor:
+                          //               WidgetStatePropertyAll(NbColors.white),
+                          //           backgroundColor:
+                          //               WidgetStateProperty.resolveWith(
+                          //                   (Set<WidgetState> states) {
+                          //             if (states
+                          //                 .contains(WidgetState.pressed)) {
+                          //               return NbColors.red;
+                          //             }else if(states.contains(WidgetState.hovered))
+                          //             return NbColors.black;
+                          //           }),
+                          //           splashFactory: InkRipple.splashFactory,
+                          //         ),
+                          //       ),
+                          //       buttonTheme: ButtonThemeData(
+                          //         buttonColor: NbColors.black,
+                          //         splashColor: NbColors.white,
+                          //       )),
+                          //   child: ElevatedButton(
+                          //     onPressed: () {},
+                          //     child: const Text("Hello world"),
+                          //   ),
+                          // ),
                           NbButton.primary(
                               text: "Create an account", onTap: _signup),
                           28.verticalSpace,
-                          RichText(
-                            text: TextSpan(
-                              text: "Already with nitro? ",
-                              style: TextStyle(
-                                color: const Color(0xFF2F3336),
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Satoshi',
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: "Sign In ",
-                                  style: const TextStyle(
-                                    color: Color(0xFF1E92E9),
-                                    fontFamily: 'Satoshi',
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = _signin,
-                                )
-                              ],
-                            ),
+                          GreyDoubleTextButton(
+                            text1: "Already with nitro?",
+                            text2: "Sign in",
+                            onTap: _signin,
                           ),
                           35.verticalSpace,
                         ],

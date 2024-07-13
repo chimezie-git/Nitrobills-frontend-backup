@@ -16,7 +16,7 @@ class UserAccount extends Equatable {
   static const String _phoneNumberKey = "phone_number";
   static const String _referralCodeKey = "referral_code";
   static const String _secretsKey = "secrets";
-  static const String _bankKey = "bank";
+  static const String _bankKey = "banks";
 
   final int id;
   final String email;
@@ -65,7 +65,9 @@ class UserAccount extends Equatable {
       phoneNumber: json[_phoneNumberKey],
       referralCode: json[_referralCodeKey],
       secrets: ApiSecrets.fromJson(json[_secretsKey]),
-      banks: [BankInfo.fromJson(json[_bankKey]), BankInfo.empty()],
+      banks: List<Map<String, dynamic>>.from(json[_bankKey])
+          .map((e) => BankInfo.fromJson(e))
+          .toList(),
     );
   }
 

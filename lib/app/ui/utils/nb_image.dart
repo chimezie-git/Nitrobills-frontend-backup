@@ -53,6 +53,24 @@ class NbSvg {
   static const String exclamation = "assets/svg/exclamation.svg";
   static const String wallet = "assets/svg/wallet.svg";
   static const String trashCan = "assets/svg/trash_can.svg";
+  static const String backspace = "assets/svg/backspace.svg";
+  static const String automatedPayment = "assets/svg/automated_payment.svg";
+  static const String beneficiaryHeart = "assets/svg/beneficiary_heart.svg";
+  static const String checkRounded = "assets/svg/check_rounded.svg";
+  static const String editAvatar = "assets/svg/edit_avatar.svg";
+  static const String infoHexagon = "assets/svg/info_hexagon.svg";
+  static const String lock = "assets/svg/lock.svg";
+  static const String naira = "assets/svg/naira.svg";
+  static const String preference = "assets/svg/preference.svg";
+  static const String senderName = "assets/svg/sender_name.svg";
+  static const String sparkOutline = "assets/svg/spark_outline.svg";
+  static const String trophy = "assets/svg/trophy.svg";
+  static const String questionMark = "assets/svg/question_mark.svg";
+  static const String fundAccount = "assets/svg/fund_account.svg";
+  static const String iSvg = "assets/svg/i_svg.svg";
+  static const String sparkRounded = "assets/svg/spark_rounded.svg";
+  static const String stopWatch = "assets/svg/stop_watch.svg";
+
   // static const String phone = "assets/svg/phone.svg";
 }
 
@@ -107,4 +125,7 @@ class NbImage {
   static const String onboarding2 = "assets/images/onboarding/onboarding2.png";
   static const String onboarding3 = "assets/images/onboarding/onboarding3.png";
   static const String onboarding4 = "assets/images/onboarding/onboarding4.png";
+  // avatar
+  static const String avatar1 = "assets/images/avatar/avatar1.png";
+  static const String avatar2 = "assets/images/avatar/avatar2.png";
 }
