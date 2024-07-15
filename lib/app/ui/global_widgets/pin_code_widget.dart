@@ -10,15 +10,14 @@ class PinCodeWidget extends StatefulWidget {
   final void Function(String) onSubmit;
   final Duration duration;
   final ValueNotifier<ButtonEnum>? status;
-  final bool clear;
 
-  const PinCodeWidget(
-      {super.key,
-      this.spacer,
-      required this.onSubmit,
-      this.duration = const Duration(milliseconds: 600),
-      this.status,
-      this.clear = false});
+  const PinCodeWidget({
+    super.key,
+    this.spacer,
+    required this.onSubmit,
+    this.duration = const Duration(milliseconds: 600),
+    this.status,
+  });
 
   @override
   State<PinCodeWidget> createState() => _PinCodeWidgetState();
@@ -30,18 +29,6 @@ class _PinCodeWidgetState extends State<PinCodeWidget> {
   late bool hide2 = false;
   late bool hide3 = false;
   late bool hide4 = false;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.clear) {
-      code = [];
-      hide1 = false;
-      hide2 = false;
-      hide3 = false;
-      hide4 = false;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +102,7 @@ class _PinCodeWidgetState extends State<PinCodeWidget> {
     } else if (index == -2) {
       if (code.length == 4) {
         widget.onSubmit(code.join(""));
+        _clear();
       }
     } else if (code.length < 4) {
       code.add("$index");
@@ -140,6 +128,15 @@ class _PinCodeWidgetState extends State<PinCodeWidget> {
         hide1 = true;
       default:
     }
+    setState(() {});
+  }
+
+  void _clear() {
+    code = [];
+    hide1 = false;
+    hide2 = false;
+    hide3 = false;
+    hide4 = false;
     setState(() {});
   }
 }

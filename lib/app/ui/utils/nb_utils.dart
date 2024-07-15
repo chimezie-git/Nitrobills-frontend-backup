@@ -8,8 +8,8 @@ import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NbUtils {
-  // static String baseUrl = "https://nitrobills-backend.onrender.com";
-  static String baseUrl = "http://127.0.0.1:8000";
+  static String baseUrl = "https://nitrobills-backend.onrender.com";
+  // static String baseUrl = "http://127.0.0.1:8000";
 
   static GlobalKey<NavigatorState> nav = GlobalKey<NavigatorState>();
 
@@ -48,11 +48,6 @@ class NbUtils {
     DateTime endDay = now.add(const Duration(days: 7));
     return (startDay, endDay);
   }
-
-  // static Color listColor(int index) {
-  //   final allColor = [0xFF897AE5, 0xFF2A6F7E, 0xFFD0119B];
-  //   return Color(allColor[(index % allColor.length)]);
-  // }
 
   static void removeKeyboard() {
     FocusManager.instance.primaryFocus?.unfocus();
