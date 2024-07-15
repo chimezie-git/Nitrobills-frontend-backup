@@ -47,10 +47,9 @@ class BeneficiariesWidget extends StatelessWidget {
                       margin: EdgeInsets.only(top: 8.h),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.r),
-                        color: NbUtils.listColor(index),
+                        color: beneficiary.color,
                       ),
-                      child:
-                          NbText.sp22(beneficiary.name[0].toUpperCase()).white,
+                      child: beneficiary.avatar,
                     ),
                     16.horizontalSpace,
                     Expanded(

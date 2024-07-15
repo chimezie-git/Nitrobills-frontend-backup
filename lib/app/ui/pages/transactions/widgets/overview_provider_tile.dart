@@ -37,34 +37,36 @@ class OverviewProviderTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          AspectRatio(
-            aspectRatio: 1,
-            child: InkWell(
-              onTap: _chooseAvatar,
-              borderRadius: BorderRadius.circular(9.6.r),
-              child: Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: colorIdx != null
-                      ? Beneficiary.bgColor[colorIdx!]
-                      : const Color(0xFF897AE5),
-                  borderRadius: BorderRadius.circular(9.6.r),
-                ),
-                child: avatarIdx != null
-                    ? Beneficiary.avatarImage(avatarIdx!)
-                    : SvgPicture.asset(
-                        NbSvg.editAvatar,
-                        width: 22.r,
-                        height: 22.r,
-                        colorFilter: const ColorFilter.mode(
-                          NbColors.white,
-                          BlendMode.srcIn,
+          if (bill.saveBeneficiary) ...[
+            AspectRatio(
+              aspectRatio: 1,
+              child: InkWell(
+                onTap: _chooseAvatar,
+                borderRadius: BorderRadius.circular(9.6.r),
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: colorIdx != null
+                        ? Beneficiary.bgColor[colorIdx!]
+                        : const Color(0xFF897AE5),
+                    borderRadius: BorderRadius.circular(9.6.r),
+                  ),
+                  child: avatarIdx != null
+                      ? Beneficiary.avatarImage(avatarIdx!)
+                      : SvgPicture.asset(
+                          NbSvg.editAvatar,
+                          width: 22.r,
+                          height: 22.r,
+                          colorFilter: const ColorFilter.mode(
+                            NbColors.white,
+                            BlendMode.srcIn,
+                          ),
                         ),
-                      ),
+                ),
               ),
             ),
-          ),
-          16.horizontalSpace,
+            16.horizontalSpace,
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

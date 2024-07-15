@@ -26,11 +26,14 @@ class ContactItemCell extends StatelessWidget {
               aspectRatio: 1,
               child: Container(
                 alignment: Alignment.center,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.blue,
+                  image: DecorationImage(
+                    image: AssetImage(payment.provider.image),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                child: NbText.sp16(name).w500.white,
               ),
             ),
           ),

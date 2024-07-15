@@ -40,7 +40,7 @@ class AirtimeBill extends Bill {
     required super.codeNumber,
     required super.provider,
     required super.saveBeneficiary,
-  }) : super(serviceType: ServiceTypesEnum.data);
+  }) : super(serviceType: ServiceTypesEnum.airtime);
 }
 
 class CableBill extends Bill {

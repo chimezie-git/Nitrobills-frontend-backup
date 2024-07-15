@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/data/repository/auth_repo.dart';
 import 'package:nitrobills/app/ui/global_widgets/pin_code_widget.dart';
+import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
@@ -17,6 +18,7 @@ class PinCodePage extends StatefulWidget {
 class _PinCodePageState extends State<PinCodePage> {
   ValueNotifier<ButtonEnum> btnStatus = ValueNotifier(ButtonEnum.disabled);
   bool firstPin = true;
+  bool hasError = false;
   String pin1 = '';
   String pin2 = '';
 
@@ -53,6 +55,10 @@ class _PinCodePageState extends State<PinCodePage> {
                     .w700
                     .setColor(const Color(0xFF219FFB)),
             const Spacer(),
+            if (hasError)
+              NbText.sp12("Pin code is not the same")
+                  .w400
+                  .setColor(NbColors.red),
             PinCodeWidget(
               onSubmit: (v) {
                 submit(v);
@@ -69,7 +75,9 @@ class _PinCodePageState extends State<PinCodePage> {
   Future submit(String pin) async {
     if (firstPin) {
       firstPin = false;
+      hasError = false;
       pin1 = pin;
+      setState(() {});
     } else {
       pin2 = pin;
       if (pin1 == pin2) {
@@ -78,6 +86,7 @@ class _PinCodePageState extends State<PinCodePage> {
         firstPin = true;
         pin1 = '';
         pin2 = '';
+        hasError = true;
         setState(() {});
       }
     }

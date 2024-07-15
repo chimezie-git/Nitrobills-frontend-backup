@@ -11,7 +11,6 @@ import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
-import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class BeneficiaryListPage extends StatelessWidget {
   final ServiceTypesEnum serviceType;
@@ -116,9 +115,9 @@ class BeneficiaryListPage extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: NbUtils.listColor(index),
+                  color: beneficiary.color,
                 ),
-                child: NbText.sp18(beneficiary.name[0]).w600.white,
+                child: beneficiary.avatar,
               ),
             ),
             16.horizontalSpace,

@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
+import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
 import 'package:nitrobills/app/ui/utils/nb_hive_box.dart';
 import 'package:uuid/uuid.dart';
 
@@ -30,6 +31,11 @@ class RecentPayment extends HiveObject {
 
   ServiceTypesEnum get serviceTypesEnum =>
       ServiceTypesEnum.fromInt(serviceType);
+
+  AbstractServiceProvider get provider {
+    return AbstractServiceProvider.fromServer(
+        serviceProvider, serviceTypesEnum);
+  }
 
   static Future add({
     required int serviceType,

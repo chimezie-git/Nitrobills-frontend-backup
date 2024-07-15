@@ -5,6 +5,7 @@ import 'package:nitrobills/app/ui/pages/home/models/bank_info.dart';
 class UserAccount extends Equatable {
   static const String _idKey = "id";
   static const String _emailKey = "email";
+  static const String _pinKey = "pin_code";
   static const String _referralCountKey = "referral_count";
   static const String _firstNameKey = "first_name";
   static const String _dateJoinedKey = "date_joined";
@@ -20,6 +21,7 @@ class UserAccount extends Equatable {
 
   final int id;
   final String email;
+  final String pin;
   final int referralCount;
   final String firstName;
   final DateTime dateJoined;
@@ -36,6 +38,7 @@ class UserAccount extends Equatable {
   const UserAccount({
     required this.id,
     required this.email,
+    required this.pin,
     required this.referralCount,
     required this.firstName,
     required this.dateJoined,
@@ -54,6 +57,7 @@ class UserAccount extends Equatable {
     return UserAccount(
       id: json[_idKey],
       email: json[_emailKey],
+      pin: json[_pinKey],
       referralCount: json[_referralCountKey],
       firstName: json[_firstNameKey],
       dateJoined: DateTime.parse(json[_dateJoinedKey]),
