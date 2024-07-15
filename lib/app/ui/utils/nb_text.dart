@@ -103,15 +103,18 @@ extension HtTextExtensions on Text {
     Color? color,
     int? maxLines,
     TextAlign? textAlign,
+    double? height,
   }) =>
       Text(
         data ?? "",
         textAlign: textAlign ?? this.textAlign,
         maxLines: maxLines ?? this.maxLines,
+
         // style: style?.merge(this.style) ?? this.style,
         style: (style ?? const TextStyle()).copyWith(
           fontWeight: fontWeight,
           color: color,
+          height: height,
           decoration: decoration,
         ),
       );
@@ -131,6 +134,7 @@ extension HtTextExtensions on Text {
   Text get w600 => copyWith(fontWeight: FontWeight.w600);
   Text get w700 => copyWith(fontWeight: FontWeight.w700);
   Text setMaxLines(int lines) => copyWith(maxLines: lines);
+  Text setLinesHeight(double height) => copyWith(height: height);
   Text get strikeThrough => copyWith(decoration: TextDecoration.lineThrough);
   Text get underline => copyWith(decoration: TextDecoration.underline);
 }

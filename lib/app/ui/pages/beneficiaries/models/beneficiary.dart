@@ -19,12 +19,16 @@ class Beneficiary {
   static const String _userCodeKey = "user_code";
   static const String _lastPaymentKey = "last_payment";
   static const String _transactionTypeKey = "transaction_type";
+  static const String _colorIdKey = "color_id";
+  static const String _avatarIdKey = "avatar_id";
 
   final int id;
   final String name;
 
   /// called transaction type in the server
   final ServiceTypesEnum serviceType;
+  final int colorId;
+  final int avatarId;
   final String provider;
   final String code;
   final Transaction? lastPayment;
@@ -35,6 +39,8 @@ class Beneficiary {
     required this.serviceType,
     required this.provider,
     required this.code,
+    required this.colorId,
+    required this.avatarId,
     required this.lastPayment,
   });
 
@@ -48,10 +54,23 @@ class Beneficiary {
       id: json[_idKey],
       name: json[_nameKey],
       serviceType: serviceType,
+      colorId: json[_colorIdKey],
+      avatarId: json[_avatarIdKey],
       provider: json[_providerKey],
       code: json[_userCodeKey],
       lastPayment: lastPay,
     );
+  }
+
+  Color get color => bgColor[colorId];
+  Widget get avatar {
+    if (avatarId == 0) {
+      return NbText.sp28(name[0].toUpperCase()).w500.black;
+    } else if (avatarId == 1) {
+      return Image.asset(NbImage.avatar1);
+    } else {
+      return Image.asset(NbImage.avatar2);
+    }
   }
 
   AbstractServiceProvider get serviceProvider =>

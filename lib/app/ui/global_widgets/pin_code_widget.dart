@@ -10,24 +10,38 @@ class PinCodeWidget extends StatefulWidget {
   final void Function(String) onSubmit;
   final Duration duration;
   final ValueNotifier<ButtonEnum>? status;
+  final bool clear;
 
   const PinCodeWidget(
       {super.key,
       this.spacer,
       required this.onSubmit,
       this.duration = const Duration(milliseconds: 600),
-      this.status});
+      this.status,
+      this.clear = false});
 
   @override
   State<PinCodeWidget> createState() => _PinCodeWidgetState();
 }
 
 class _PinCodeWidgetState extends State<PinCodeWidget> {
-  List<String> code = [];
-  bool hide1 = false;
-  bool hide2 = false;
-  bool hide3 = false;
-  bool hide4 = false;
+  late List<String> code = [];
+  late bool hide1 = false;
+  late bool hide2 = false;
+  late bool hide3 = false;
+  late bool hide4 = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.clear) {
+      code = [];
+      hide1 = false;
+      hide2 = false;
+      hide3 = false;
+      hide4 = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

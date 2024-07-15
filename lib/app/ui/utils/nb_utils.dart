@@ -49,10 +49,10 @@ class NbUtils {
     return (startDay, endDay);
   }
 
-  static Color listColor(int index) {
-    final allColor = [0xFF897AE5, 0xFF2A6F7E, 0xFFD0119B];
-    return Color(allColor[(index % allColor.length)]);
-  }
+  // static Color listColor(int index) {
+  //   final allColor = [0xFF897AE5, 0xFF2A6F7E, 0xFFD0119B];
+  //   return Color(allColor[(index % allColor.length)]);
+  // }
 
   static void removeKeyboard() {
     FocusManager.instance.primaryFocus?.unfocus();

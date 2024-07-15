@@ -298,3 +298,120 @@ class BlackWidgetButton extends StatelessWidget {
     );
   }
 }
+
+class PayNowButton extends StatelessWidget {
+  final ButtonEnum status;
+  final void Function() onTap;
+
+  const PayNowButton({
+    super.key,
+    required this.status,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: status.isActive ? onTap : null,
+      borderRadius: BorderRadius.circular(16.r),
+      child: Container(
+        height: 56.h,
+        width: 154.w,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.r),
+          color: status.isDisabled ? const Color(0xFFEFEFEF) : NbColors.black,
+        ),
+        child: status.isLoading
+            ? SizedBox(
+                width: 24.r,
+                height: 24.r,
+                child: const CircularProgressIndicator(
+                  color: NbColors.white,
+                  strokeCap: StrokeCap.round,
+                ),
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  NbText.sp14("Pay now").w700.setColor(status.isDisabled
+                      ? const Color(0xFF212121)
+                      : NbColors.white),
+                  16.horizontalSpace,
+                  SvgPicture.asset(
+                    NbSvg.checkRounded,
+                    width: 20.r,
+                    height: 20.r,
+                    colorFilter: ColorFilter.mode(
+                      status.isDisabled
+                          ? const Color(0xFF212121)
+                          : NbColors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+}
+
+class ProceedButton extends StatelessWidget {
+  final ButtonEnum status;
+  final void Function() onTap;
+
+  const ProceedButton({
+    super.key,
+    required this.status,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: status.isActive ? onTap : null,
+      borderRadius: BorderRadius.circular(16.r),
+      child: Container(
+        height: 56.h,
+        width: 154.w,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.r),
+          color: status.isDisabled ? const Color(0xFFEFEFEF) : NbColors.black,
+        ),
+        child: status.isLoading
+            ? SizedBox(
+                width: 24.r,
+                height: 24.r,
+                child: const CircularProgressIndicator(
+                  color: NbColors.white,
+                  strokeCap: StrokeCap.round,
+                ),
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  NbText.sp14("Proceed").w700.setColor(status.isDisabled
+                      ? const Color(0xFF212121)
+                      : NbColors.white),
+                  16.horizontalSpace,
+                  RotatedBox(
+                    quarterTurns: 2,
+                    child: SvgPicture.asset(
+                      NbSvg.arrowBack,
+                      width: 15.r,
+                      height: 15.r,
+                      colorFilter: ColorFilter.mode(
+                        status.isDisabled
+                            ? const Color(0xFF212121)
+                            : NbColors.white,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+}

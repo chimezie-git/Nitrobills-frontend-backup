@@ -70,6 +70,10 @@ class NbSvg {
   static const String iSvg = "assets/svg/i_svg.svg";
   static const String sparkRounded = "assets/svg/spark_rounded.svg";
   static const String stopWatch = "assets/svg/stop_watch.svg";
+  static const String validity = "assets/svg/validity.svg";
+  static const String dateTime = "assets/svg/date_time.svg";
+  static const String charge = "assets/svg/charge.svg";
+  static const String emailHeart = "assets/svg/email_heart.svg";
 
   // static const String phone = "assets/svg/phone.svg";
 }
@@ -85,6 +89,7 @@ class NbImage {
   static const String flag = "assets/images/flag.png";
   static const String glo = "assets/images/glo.png";
   static const String gotv = "assets/images/gotv.png";
+  static const String logo = "assets/images/logo.png";
   static const String logoNoSpark = "assets/images/logo_no_spark.png";
   static const String logoSpark = "assets/images/logo_spark.png";
   static const String merryBet = "assets/images/merry_bet.png";
@@ -94,6 +99,8 @@ class NbImage {
   static const String sportyBet = "assets/images/sporty_bet.png";
   static const String startimes = "assets/images/startimes.png";
   static const String dstv = "assets/images/dstv.png";
+  static const String greyRatingStar = "assets/images/star_grey_rating.png";
+  static const String goldRatingStar = "assets/images/gold_rating_star.png";
 
   static const String noTransactions = "assets/images/no_transactions.png";
   static const String noManageData = "assets/images/no_subscription.png";
@@ -120,6 +127,8 @@ class NbImage {
   static const String ikejaElect = "assets/images/ikeja_electric.jpg";
   static const String confetti = "assets/images/confetti.png";
   static const String homeBgImg = "assets/images/home_bg_color.png";
+  static const String whiteBlackRoundLogo =
+      "assets/images/white_black_round_logo.png";
   // onboarding page
   static const String onboarding1 = "assets/images/onboarding/onboarding1.png";
   static const String onboarding2 = "assets/images/onboarding/onboarding2.png";
