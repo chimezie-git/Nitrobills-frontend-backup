@@ -30,9 +30,8 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
   bool oldPasswordVisible = false;
   bool confirmPasswordVisible = false;
 
-  bool loading = false;
-
   GlobalKey<FormState> formKey = GlobalKey();
+  ButtonEnum btnStatus = ButtonEnum.disabled;
 
   @override
   void initState() {
@@ -90,6 +89,9 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
               NbField.textAndIcon(
                   obscureText: true,
                   controller: newPasswordCntrl,
+                  onChanged: (v) {
+                    checkValidator();
+                  },
                   validator: () {
                     if (!NbValidators.isPassword(newPasswordCntrl.text)) {
                       return "Password must be eight characters, with at least one letter and one number";
@@ -116,6 +118,9 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
               16.verticalSpace,
               NbField.textAndIcon(
                   obscureText: true,
+                  onChanged: (v) {
+                    checkValidator();
+                  },
                   controller: confirmPasswordCntrl,
                   validator: () {
                     if (confirmPasswordCntrl.text != newPasswordCntrl.text) {
@@ -144,7 +149,7 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
               NbButton.primary(
                 text: "Save",
                 onTap: _save,
-                status: loading ? ButtonEnum.loading : ButtonEnum.active,
+                status: btnStatus,
               ),
               SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
             ],
@@ -188,26 +193,39 @@ class _PasswordResetModalState extends State<PasswordResetModal> {
     );
   }
 
+  void checkValidator() {
+    if (!NbValidators.isPassword(newPasswordCntrl.text)) {
+      btnStatus = ButtonEnum.disabled;
+    } else if (confirmPasswordCntrl.text != newPasswordCntrl.text) {
+      btnStatus = ButtonEnum.disabled;
+    } else {
+      btnStatus = ButtonEnum.active;
+    }
+    setState(() {});
+  }
+
   void _save() async {
     if (!formKey.currentState!.validate()) {
       return;
     }
     setState(() {
-      loading = true;
+      btnStatus = ButtonEnum.loading;
     });
     final passwordResult = await AuthService.changePassword(
       newPasswordCntrl.text,
     );
     setState(() {
-      loading = false;
+      btnStatus = ButtonEnum.active;
     });
     if (passwordResult.isRight) {
-      NbToast.info("Password Changed Successfully");
+      // ignore: use_build_context_synchronously
+      NbToast.info(context, "Password Changed Successfully");
       Get.find<AuthController>().password.value = newPasswordCntrl.text;
       await AuthData.updateData(password: newPasswordCntrl.text);
       Get.back();
     } else {
-      NbToast.error(passwordResult.left.message);
+      // ignore: use_build_context_synchronously
+      NbToast.error(context, passwordResult.left.message);
     }
   }
 }

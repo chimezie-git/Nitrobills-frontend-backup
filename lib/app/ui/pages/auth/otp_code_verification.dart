@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/data/provider/app_error.dart';
 import 'package:nitrobills/app/data/repository/auth_repo.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/elevated_primary_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/pages/auth/edit_phone_number_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
@@ -201,11 +202,10 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
                     ValueListenableBuilder(
                         valueListenable: buttonStatus,
                         builder: (context, value, child) {
-                          return NbButton.primary(
-                            text: "VerifyNumber",
-                            onTap: _verifyNumber,
-                            status: value,
-                          );
+                          return ElevatedPrimaryButton(
+                              status: value,
+                              text: "Verify number",
+                              onTap: _verifyNumber);
                         }),
                     32.verticalSpace,
                   ],
@@ -225,6 +225,7 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
   void _requestAgain() async {
     buttonStatus.value = ButtonEnum.loading;
     await AuthRepo().resendOtp(
+      context,
       phoneNumber,
     );
     buttonStatus.value = ButtonEnum.active;
@@ -243,7 +244,7 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
   void _verifyNumber() async {
     buttonStatus.value = ButtonEnum.loading;
     final result = await AuthRepo()
-        .confirmOtpPhone(otpCode, phoneNumber, widget.resetPassword);
+        .confirmOtpPhone(context, otpCode, phoneNumber, widget.resetPassword);
     if (result.isLeft) {
       _showErrors(result.left);
     }

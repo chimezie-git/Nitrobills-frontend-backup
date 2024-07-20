@@ -15,7 +15,7 @@ class GbAirtimeServiceProviderModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.find<AirtimeController>().initializeProvider();
+      Get.find<AirtimeController>().initializeProvider(context);
     });
     return Material(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),

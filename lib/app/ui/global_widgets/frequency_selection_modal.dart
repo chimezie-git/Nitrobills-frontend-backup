@@ -131,14 +131,19 @@ class _TextFieldBoxState extends State<_TextFieldBox> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 38.w,
-      height: 34.h,
-      alignment: Alignment.center,
-      padding: EdgeInsets.only(bottom: 10.r),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4.r),
-        border: Border.all(color: NbColors.black),
+    return Theme(
+      data: ThemeData(
+        inputDecorationTheme: InputDecorationTheme(
+          constraints: BoxConstraints(
+            maxHeight: 34.h,
+            maxWidth: 38.w,
+          ),
+          enabledBorder: _borderStyle(),
+          border: _borderStyle(),
+          focusedBorder: _borderStyle(),
+          errorBorder: _borderStyle(),
+          contentPadding: EdgeInsets.zero,
+        ),
       ),
       child: TextField(
         controller: _cntrl,
@@ -149,11 +154,18 @@ class _TextFieldBoxState extends State<_TextFieldBox> {
           fontSize: 16.sp,
           fontWeight: FontWeight.w500,
         ),
-        decoration: const InputDecoration(
-          contentPadding: EdgeInsets.zero,
-          border: InputBorder.none,
-        ),
+        // decoration: const InputDecoration(
+        //   contentPadding: EdgeInsets.zero,
+        //   border: InputBorder.none,
+        // ),
       ),
+    );
+  }
+
+  OutlineInputBorder _borderStyle() {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(4.r),
+      borderSide: const BorderSide(color: NbColors.black),
     );
   }
 }

@@ -15,7 +15,7 @@ class GbElectricityServiceProviderModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.find<ElectricityController>().initializeProvider();
+      Get.find<ElectricityController>().initializeProvider(context);
     });
     return Material(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),

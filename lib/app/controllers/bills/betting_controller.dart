@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/transactions_controller.dart';
 import 'package:nitrobills/app/data/enums/loader_enum.dart';
@@ -12,7 +13,7 @@ class BettingController extends GetxController {
   final Rxn<GbBetData> userData = Rxn();
   final Rx<LoaderEnum> status = Rx<LoaderEnum>(LoaderEnum.loading);
 
-  Future initializeProvider() async {
+  Future initializeProvider(BuildContext context) async {
     if (providers.isEmpty) {
       status.value = LoaderEnum.loading;
       final result = await BetService.getBettingProviders();
@@ -21,13 +22,15 @@ class BettingController extends GetxController {
         status.value = LoaderEnum.success;
       } else {
         status.value = LoaderEnum.failed;
-        NbToast.error(result.left.message);
+        // ignore: use_build_context_synchronously
+        NbToast.error(context, result.left.message);
       }
       update();
     }
   }
 
-  Future reloadProviders({bool showLoader = false}) async {
+  Future reloadProviders(BuildContext context,
+      {bool showLoader = false}) async {
     if (showLoader) {
       status.value = LoaderEnum.loading;
     }
@@ -37,12 +40,14 @@ class BettingController extends GetxController {
       status.value = LoaderEnum.success;
     } else {
       status.value = LoaderEnum.failed;
-      NbToast.error(result.left.message);
+      // ignore: use_build_context_synchronously
+      NbToast.error(context, result.left.message);
     }
     update();
   }
 
-  Future loadUserData(String provider, String customerId) async {
+  Future loadUserData(
+      BuildContext context, String provider, String customerId) async {
     status.value = LoaderEnum.loading;
 
     final result = await BetService.validateCustomer(provider, customerId);
@@ -51,18 +56,20 @@ class BettingController extends GetxController {
       status.value = LoaderEnum.success;
     } else {
       status.value = LoaderEnum.failed;
-      NbToast.error(result.left.message);
+      // ignore: use_build_context_synchronously
+      NbToast.error(context, result.left.message);
     }
     update();
   }
 
-  Future<bool> buy(BetBill bill) async {
+  Future<bool> buy(BuildContext context, BetBill bill) async {
     final result = await BetService.buy(bill);
     if (result.isRight) {
       Get.find<TransactionsController>().addTransaction(result.right);
       return true;
     } else {
-      NbToast.error(result.left.message);
+      // ignore: use_build_context_synchronously
+      NbToast.error(context, result.left.message);
       return false;
     }
   }

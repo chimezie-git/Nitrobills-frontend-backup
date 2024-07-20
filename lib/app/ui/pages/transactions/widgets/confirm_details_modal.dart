@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/beneficiaries_controller.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/data/services/formatter.dart';
-import 'package:nitrobills/app/ui/global_widgets/buttons.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/proceed_button.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/small_outline_button.dart';
 import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -60,14 +60,8 @@ class _ConfirmDetailsModalState extends State<ConfirmDetailsModal> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
-                  width: 154.w,
-                  child: NbButton.outlinedPrimary(
-                    text: "Cancel",
-                    onTap: () => Get.back(),
-                  ),
-                ),
-                ProceedButton(status: status, onTap: _payNow),
+                SmallOutlineButton(onTap: () => Get.back(), text: "Cancel"),
+                ProceedButton(status: status, onTap: _proceed),
               ],
             ),
             24.verticalSpace,
@@ -106,12 +100,14 @@ class _ConfirmDetailsModalState extends State<ConfirmDetailsModal> {
     }
   }
 
-  Future _payNow() async {
-    if (widget.bill.saveBeneficiary) {
+  Future _proceed() async {
+    int? benId;
+    if (widget.bill.saveBeneficiary && (widget.bill.beneficiaryId == null)) {
       setState(() {
         status = ButtonEnum.loading;
       });
-      await Get.find<BeneficiariesController>().create(
+      benId = await Get.find<BeneficiariesController>().create(
+        context,
         name: widget.bill.name,
         number: widget.bill.codeNumber,
         serviceType: widget.bill.serviceType,
@@ -123,6 +119,6 @@ class _ConfirmDetailsModalState extends State<ConfirmDetailsModal> {
         status = ButtonEnum.active;
       });
     }
-    Get.back(result: true);
+    Get.back(result: (true, benId));
   }
 }

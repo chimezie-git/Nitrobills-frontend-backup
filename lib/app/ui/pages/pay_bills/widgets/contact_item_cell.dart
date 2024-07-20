@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nitrobills/app/hive_box/recent_payments/recent_payment.dart';
+import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class ContactItemCell extends StatelessWidget {
@@ -28,7 +29,8 @@ class ContactItemCell extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.blue,
+                  color: NbColors.white,
+                  // border: Border.all(color: NbColors.white, width: 2),
                   image: DecorationImage(
                     image: AssetImage(payment.provider.image),
                     fit: BoxFit.cover,

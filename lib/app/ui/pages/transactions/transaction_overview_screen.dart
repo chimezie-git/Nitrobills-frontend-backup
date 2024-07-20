@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/account/autopay_controller.dart';
 import 'package:nitrobills/app/controllers/account/transactions_controller.dart';
 import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
 import 'package:nitrobills/app/controllers/bills/airtime_controller.dart';
@@ -10,10 +13,12 @@ import 'package:nitrobills/app/controllers/bills/cable_controller.dart';
 import 'package:nitrobills/app/controllers/bills/data_controller.dart';
 import 'package:nitrobills/app/controllers/bills/electricity_controller.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
+import 'package:nitrobills/app/data/models/pay_frequency.dart';
 import 'package:nitrobills/app/data/services/bills/bulk_sms_service.dart';
 import 'package:nitrobills/app/data/services/formatter.dart';
-import 'package:nitrobills/app/ui/global_widgets/buttons.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/pay_now_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
+import 'package:nitrobills/app/ui/pages/autopayments/models/autopay.dart';
 import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/pages/transactions/transaction_details_screen.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/confirm_details_modal.dart';
@@ -44,16 +49,25 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
   bool makeAutopay = false;
   bool enableDataManagement = false;
 
-  ButtonEnum btnStatus = ButtonEnum.active;
+  ButtonEnum btnStatus = ButtonEnum.disabled;
   late ExpandableController expandCntr;
 
   int? avatarColor;
   int? avatarIdx;
 
+  PayFrequency? payFrequency;
+  DateTime? autopayEndDate;
+
   @override
   void initState() {
     super.initState();
     expandCntr = ExpandableController(initialExpanded: true);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(const Duration(seconds: 1));
+      setState(() {
+        btnStatus = ButtonEnum.active;
+      });
+    });
   }
 
   @override
@@ -134,11 +148,12 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
                         },
                       ),
                       15.verticalSpace,
-                      if (makeAutopay)
-                        TransactionInfoWidget(
-                          bill: widget.bill,
-                          expandCntr: expandCntr,
-                        ),
+                      // if (makeAutopay)
+                      TransactionInfoWidget(
+                        bill: widget.bill,
+                        expandCntr: expandCntr,
+                        endDate: autopayEndDate,
+                      ),
                       20.verticalSpace,
                     ],
                   ),
@@ -178,7 +193,7 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
                   ),
                   PayNowButton(
                     status: btnStatus,
-                    onTap: _continue,
+                    onTap: _payNow,
                   )
                 ],
               ),
@@ -191,28 +206,44 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
 
   Future _makeRecurringPayment(bool value) async {
     if (value) {
-      bool? hasSetData = await Get.bottomSheet<bool>(
-        const MakeRecurringPaymentModal(),
+      // (PayFrequency, DateTime)
+      final hasSetData = await Get.bottomSheet<(PayFrequency, DateTime)?>(
+        MakeRecurringPaymentModal(
+          serviceType: widget.bill.serviceType,
+          amount: NbFormatter.amount(widget.bill.amount),
+          frequency: payFrequency,
+          endDate: autopayEndDate,
+        ),
         backgroundColor: Colors.black.withOpacity(0.2),
         isScrollControlled: true,
       );
 
-      if (hasSetData ?? false) {
+      if (hasSetData != null) {
+        if (expandCntr.expanded) {
+          expandCntr.toggle();
+        }
         setState(() {
-          makeAutopay = value;
+          payFrequency = hasSetData.$1;
+          autopayEndDate = hasSetData.$2;
+          makeAutopay = true;
         });
       }
     } else {
+      if (!expandCntr.expanded) {
+        expandCntr.toggle();
+      }
       setState(() {
-        makeAutopay = value;
+        payFrequency = null;
+        autopayEndDate = null;
+        makeAutopay = false;
       });
     }
   }
 
   Future _setDataManagement(bool value) async {}
 
-  void _continue() async {
-    final confirmed = await Get.bottomSheet<bool?>(
+  void _payNow() async {
+    final confirmed = await Get.bottomSheet<(bool, int?)?>(
       ConfirmDetailsModal(
         bill: widget.bill,
         avatarColor: avatarColor,
@@ -220,8 +251,9 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
       ),
       isScrollControlled: true,
     );
-    if (confirmed ?? false) {
+    if (confirmed?.$1 ?? false) {
       //
+
       final verified = await Get.bottomSheet<bool?>(
         const PinCodeModal(),
         isScrollControlled: true,
@@ -231,16 +263,16 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
         setState(() {
           btnStatus = ButtonEnum.loading;
         });
+        widget.bill.update(benId: confirmed?.$2);
         bool success = await pay();
         btnStatus = ButtonEnum.active;
         setState(() {});
         if (success) {
           await Future.delayed(const Duration(milliseconds: 500));
           Get.to(() => TransactionDetailsScreen(bill: widget.bill));
+        } else {
+          NbToast.show(context, "Transaction failed");
         }
-        // else {
-        //   NbToast.show("Transaction failed");
-        // }
       } else {
         return;
       }
@@ -250,25 +282,43 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
   }
 
   Future<bool> pay() async {
+    if (makeAutopay && (widget.bill.autopayId == null)) {
+      Autopay autopay = Autopay.createNew(
+        payFrequency!,
+        autopayEndDate!,
+        widget.bill,
+      );
+      Autopay? aPay =
+          await Get.find<AutopayController>().create(context, autopay);
+
+      if (aPay != null) {
+        widget.bill.update(autoId: aPay.id);
+      }
+    }
+
     bool success;
-    final bill = widget.bill;
-    if (bill is AirtimeBill) {
-      success = await Get.find<AirtimeController>().buy(bill);
-    } else if (bill is DataBill) {
-      success = await Get.find<DataController>().buy(bill);
-    } else if (bill is BetBill) {
-      success = await Get.find<BettingController>().buy(bill);
-    } else if (bill is ElectricityBill) {
-      success = await Get.find<ElectricityController>().buy(bill);
-    } else if (bill is CableBill) {
-      success = await Get.find<CableController>().buy(bill);
-    } else if (bill is BulkSMSBill) {
-      final tran = await BulkSmsService.buy(bill);
+    if (widget.bill is AirtimeBill) {
+      success = await Get.find<AirtimeController>()
+          .buy(context, widget.bill as AirtimeBill);
+    } else if (widget.bill is DataBill) {
+      success = await Get.find<DataController>()
+          .buy(context, widget.bill as DataBill);
+    } else if (widget.bill is BetBill) {
+      success = await Get.find<BettingController>()
+          .buy(context, widget.bill as BetBill);
+    } else if (widget.bill is ElectricityBill) {
+      success = await Get.find<ElectricityController>()
+          .buy(context, widget.bill as ElectricityBill);
+    } else if (widget.bill is CableBill) {
+      success = await Get.find<CableController>()
+          .buy(context, widget.bill as CableBill);
+    } else if (widget.bill is BulkSMSBill) {
+      final tran = await BulkSmsService.buy(widget.bill as BulkSMSBill);
       if (tran.isRight) {
         Get.find<TransactionsController>().addTransaction(tran.right);
         success = true;
       } else {
-        NbToast.error(tran.left.message);
+        NbToast.error(context, tran.left.message);
         success = false;
       }
     } else {

@@ -23,7 +23,7 @@ class GbCablePlansModal extends StatelessWidget {
         child: GetBuilder<CableController>(
           init: Get.find<CableController>(),
           initState: (_) {
-            Get.find<CableController>().initializePlans(provider.id);
+            Get.find<CableController>().initializePlans(context, provider.id);
           },
           builder: (cntrl) {
             List<GbCablePlans> cablePlans = cntrl.getCablePlans(provider.id);

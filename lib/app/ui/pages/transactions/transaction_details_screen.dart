@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
-import 'package:nitrobills/app/data/enums/service_types_enum.dart';
-import 'package:nitrobills/app/ui/global_widgets/buttons.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/return_home_button.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/small_outline_button.dart';
 import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/confirm_transaction_card_widget.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/contact_support_card.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/rate_exprerience_card.dart';
+import 'package:nitrobills/app/ui/pages/transactions/widgets/success_widget.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
-import 'package:nitrobills/app/ui/utils/nb_image.dart';
-import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class TransactionDetailsScreen extends StatelessWidget {
   final Bill bill;
@@ -22,7 +20,7 @@ class TransactionDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      // canPop: false,
       child: Scaffold(
         backgroundColor: const Color(0xFFF2F2F2),
         body: Column(
@@ -37,37 +35,7 @@ class TransactionDetailsScreen extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        70.verticalSpace,
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              height: 32.r,
-                              width: 32.r,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: AssetImage(bill.provider.image),
-                                ),
-                              ),
-                            ),
-                            8.horizontalSpace,
-                            NbText.sp18(_planOrAmount()).w700.black,
-                          ],
-                        ),
-                        16.verticalSpace,
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 28.w, vertical: 8.h),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24.r),
-                            color: const Color(0xFFC2E8D2),
-                          ),
-                          child: NbText.sp18("Successful")
-                              .w400
-                              .setColor(const Color(0xFF2E7E45)),
-                        ),
-                        84.verticalSpace,
+                        SuccessWidget(bill: bill),
                         Container(
                           width: double.maxFinite,
                           padding: EdgeInsets.symmetric(
@@ -126,29 +94,13 @@ class TransactionDetailsScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                      width: 154.w,
-                      child: NbButton.outlinedPrimary(
-                          text: "Share Receipt", onTap: _shareReceipt)),
-                  SizedBox(
-                    width: 154.w,
-                    child: BlackWidgetButton(
-                      onTap: _continue,
-                      status: ButtonEnum.active,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          NbText.sp14("Return Home").w500.white,
-                          8.horizontalSpace,
-                          SvgPicture.asset(
-                            NbSvg.home,
-                            width: 18.r,
-                            colorFilter: const ColorFilter.mode(
-                                NbColors.white, BlendMode.srcIn),
-                          ),
-                        ],
-                      ),
-                    ),
+                  SmallOutlineButton(
+                    onTap: _shareReceipt,
+                    text: "Share receipt",
+                  ),
+                  ReturnHomeButton(
+                    status: ButtonEnum.active,
+                    onTap: () => _continue(context),
                   ),
                 ],
               ),
@@ -159,23 +111,12 @@ class TransactionDetailsScreen extends StatelessWidget {
     );
   }
 
-  void _continue() {
+  void _continue(BuildContext context) {
+    Get.find<UserAccountController>().reload();
     Navigator.popUntil(Get.context!, (route) => route.isFirst);
   }
 
   void _shareReceipt() {}
-
-  String _planOrAmount() {
-    if (bill.serviceType == ServiceTypesEnum.data) {
-      final dBill = bill as DataBill;
-      return dBill.plan.name;
-    } else if (bill.serviceType == ServiceTypesEnum.cable) {
-      final cBill = bill as CableBill;
-      return cBill.plan.name;
-    } else {
-      return "₦ ${bill.amount}";
-    }
-  }
 
   String _recepientName() {
     if (bill.saveBeneficiary) {

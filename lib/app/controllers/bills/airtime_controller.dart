@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/transactions_controller.dart';
 import 'package:nitrobills/app/data/enums/loader_enum.dart';
@@ -13,7 +14,7 @@ class AirtimeController extends GetxController {
       RxList<MobileServiceProvider>();
   final Rx<LoaderEnum> status = Rx<LoaderEnum>(LoaderEnum.loading);
 
-  Future initializeProvider() async {
+  Future initializeProvider(BuildContext context) async {
     if (!providerLoaded.value) {
       status.value = LoaderEnum.loading;
       final result = await AirtimeService.getMobileProiders();
@@ -23,13 +24,14 @@ class AirtimeController extends GetxController {
         providerLoaded.value = true;
       } else {
         status.value = LoaderEnum.failed;
-        NbToast.error(result.left.message);
+        // ignore: use_build_context_synchronously
+        NbToast.error(context, result.left.message);
       }
       update();
     }
   }
 
-  Future reload({bool showLoader = false}) async {
+  Future reload(BuildContext context, {bool showLoader = false}) async {
     if (showLoader) {
       status.value = LoaderEnum.loading;
     }
@@ -39,11 +41,12 @@ class AirtimeController extends GetxController {
       status.value = LoaderEnum.success;
     } else {
       status.value = LoaderEnum.failed;
-      NbToast.error(result.left.message);
+      // ignore: use_build_context_synchronously
+      NbToast.error(context, result.left.message);
     }
   }
 
-  Future<bool> buy(AirtimeBill bill) async {
+  Future<bool> buy(BuildContext context, AirtimeBill bill) async {
     final result = await AirtimeService.buy(bill);
     if (result.isRight) {
       Get.find<TransactionsController>().addTransaction(result.right);
@@ -56,7 +59,8 @@ class AirtimeController extends GetxController {
       );
       return true;
     } else {
-      NbToast.error(result.left.message);
+      // ignore: use_build_context_synchronously
+      NbToast.error(context, result.left.message);
       return false;
     }
   }

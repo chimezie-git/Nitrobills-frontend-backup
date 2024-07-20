@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
 import 'package:nitrobills/app/data/enums/loader_enum.dart';
@@ -15,7 +16,7 @@ class UserAccountController extends GetxController {
   final RxString authToken = RxString("");
   final RxBool loaded = RxBool(false);
 
-  Future initialize() async {
+  Future initialize(BuildContext context) async {
     if (!loaded.value) {
       //load data and set account value
       status.value = LoaderEnum.loading;
@@ -25,7 +26,8 @@ class UserAccountController extends GetxController {
             result.right.lastName, result.right.firstName, result.right.email);
         account = Rx<UserAccount>(result.right);
         if (account.value.banks.first.accountStatus.isPending) {
-          NbToast.fetchAccount();
+          // ignore: use_build_context_synchronously
+          NbToast.fetchAccount(context);
         }
         NbUtils.startNotificationPoll();
         status.value = LoaderEnum.success;
@@ -33,14 +35,14 @@ class UserAccountController extends GetxController {
         // start notification polling
       } else {
         status.value = LoaderEnum.failed;
-        NbToast.error(result.left.message);
+        // ignore: use_build_context_synchronously
+        NbToast.error(context, result.left.message);
       }
       update();
     }
   }
 
   Future reload({
-    bool showToast = true,
     bool showLoading = false,
   }) async {
     if (showLoading) {
@@ -54,9 +56,6 @@ class UserAccountController extends GetxController {
       status.value = LoaderEnum.success;
     } else {
       status.value = LoaderEnum.failed;
-      if (showToast) {
-        NbToast.error(result.left.message);
-      }
     }
     update();
   }

@@ -7,7 +7,7 @@ import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/data/provider/app_error.dart';
 import 'package:nitrobills/app/data/repository/auth_repo.dart';
 import 'package:nitrobills/app/data/services/validators.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/elevated_primary_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/global_widgets/form_fields.dart';
@@ -199,10 +199,10 @@ class _SignupPageState extends State<SignupPage> {
                         ValueListenableBuilder(
                             valueListenable: buttonStatus,
                             builder: (context, value, child) {
-                              return NbButton.primary(
+                              return ElevatedPrimaryButton(
+                                status: value,
                                 text: "Agree and continue",
                                 onTap: _agreeAndContinue,
-                                status: value,
                               );
                             }),
                         37.verticalSpace,
@@ -221,15 +221,15 @@ class _SignupPageState extends State<SignupPage> {
   bool validators() {
     if (!NbValidators.isPassword(passwordCntrl.text)) {
       return false;
-    } else if (usernameCntrl.text.isEmpty) {
+    } else if (!NbValidators.isUsername(usernameCntrl.text)) {
       return false;
     } else if (!NbValidators.isPhone(phoneCntrl.text.trim())) {
       return false;
     } else if (!NbValidators.isEmail(emailCntrl.text.trim())) {
       return false;
-    } else if (firstNameCntrl.text.isEmpty) {
+    } else if (!NbValidators.isName(firstNameCntrl.text)) {
       return false;
-    } else if (lastNameCntrl.text.isEmpty) {
+    } else if (!NbValidators.isName(lastNameCntrl.text)) {
       return false;
     } else {
       return true;
@@ -256,6 +256,7 @@ class _SignupPageState extends State<SignupPage> {
     if (formKey.currentState?.validate() ?? false) {
       buttonStatus.value = ButtonEnum.loading;
       final data = await AuthRepo().register(
+        context,
         usernameCntrl.text,
         firstNameCntrl.text,
         lastNameCntrl.text,

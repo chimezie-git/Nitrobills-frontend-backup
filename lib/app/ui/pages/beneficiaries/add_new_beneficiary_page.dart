@@ -112,6 +112,7 @@ class _AddNewBeneficiaryPageState extends State<AddNewBeneficiaryPage> {
   void _continue() async {
     if (isValid()) {
       final result = await Get.find<BeneficiariesController>().create(
+        context,
         name: nameCntrl.text,
         number: numberCntrl.text,
         serviceType: serviceType!,

@@ -2,11 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:nitrobills/app/ui/global_widgets/buttons.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
+import 'package:nitrobills/app/data/enums/button_enum.dart';
+// import 'package:nitrobills/app/ui/global_widgets/buttons.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/elevated_primary_button.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/white_grey_auth_button.dart';
+// import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/pages/auth/signin_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/signup_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
+import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
@@ -167,41 +171,20 @@ class _IntroPageState extends State<IntroPage>
                       padding: EdgeInsets.symmetric(
                         horizontal: 8.w,
                       ),
-                      color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: NbColors.white),
+                      ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Theme(
-                          //   data: ThemeData(
-                          //       elevatedButtonTheme: ElevatedButtonThemeData(
-                          //         style: ButtonStyle(
-                          //           foregroundColor:
-                          //               WidgetStatePropertyAll(NbColors.white),
-                          //           backgroundColor:
-                          //               WidgetStateProperty.resolveWith(
-                          //                   (Set<WidgetState> states) {
-                          //             if (states
-                          //                 .contains(WidgetState.pressed)) {
-                          //               return NbColors.red;
-                          //             }else if(states.contains(WidgetState.hovered))
-                          //             return NbColors.black;
-                          //           }),
-                          //           splashFactory: InkRipple.splashFactory,
-                          //         ),
-                          //       ),
-                          //       buttonTheme: ButtonThemeData(
-                          //         buttonColor: NbColors.black,
-                          //         splashColor: NbColors.white,
-                          //       )),
-                          //   child: ElevatedButton(
-                          //     onPressed: () {},
-                          //     child: const Text("Hello world"),
-                          //   ),
-                          // ),
-                          NbButton.primary(
-                              text: "Create an account", onTap: _signup),
+                          ElevatedPrimaryButton(
+                            status: ButtonEnum.active,
+                            text: "Create an account",
+                            onTap: _signup,
+                          ),
                           28.verticalSpace,
-                          GreyDoubleTextButton(
+                          WhiteGreyAuthButton(
                             text1: "Already with nitro?",
                             text2: "Sign in",
                             onTap: _signin,

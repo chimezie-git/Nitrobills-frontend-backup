@@ -4,12 +4,11 @@ import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/navbar_controller.dart';
 import 'package:nitrobills/app/data/models/app_notification.dart';
 import 'package:nitrobills/app/data/services/notification/notification_service.dart';
-import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NbUtils {
-  static String baseUrl = "https://nitrobills-backend.onrender.com";
-  // static String baseUrl = "http://127.0.0.1:8000";
+  // static String baseUrl = "https://nitrobills-backend.onrender.com";
+  static String baseUrl = "http://127.0.0.1:8000";
 
   static GlobalKey<NavigatorState> nav = GlobalKey<NavigatorState>();
 
@@ -56,13 +55,13 @@ class NbUtils {
   static void copyClipBoard(String text, String toastMsg) async {
     ClipboardData data = ClipboardData(text: text);
     await Clipboard.setData(data);
-    NbToast.copy(toastMsg);
+    // NbToast.copy(toastMsg);
   }
 
   static Future<void> openLink(String link, String failMessage) async {
     final Uri url = Uri.parse(link);
     if (!await launchUrl(url)) {
-      NbToast.show(failMessage);
+      // NbToast.show(failMessage);
     }
   }
 }

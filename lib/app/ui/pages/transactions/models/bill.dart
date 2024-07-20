@@ -3,13 +3,15 @@ import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
 import 'package:nitrobills/app/ui/pages/pay_bills/models/gb_cable_plans.dart';
 import 'package:nitrobills/app/ui/pages/pay_bills/models/gb_data_plans.dart';
 
-class Bill {
+abstract class Bill {
   final double amount;
   final String name;
   final ServiceTypesEnum serviceType;
   final String codeNumber;
   final bool saveBeneficiary;
   final AbstractServiceProvider provider;
+  int? beneficiaryId;
+  int? autopayId;
 
   Bill({
     required this.amount,
@@ -18,7 +20,21 @@ class Bill {
     required this.codeNumber,
     required this.provider,
     required this.saveBeneficiary,
+    required this.beneficiaryId,
+    required this.autopayId,
   });
+
+  void update({
+    int? benId,
+    int? autoId,
+  }) {
+    if (benId != null) {
+      beneficiaryId = benId;
+    }
+    if (autoId != null) {
+      autopayId = autoId;
+    }
+  }
 }
 
 class DataBill extends Bill {
@@ -30,6 +46,8 @@ class DataBill extends Bill {
     required super.provider,
     required this.plan,
     required super.saveBeneficiary,
+    super.beneficiaryId,
+    super.autopayId,
   }) : super(serviceType: ServiceTypesEnum.data);
 }
 
@@ -40,6 +58,8 @@ class AirtimeBill extends Bill {
     required super.codeNumber,
     required super.provider,
     required super.saveBeneficiary,
+    super.beneficiaryId,
+    super.autopayId,
   }) : super(serviceType: ServiceTypesEnum.airtime);
 }
 
@@ -52,6 +72,8 @@ class CableBill extends Bill {
     required super.provider,
     required this.plan,
     required super.saveBeneficiary,
+    super.beneficiaryId,
+    super.autopayId,
   }) : super(serviceType: ServiceTypesEnum.cable);
 }
 
@@ -62,6 +84,8 @@ class ElectricityBill extends Bill {
     required super.codeNumber,
     required super.provider,
     required super.saveBeneficiary,
+    super.beneficiaryId,
+    super.autopayId,
   }) : super(serviceType: ServiceTypesEnum.electricity);
 }
 
@@ -72,6 +96,8 @@ class BetBill extends Bill {
     required super.codeNumber,
     required super.provider,
     required super.saveBeneficiary,
+    super.beneficiaryId,
+    super.autopayId,
   }) : super(serviceType: ServiceTypesEnum.betting);
 }
 
@@ -84,6 +110,8 @@ class BulkSMSBill extends Bill {
     required super.codeNumber,
     required this.contacts,
     required this.message,
+    super.beneficiaryId,
+    super.autopayId,
   }) : super(
             serviceType: ServiceTypesEnum.bulkSms,
             provider: BulkSmsServiceProvider(),

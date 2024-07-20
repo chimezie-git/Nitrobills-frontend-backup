@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/data/services/validators.dart';
-import 'package:nitrobills/app/hive_box/auth_data/auth_data.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
-import 'package:nitrobills/app/ui/pages/account/widgets/email_verification_sent_dialog.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -106,7 +103,7 @@ class _InsertNewEmailDailogState extends State<InsertNewEmailDailog> {
 
   _changeEmail() async {
     if (!NbValidators.isEmail(emailCntrl.text)) {
-      NbToast.error("Enter a valid email address");
+      NbToast.error(context, "Enter a valid email address");
       return;
     }
     // Change email here

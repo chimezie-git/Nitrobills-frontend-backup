@@ -25,7 +25,8 @@ class ChooseContactButton extends StatelessWidget {
             String phone = contact.phoneNumber?.number ?? "";
             getContact(phone.replaceAll(" ", ""));
           } catch (e) {
-            NbToast.info("Could not pick Contact");
+            // ignore: use_build_context_synchronously
+            NbToast.info(context, "Could not pick Contact");
             debugPrint(e.toString());
           }
         },

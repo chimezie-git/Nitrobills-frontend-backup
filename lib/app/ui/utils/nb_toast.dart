@@ -47,12 +47,15 @@ class NbToast {
     }
   }
 
-  static void _showToast(ToastTypeEnum type, String message) {
-    _showToastWidget(toast(type, message));
+  static void _showToast(
+      ToastTypeEnum type, String message, BuildContext context) {
+    _showToastWidget(toast(type, message), context);
   }
 
-  static void _showToastWidget(Widget toastWidget) {
+  static void _showToastWidget(Widget toastWidget, BuildContext context) {
+    init(context);
     fToast.removeCustomToast();
+
     fToast.showToast(
       child: toastWidget,
       positionedToastBuilder: (context, widget) {
@@ -72,45 +75,47 @@ class NbToast {
     fToast.removeCustomToast();
   }
 
-  static void show(String message,
+  static void show(BuildContext context, String message,
       {ToastTypeEnum type = ToastTypeEnum.info,
       Duration duration = const Duration(seconds: 2)}) {
     _toastDuration = duration;
-    _showToast(type, message);
+    _showToast(type, message, context);
   }
 
-  static void info(String message,
+  static void info(BuildContext context, String message,
       {Duration duration = const Duration(seconds: 2)}) {
     _toastDuration = duration;
-    _showToast(ToastTypeEnum.info, message);
+    _showToast(ToastTypeEnum.info, message, context);
   }
 
-  static void success(String message,
+  static void success(BuildContext context, String message,
       {Duration duration = const Duration(seconds: 2)}) {
     _toastDuration = duration;
-    _showToast(ToastTypeEnum.success, message);
+    _showToast(ToastTypeEnum.success, message, context);
   }
 
-  static void error(String message,
+  static void error(BuildContext context, String message,
       {Duration duration = const Duration(seconds: 4)}) {
     _toastDuration = duration;
-    _showToast(ToastTypeEnum.error, message);
+    _showToast(ToastTypeEnum.error, message, context);
   }
 
-  static void copy(String message,
+  static void copy(BuildContext context, String message,
       {Duration duration = const Duration(seconds: 2)}) {
     _toastDuration = duration;
-    _showToast(ToastTypeEnum.copy, message);
+    _showToast(ToastTypeEnum.copy, message, context);
   }
 
-  static void updateBalance({Duration duration = const Duration(seconds: 2)}) {
+  static void updateBalance(BuildContext context,
+      {Duration duration = const Duration(seconds: 2)}) {
     _toastDuration = duration;
-    _showToastWidget(const _UpdateBalanceToastWidget());
+    _showToastWidget(const _UpdateBalanceToastWidget(), context);
   }
 
-  static void fetchAccount({Duration duration = const Duration(seconds: 4)}) {
+  static void fetchAccount(BuildContext context,
+      {Duration duration = const Duration(seconds: 4)}) {
     _toastDuration = duration;
-    _showToastWidget(const _FetchAccountToastWidget());
+    _showToastWidget(const _FetchAccountToastWidget(), context);
   }
 }
 

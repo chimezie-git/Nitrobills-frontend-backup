@@ -168,7 +168,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   void _resetPassword() async {
     if (formKey.currentState?.validate() ?? false) {
       buttonStatus.value = ButtonEnum.loading;
-      await AuthRepo().changePassword(password1.text);
+      await AuthRepo().changePassword(context, password1.text);
       buttonStatus.value = ButtonEnum.active;
     }
   }

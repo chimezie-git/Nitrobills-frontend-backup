@@ -108,7 +108,8 @@ class CableService {
       "number": bill.codeNumber,
       "amount": "${bill.amount}",
       "plan": bill.plan.planId,
-      // if (bill.beneficiaryId != null) "beneficiary_id": bill.beneficiaryId,
+      if (bill.beneficiaryId != null) "beneficiary_id": bill.beneficiaryId,
+      if (bill.autopayId != null) "autopay_id": bill.autopayId,
     };
 
     TypeOrError<dio.Response> response = await HttpService.post(

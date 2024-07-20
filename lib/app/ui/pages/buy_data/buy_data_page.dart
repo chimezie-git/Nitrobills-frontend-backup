@@ -8,6 +8,7 @@ import 'package:nitrobills/app/data/models/mobile_service_provider.dart';
 import 'package:nitrobills/app/hive_box/recent_payments/recent_payment.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/buy_data/buy_data_information.dart';
+import 'package:nitrobills/app/ui/pages/buy_data/widgets/delete_account_modal.dart';
 import 'package:nitrobills/app/ui/pages/buy_data/widgets/your_accounts_list_tile.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_hive_box.dart';
@@ -58,7 +59,7 @@ class _BuyDataPageState extends State<BuyDataPage> {
                   init: Get.find<DataController>(),
                   initState: (s) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      Get.find<DataController>().initializeProvider();
+                      Get.find<DataController>().initializeProvider(context);
                     });
                   },
                   builder: (cntrl) {
@@ -102,6 +103,7 @@ class _BuyDataPageState extends State<BuyDataPage> {
                         recents = recents.sublist(recents.length - 5);
                       }
                       return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           NbText.sp18("Your Accounts").w600.black,
                           10.verticalSpace,
@@ -112,13 +114,14 @@ class _BuyDataPageState extends State<BuyDataPage> {
                               final provider = MobileServiceProvider
                                   .allDataMap[rPay.serviceProvider]!;
                               return YourAccountsListTile(
-                                  recentPayment: rPay,
-                                  provider: provider,
-                                  onTap: () {
-                                    _addInfo(
-                                        provider: provider,
-                                        number: rPay.number);
-                                  });
+                                recentPayment: rPay,
+                                provider: provider,
+                                onTap: () {
+                                  _addInfo(
+                                      provider: provider, number: rPay.number);
+                                },
+                                onDelete: () => deleteAccount(rPay),
+                              );
                             },
                           ),
                         ],
@@ -168,5 +171,10 @@ class _BuyDataPageState extends State<BuyDataPage> {
         mobileProvider: provider,
       ),
     );
+  }
+
+  void deleteAccount(RecentPayment payment) {
+    Get.bottomSheet(DeleteAccountModal(payment: payment),
+        isScrollControlled: true);
   }
 }

@@ -10,7 +10,7 @@ class EmptyFieldsWidget extends StatelessWidget {
   final String btnText;
   final void Function() onTap;
   final String? prefix;
-  final String? postfix;
+  final Widget? postfix;
   final void Function()? tapPostfix;
   const EmptyFieldsWidget({
     super.key,
@@ -68,27 +68,7 @@ class EmptyFieldsWidget extends StatelessWidget {
                     NbText.sp16(btnText).w500.primary,
                     if (postfix != null) ...[
                       8.horizontalSpace,
-                      InkWell(
-                        onTap: tapPostfix,
-                        child: Container(
-                          width: 12.r,
-                          height: 12.r,
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                            color: NbColors.lightGrey,
-                            shape: BoxShape.circle,
-                          ),
-                          child: SvgPicture.asset(
-                            postfix!,
-                            width: 20.r,
-                            height: 20.r,
-                            colorFilter: const ColorFilter.mode(
-                              NbColors.primary,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                      ),
+                      postfix!,
                     ],
                   ],
                 ),

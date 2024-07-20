@@ -3,10 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/account/widgets/email_info_card.dart';
-import 'package:nitrobills/app/ui/pages/account/widgets/email_verification_sent_dialog.dart';
-import 'package:nitrobills/app/ui/pages/account/widgets/insert_new_email_dialog.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
-import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 
 class AccountEmailPage extends StatefulWidget {
   const AccountEmailPage({super.key});

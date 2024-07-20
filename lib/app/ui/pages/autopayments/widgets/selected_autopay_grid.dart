@@ -1,18 +1,19 @@
+// ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:nitrobills/app/ui/pages/autopayments/models/autopay.dart';
+import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
-class RecentAutopayGridWidget extends StatelessWidget {
-  final List<Autopay> autopays;
+class SelectedAutopayGrid extends StatelessWidget {
+  final List<Beneficiary> beneficiary;
   final void Function() onAdd;
   final void Function(int) onDelete;
 
-  const RecentAutopayGridWidget({
+  const SelectedAutopayGrid({
     super.key,
-    required this.autopays,
+    required this.beneficiary,
     required this.onDelete,
     required this.onAdd,
   });
@@ -29,7 +30,7 @@ class RecentAutopayGridWidget extends StatelessWidget {
         childAspectRatio: 0.68,
       ),
       children: [
-        ...autopays.mapIndexed((idx, bf) => autopayTile(bf, idx)),
+        ...beneficiary.mapIndexed((idx, bf) => autopayTile(bf, idx)),
         addBeneficiary(),
       ],
     );
@@ -59,7 +60,7 @@ class RecentAutopayGridWidget extends StatelessWidget {
     );
   }
 
-  Widget autopayTile(Autopay autopay, int index) {
+  Widget autopayTile(Beneficiary beneficiary, int index) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -82,7 +83,7 @@ class RecentAutopayGridWidget extends StatelessWidget {
                     alignment: Alignment.center,
                     decoration: const BoxDecoration(
                         shape: BoxShape.circle, color: Color(0xFF897AE5)),
-                    child: NbText.sp18(autopay.name[0]).w600.white,
+                    child: NbText.sp18(beneficiary.name[0]).w600.white,
                   ),
                 ),
                 Container(
@@ -101,7 +102,11 @@ class RecentAutopayGridWidget extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: NbText.sp16(autopay.name).w500.black.centerText.setMaxLines(1),
+          child: NbText.sp16(beneficiary.name)
+              .w500
+              .black
+              .centerText
+              .setMaxLines(1),
         ),
       ],
     );

@@ -1,5 +1,4 @@
 import 'package:either_dart/either.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -9,7 +8,8 @@ import 'package:nitrobills/app/data/provider/app_error.dart';
 import 'package:nitrobills/app/data/repository/auth_repo.dart';
 import 'package:nitrobills/app/data/services/validators.dart';
 import 'package:nitrobills/app/ui/global_widgets/buttons.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/elevated_primary_button.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/white_grey_auth_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/auth/forget_password_page.dart';
@@ -112,7 +112,8 @@ class _SigninPageState extends State<SigninPage> {
                               forcedError: signinError,
                               onChanged: _onChanged,
                               validator: () {
-                                if (usernameEmailCntrl.text.isEmpty) {
+                                if (!NbValidators.isUsernameOrEmail(
+                                    usernameEmailCntrl.text)) {
                                   return "Enter a valid username or email";
                                 } else {
                                   return null;
@@ -151,45 +152,19 @@ class _SigninPageState extends State<SigninPage> {
                       ValueListenableBuilder(
                         valueListenable: buttonStatus,
                         builder: (context, value, child) {
-                          return NbButton.primary(
+                          return ElevatedPrimaryButton(
+                            status: value,
                             text: "Login",
                             onTap: _login,
-                            status: value,
                           );
                         },
                       ),
                       26.verticalSpace,
-                      if (userCntrl.biometricAvailable.value && hasUser)
-                        Padding(
-                          padding: EdgeInsets.only(top: 11.h),
-                          child: RichText(
-                            text: TextSpan(
-                              text: "Dont have an account? ",
-                              style: TextStyle(
-                                  color: const Color(0xFF282828),
-                                  fontFamily: 'Satoshi',
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w500),
-                              children: [
-                                TextSpan(
-                                  text: "Sign up",
-                                  style: const TextStyle(
-                                    color: Color(0xFF1E92E9),
-                                    fontFamily: 'Satoshi',
-                                  ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = _signup,
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      else
-                        GreyDoubleTextButton(
-                          onTap: _signup,
-                          text1: "Dont have an account?",
-                          text2: "Signup",
-                        ),
+                      WhiteGreyAuthButton(
+                        onTap: _signup,
+                        text1: "Dont have an account?",
+                        text2: "Signup",
+                      ),
                       TextButton(
                         onPressed: _forgetPassword,
                         child: NbText.sp14("Forget Password?").w500.darkGrey,
@@ -215,7 +190,7 @@ class _SigninPageState extends State<SigninPage> {
 
   void biometricLogin() async {
     buttonStatus.value = ButtonEnum.loading;
-    final data = await AuthRepo().biometricLogin();
+    final data = await AuthRepo().biometricLogin(context);
     if (data.isLeft) {
       showFieldErrors(data.left);
     }
@@ -224,17 +199,17 @@ class _SigninPageState extends State<SigninPage> {
 
   void _login() async {
     NbUtils.removeKeyboard();
-    Either<SingleFieldError, Null> data = Right(null);
+    Either<SingleFieldError, Null> data = const Right(null);
     buttonStatus.value = ButtonEnum.loading;
     if (hasUser) {
       usernameEmailCntrl.text = userCntrl.email.value;
       if (formKey.currentState?.validate() ?? false) {
-        data = await AuthRepo().onlyPasswordLogin(passwordCntrl.text);
+        data = await AuthRepo().onlyPasswordLogin(context, passwordCntrl.text);
       }
     } else {
       if (formKey.currentState?.validate() ?? false) {
-        data =
-            await AuthRepo().login(usernameEmailCntrl.text, passwordCntrl.text);
+        data = await AuthRepo()
+            .login(context, usernameEmailCntrl.text, passwordCntrl.text);
       }
     }
     if (data.isLeft) {
@@ -248,16 +223,16 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   bool _validate() {
+    bool isValid = true;
     if (!hasUser) {
-      if (usernameEmailCntrl.text.isEmpty) {
-        return false;
+      if (!NbValidators.isUsernameOrEmail(usernameEmailCntrl.text)) {
+        isValid = false;
       }
     }
     if (NbValidators.isPassword(passwordCntrl.text.trim())) {
-      return false;
-    } else {
-      return true;
+      isValid = false;
     }
+    return isValid;
   }
 
   void _onChanged(String? val) {

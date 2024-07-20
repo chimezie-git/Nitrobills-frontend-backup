@@ -15,7 +15,7 @@ class GbBetServiceProviderModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.find<BettingController>().initializeProvider();
+      Get.find<BettingController>().initializeProvider(context);
     });
     return Material(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
