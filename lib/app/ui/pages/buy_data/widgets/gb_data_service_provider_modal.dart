@@ -15,7 +15,7 @@ class GbDataServiceProviderModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.find<DataController>().initializeProvider();
+      Get.find<DataController>().initializeProvider(context);
     });
     return Material(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),

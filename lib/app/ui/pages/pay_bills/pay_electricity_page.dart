@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:nitrobills/app/controllers/account/beneficiaries_controller.dart';
-import 'package:nitrobills/app/data/enums/service_types_enum.dart';
+import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/data/models/electricity_service_provider.dart';
+import 'package:nitrobills/app/data/services/validators.dart';
 import 'package:nitrobills/app/ui/global_widgets/balance_hint_widget.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/big_primary_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/choose_contact_button.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_electricity_service_provider_modal.dart';
-import 'package:nitrobills/app/ui/pages/transactions/confirm_transaction_screen.dart';
+import 'package:nitrobills/app/ui/pages/transactions/transaction_overview_screen.dart';
 import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -32,7 +32,7 @@ class _PayElectricityPageState extends State<PayElectricityPage> {
 
   String? providerValidator;
   GlobalKey<FormState> formKey = GlobalKey();
-  bool isLoading = false;
+  ButtonEnum btnStatus = ButtonEnum.disabled;
 
   @override
   void initState() {
@@ -76,77 +76,88 @@ class _PayElectricityPageState extends State<PayElectricityPage> {
                   color: NbColors.black,
                 ),
                 37.verticalSpace,
-                NbField.buttonArrowDown(
-                  fieldHeight: 78.h,
-                  text: electricityProvider?.name ?? "Choose Provider",
-                  onTap: _chooseProvider,
-                  forcedErrorString: providerValidator,
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(children: [
+                      NbField.buttonArrowDown(
+                        fieldHeight: 78.h,
+                        text: electricityProvider?.name ?? "Choose Provider",
+                        onTap: _chooseProvider,
+                        forcedErrorString: providerValidator,
+                      ),
+                      ChooseContactButton(getContact: _chooseContact),
+                      NbField.text(
+                          controller: idCntr,
+                          fieldHeight: 78.h,
+                          hint: "Customer Id",
+                          onChanged: buttonValidate,
+                          validator: () {
+                            if (idCntr.text.length < 5) {
+                              return "Enter a valid customer id";
+                            }
+                            return null;
+                          }),
+                      const BalanceHintWidget(),
+                      NbField.text(
+                        controller: amountCntr,
+                        fieldHeight: 78.h,
+                        hint: "Amount",
+                        keyboardType: TextInputType.number,
+                        onChanged: buttonValidate,
+                        validator: () {
+                          double? amount = double.tryParse(amountCntr.text);
+                          if (amount == null) {
+                            return "Enter a valid amount";
+                          } else if (electricityProvider == null) {
+                            return null;
+                          } else if (amount <= electricityProvider!.minAmount) {
+                            return electricityProvider!.electMinError;
+                          } else {
+                            return null;
+                          }
+                        },
+                      ),
+                      if (addToBeneficiary) ...[
+                        32.verticalSpace,
+                        NbField.text(
+                            controller: nameCntr,
+                            hint: "Name",
+                            fieldHeight: 78.h,
+                            onChanged: buttonValidate,
+                            validator: () {
+                              if (nameCntr.text.length < 2) {
+                                return "Enter a valid name";
+                              }
+                              return null;
+                            })
+                      ],
+                      21.verticalSpace,
+                      Row(
+                        children: [
+                          Expanded(
+                            child:
+                                NbText.sp16("Add this account to beneficiary")
+                                    .w500
+                                    .black,
+                          ),
+                          NbField.check(
+                            value: addToBeneficiary,
+                            onChanged: (v) {
+                              setState(() {
+                                addToBeneficiary = v;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      20.verticalSpace,
+                    ]),
+                  ),
                 ),
-                ChooseContactButton(getContact: _chooseContact),
-                NbField.text(
-                    controller: idCntr,
-                    fieldHeight: 78.h,
-                    hint: "Customer Id",
-                    validator: () {
-                      if (idCntr.text.length < 5) {
-                        return "Enter a valid customer id";
-                      }
-                      return null;
-                    }),
-                const BalanceHintWidget(),
-                NbField.text(
-                  controller: amountCntr,
-                  fieldHeight: 78.h,
-                  hint: "Amount",
-                  validator: () {
-                    double? amount = double.tryParse(amountCntr.text);
-                    if (amount == null) {
-                      return "Enter a valid amount";
-                    } else if (electricityProvider == null) {
-                      return null;
-                    } else if (amount <= electricityProvider!.minAmount) {
-                      return electricityProvider!.electMinError;
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                if (addToBeneficiary) ...[
-                  32.verticalSpace,
-                  NbField.text(
-                      controller: nameCntr,
-                      hint: "Name",
-                      fieldHeight: 78.h,
-                      validator: () {
-                        if (nameCntr.text.length < 2) {
-                          return "Enter a valid name";
-                        }
-                        return null;
-                      })
-                ],
-                21.verticalSpace,
-                Row(
-                  children: [
-                    Expanded(
-                      child: NbText.sp16("Add this account to beneficiary")
-                          .w500
-                          .black,
-                    ),
-                    NbField.check(
-                      value: addToBeneficiary,
-                      onChanged: (v) {
-                        setState(() {
-                          addToBeneficiary = v;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                NbButton.primaryBoolLoader(
+                BigPrimaryButton(
+                  status: btnStatus,
                   text: "Continue",
                   onTap: _continue,
-                  isLoading: isLoading,
                 ),
               ],
             ),
@@ -177,20 +188,34 @@ class _PayElectricityPageState extends State<PayElectricityPage> {
     return validForm;
   }
 
+  void buttonValidate(String? val) {
+    bool isValid;
+    double? amount = double.tryParse(amountCntr.text);
+
+    if ((addToBeneficiary) && (!NbValidators.isName(nameCntr.text))) {
+      isValid = false;
+    } else if (!NbValidators.isUsername(idCntr.text)) {
+      isValid = false;
+    } else if (electricityProvider == null) {
+      isValid = false;
+    } else if (amount == null) {
+      isValid = false;
+    } else {
+      isValid = true;
+    }
+    if (isValid) {
+      btnStatus = ButtonEnum.active;
+    } else {
+      btnStatus = ButtonEnum.disabled;
+    }
+    setState(() {});
+  }
+
   void _continue() async {
     if (isValid) {
       setState(() {
-        isLoading = false;
+        btnStatus = ButtonEnum.loading;
       });
-      // int? id;
-      // if (addToBeneficiary) {
-      //   id = await Get.find<BeneficiariesController>().create(
-      //     name: nameCntr.text,
-      //     number: idCntr.text,
-      //     serviceType: ServiceTypesEnum.electricity,
-      //     provider: electricityProvider!,
-      //   );
-      // }
       ElectricityBill bill = ElectricityBill(
         amount: double.parse(amountCntr.text),
         name: nameCntr.text,
@@ -199,7 +224,7 @@ class _PayElectricityPageState extends State<PayElectricityPage> {
         saveBeneficiary: addToBeneficiary,
       );
       setState(() {
-        isLoading = false;
+        btnStatus = ButtonEnum.active;
       });
       Get.to(() => ConfirmTransactionScreen(bill: bill));
     }

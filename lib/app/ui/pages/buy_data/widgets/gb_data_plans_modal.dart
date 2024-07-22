@@ -23,7 +23,7 @@ class GbDataPlansModal extends StatelessWidget {
         child: GetBuilder<DataController>(
           init: Get.find<DataController>(),
           initState: (_) {
-            Get.find<DataController>().initializePlans(provider.id);
+            Get.find<DataController>().initializePlans(context, provider.id);
           },
           builder: (cntrl) {
             List<GbDataPlans> dataPlans = cntrl.getDataPlans(provider.id);

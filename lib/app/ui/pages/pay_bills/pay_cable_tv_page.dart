@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:nitrobills/app/controllers/account/beneficiaries_controller.dart';
-import 'package:nitrobills/app/data/enums/service_types_enum.dart';
+import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/data/models/tv_service_provider.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
+import 'package:nitrobills/app/data/services/validators.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/big_primary_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_field.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_cable_plans_modal.dart';
 import 'package:nitrobills/app/ui/pages/buy_data/widgets/gb_cable_service_provider_modal.dart';
 import 'package:nitrobills/app/ui/pages/pay_bills/models/gb_cable_plans.dart';
-import 'package:nitrobills/app/ui/pages/transactions/confirm_transaction_screen.dart';
+import 'package:nitrobills/app/ui/pages/transactions/transaction_overview_screen.dart';
 import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -34,7 +33,8 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
   String? providerValidator;
   String? planValidator;
   final String _providerValidatorTxt = "Select an Cable Service Provider";
-  bool isLoading = false;
+  // bool isLoading = false;
+  ButtonEnum btnStatus = ButtonEnum.disabled;
 
   @override
   void initState() {
@@ -76,67 +76,75 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
                   color: NbColors.black,
                 ),
                 37.verticalSpace,
-                NbField.buttonArrowDown(
-                  fieldHeight: 78.h,
-                  text: cableProvider?.name ?? "Choose Provider",
-                  onTap: _chooseProvider,
-                  forcedErrorString: providerValidator,
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(children: [
+                      NbField.buttonArrowDown(
+                        fieldHeight: 78.h,
+                        text: cableProvider?.name ?? "Choose Provider",
+                        onTap: _chooseProvider,
+                        forcedErrorString: providerValidator,
+                      ),
+                      32.verticalSpace,
+                      NbField.buttonArrowDown(
+                        fieldHeight: 78.h,
+                        text: plan?.name ?? "Subscription",
+                        onTap: _chooseSubscription,
+                        forcedErrorString: planValidator,
+                      ),
+                      32.verticalSpace,
+                      NbField.text(
+                        controller: codeCntr,
+                        hint: "Cable Number",
+                        fieldHeight: 78.h,
+                        onChanged: buttonValidate,
+                        validator: () {
+                          if (codeCntr.text.length < 5) {
+                            return "Enter a valid cable number";
+                          }
+                          return null;
+                        },
+                      ),
+                      if (addToBeneficiary) ...[
+                        32.verticalSpace,
+                        NbField.text(
+                            controller: nameCntr,
+                            hint: "Name",
+                            fieldHeight: 78.h,
+                            onChanged: buttonValidate,
+                            validator: () {
+                              if (nameCntr.text.length < 2) {
+                                return "Enter a valid name";
+                              }
+                              return null;
+                            })
+                      ],
+                      21.verticalSpace,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: NbText.sp16("Add this cable to beneficiary")
+                                .w500
+                                .black,
+                          ),
+                          NbField.check(
+                            value: addToBeneficiary,
+                            onChanged: (v) {
+                              setState(() {
+                                addToBeneficiary = v;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      20.verticalSpace,
+                    ]),
+                  ),
                 ),
-                32.verticalSpace,
-                NbField.buttonArrowDown(
-                  fieldHeight: 78.h,
-                  text: plan?.name ?? "Subscription",
-                  onTap: _chooseSubscription,
-                  forcedErrorString: planValidator,
-                ),
-                32.verticalSpace,
-                NbField.text(
-                  controller: codeCntr,
-                  hint: "Cable Number",
-                  fieldHeight: 78.h,
-                  validator: () {
-                    if (codeCntr.text.length < 5) {
-                      return "Enter a valid cable number";
-                    }
-                    return null;
-                  },
-                ),
-                if (addToBeneficiary) ...[
-                  32.verticalSpace,
-                  NbField.text(
-                      controller: nameCntr,
-                      hint: "Name",
-                      fieldHeight: 78.h,
-                      validator: () {
-                        if (nameCntr.text.length < 2) {
-                          return "Enter a valid name";
-                        }
-                        return null;
-                      })
-                ],
-                21.verticalSpace,
-                Row(
-                  children: [
-                    Expanded(
-                      child: NbText.sp16("Add this cable to beneficiary")
-                          .w500
-                          .black,
-                    ),
-                    NbField.check(
-                      value: addToBeneficiary,
-                      onChanged: (v) {
-                        setState(() {
-                          addToBeneficiary = v;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                NbButton.primaryBoolLoader(
+                BigPrimaryButton(
+                  status: btnStatus,
                   text: "Continue",
                   onTap: _continue,
-                  isLoading: isLoading,
                 ),
               ],
             ),
@@ -153,7 +161,7 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
           isScrollControlled: true,
         ) ??
         cableProvider;
-    setState(() {});
+    buttonValidate("");
   }
 
   void _chooseSubscription() async {
@@ -167,7 +175,7 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
             isScrollControlled: true,
           ) ??
           plan;
-      setState(() {});
+      buttonValidate("");
     }
   }
 
@@ -185,20 +193,33 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
     return validForm;
   }
 
+  void buttonValidate(String? val) {
+    bool isValid;
+
+    if ((addToBeneficiary) && (!NbValidators.isName(nameCntr.text))) {
+      isValid = false;
+    } else if (!NbValidators.isUsername(codeCntr.text)) {
+      isValid = false;
+    } else if (cableProvider == null) {
+      isValid = false;
+    } else if (plan == null) {
+      isValid = false;
+    } else {
+      isValid = true;
+    }
+    if (isValid) {
+      btnStatus = ButtonEnum.active;
+    } else {
+      btnStatus = ButtonEnum.disabled;
+    }
+    setState(() {});
+  }
+
   void _continue() async {
     if (isValid) {
       setState(() {
-        isLoading = false;
+        btnStatus = ButtonEnum.loading;
       });
-      // int? id;
-      // if (addToBeneficiary) {
-      //   id = await Get.find<BeneficiariesController>().create(
-      //     name: nameCntr.text,
-      //     number: codeCntr.text,
-      //     serviceType: ServiceTypesEnum.cable,
-      //     provider: cableProvider!,
-      //   );
-      // }
       CableBill bill = CableBill(
         amount: plan!.amount,
         name: nameCntr.text,
@@ -208,7 +229,7 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
         saveBeneficiary: addToBeneficiary,
       );
       setState(() {
-        isLoading = false;
+        btnStatus = ButtonEnum.active;
       });
       Get.to(() => ConfirmTransactionScreen(bill: bill));
     }

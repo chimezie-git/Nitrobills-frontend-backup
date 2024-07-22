@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/transactions_controller.dart';
+import 'package:nitrobills/app/controllers/navbar_controller.dart';
 import 'package:nitrobills/app/ui/global_widgets/empty_fields_widget.dart';
+import 'package:nitrobills/app/ui/pages/home/home_page.dart';
 import 'package:nitrobills/app/ui/pages/transactions/transactions_loading_page.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/transaction_tile.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
+import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class TransactionsPage extends StatelessWidget {
   const TransactionsPage({super.key});
@@ -15,7 +18,7 @@ class TransactionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Get.find<TransactionsController>().initialize();
+      Get.find<TransactionsController>().initialize(context);
     });
 
     return GetX<TransactionsController>(
@@ -32,7 +35,7 @@ class TransactionsPage extends StatelessWidget {
                 color: NbColors.black,
                 backgroundColor: Colors.white,
                 onRefresh: () async {
-                  await cntrl.reload();
+                  await cntrl.reload(context);
                 },
                 child: Column(
                   children: [
@@ -45,7 +48,7 @@ class TransactionsPage extends StatelessWidget {
                         text: "You haven't made any transaction yet.",
                         btnText: "View top payments",
                         prefix: NbSvg.card,
-                        onTap: () {},
+                        onTap: viewTopPayments,
                       )
                     else
                       Expanded(
@@ -68,5 +71,13 @@ class TransactionsPage extends StatelessWidget {
         }
       },
     );
+  }
+
+  void viewTopPayments() async {
+    Get.find<NavbarController>().changeIndex(0);
+    await NbUtils.nav.currentState?.push(
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
+    Get.find<NavbarController>().changeIndex(2);
   }
 }

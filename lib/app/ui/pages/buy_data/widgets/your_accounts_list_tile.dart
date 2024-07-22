@@ -10,11 +10,13 @@ class YourAccountsListTile extends StatelessWidget {
   final RecentPayment recentPayment;
   final MobileServiceProvider provider;
   final void Function() onTap;
+  final void Function() onDelete;
 
   const YourAccountsListTile({
     super.key,
     required this.recentPayment,
     required this.onTap,
+    required this.onDelete,
     required this.provider,
   });
 
@@ -26,10 +28,7 @@ class YourAccountsListTile extends StatelessWidget {
         onTap: onTap,
         child: Container(
           height: 76.h,
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: 16.h,
-          ),
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 2.w, 16.h),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16.r),
@@ -57,10 +56,13 @@ class YourAccountsListTile extends StatelessWidget {
                   ],
                 ),
               ),
-              SvgPicture.asset(
-                NbSvg.trashCan,
-                width: 24.w,
-                height: 24.h,
+              IconButton(
+                onPressed: onDelete,
+                icon: SvgPicture.asset(
+                  NbSvg.trashCan,
+                  width: 24.w,
+                  height: 24.h,
+                ),
               ),
             ],
           ),

@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/transactions_controller.dart';
 import 'package:nitrobills/app/data/enums/loader_enum.dart';
@@ -15,7 +18,9 @@ class DataController extends GetxController {
       RxMap<String, List<GbDataPlans>>();
   final Rx<LoaderEnum> status = Rx<LoaderEnum>(LoaderEnum.loading);
 
-  Future initializeProvider() async {
+  Future initializeProvider(
+    BuildContext context,
+  ) async {
     if (providers.isEmpty) {
       status.value = LoaderEnum.loading;
       final result = await DataService.getMobileProiders();
@@ -25,13 +30,13 @@ class DataController extends GetxController {
         providerLoaded.value = true;
       } else {
         status.value = LoaderEnum.failed;
-        NbToast.error(result.left.message);
+        NbToast.error(context, result.left.message);
       }
       update();
     }
   }
 
-  Future initializePlans(String provider) async {
+  Future initializePlans(BuildContext context, String provider) async {
     if (!dataPlan.containsKey(provider)) {
       status.value = LoaderEnum.loading;
       final result = await DataService.getDataPlans(provider);
@@ -40,13 +45,14 @@ class DataController extends GetxController {
         status.value = LoaderEnum.success;
       } else {
         status.value = LoaderEnum.failed;
-        NbToast.error(result.left.message);
+        NbToast.error(context, result.left.message);
       }
       update();
     }
   }
 
-  Future reloadProviders({bool showLoader = false}) async {
+  Future reloadProviders(BuildContext context,
+      {bool showLoader = false}) async {
     if (showLoader) {
       status.value = LoaderEnum.loading;
     }
@@ -56,12 +62,13 @@ class DataController extends GetxController {
       status.value = LoaderEnum.success;
     } else {
       status.value = LoaderEnum.failed;
-      NbToast.error(result.left.message);
+      NbToast.error(context, result.left.message);
     }
     update();
   }
 
-  Future reloadPlans(String provider, {bool showLoader = false}) async {
+  Future reloadPlans(BuildContext context, String provider,
+      {bool showLoader = false}) async {
     if (showLoader) {
       status.value = LoaderEnum.loading;
     }
@@ -71,7 +78,7 @@ class DataController extends GetxController {
       status.value = LoaderEnum.success;
     } else {
       status.value = LoaderEnum.failed;
-      NbToast.error(result.left.message);
+      NbToast.error(context, result.left.message);
     }
     update();
   }
@@ -84,13 +91,13 @@ class DataController extends GetxController {
     }
   }
 
-  Future<bool> buy(DataBill bill) async {
+  Future<bool> buy(BuildContext context, DataBill bill) async {
     final result = await DataService.buy(bill);
     if (result.isRight) {
       Get.find<TransactionsController>().addTransaction(result.right);
       return true;
     } else {
-      NbToast.error(result.left.message);
+      NbToast.error(context, result.left.message);
       return false;
     }
   }

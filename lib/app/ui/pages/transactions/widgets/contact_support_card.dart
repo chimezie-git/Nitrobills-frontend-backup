@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
+import 'package:nitrobills/app/ui/utils/contact_utils/nb_contact_utils.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
@@ -23,25 +24,33 @@ class ContactSupportCard extends StatelessWidget {
         children: [
           NbText.sp16("Contact support").w500.black,
           const Spacer(flex: 2),
-          _infoTile(NbSvg.phone, "+2349163897229"),
+          _infoTile(NbSvg.phone, "+2349163897229", () async {
+            await NbContactUtils.phoneCall("+2349163897229");
+          }),
           const Spacer(),
-          _infoTile(NbSvg.emailHeart, "info@nitrobills.com"),
+          _infoTile(NbSvg.emailHeart, "info@nitrobills.com", () async {
+            await NbContactUtils.sendEmail(toEmail: "info@nitrobills.com");
+          }),
           const Spacer(),
         ],
       ),
     );
   }
 
-  Row _infoTile(String svg, String info) {
-    return Row(
-      children: [
-        Expanded(child: NbText.sp14(info).w700.black),
-        SvgPicture.asset(
-          svg,
-          width: 22.r,
-          colorFilter: const ColorFilter.mode(NbColors.black, BlendMode.srcIn),
-        ),
-      ],
+  Widget _infoTile(String svg, String info, void Function() onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Expanded(child: NbText.sp14(info).w700.black),
+          SvgPicture.asset(
+            svg,
+            width: 22.r,
+            colorFilter:
+                const ColorFilter.mode(NbColors.black, BlendMode.srcIn),
+          ),
+        ],
+      ),
     );
   }
 }

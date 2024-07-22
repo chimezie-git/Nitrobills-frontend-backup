@@ -11,11 +11,13 @@ import 'package:nitrobills/app/ui/utils/nb_text.dart';
 class TransactionInfoWidget extends StatelessWidget {
   final ExpandableController expandCntr;
   final Bill bill;
+  final DateTime? endDate;
 
   const TransactionInfoWidget({
     super.key,
     required this.expandCntr,
     required this.bill,
+    required this.endDate,
   });
 
   @override
@@ -32,7 +34,12 @@ class TransactionInfoWidget extends StatelessWidget {
       ),
       child: ExpandablePanel(
         controller: expandCntr,
-        theme: const ExpandableThemeData(hasIcon: false),
+        theme: const ExpandableThemeData(
+          hasIcon: false,
+          tapHeaderToExpand: false,
+          tapBodyToExpand: false,
+          tapBodyToCollapse: false,
+        ),
         header: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -102,7 +109,12 @@ class TransactionInfoWidget extends StatelessWidget {
               ),
             ),
             30.verticalSpace,
-            _listTile(NbSvg.validity, "Validity", bill.serviceType.name),
+            _listTile(
+                NbSvg.validity,
+                "Validity",
+                DateFormat("d MMMM yyyy").format(
+                  endDate ?? DateTime.now(),
+                )),
           ],
         ),
         expanded: const SizedBox.shrink(),

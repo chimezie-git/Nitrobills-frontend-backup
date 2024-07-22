@@ -1,5 +1,3 @@
-import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
-
 abstract class AbstractServicePlan {
   final int planId;
   final String name;

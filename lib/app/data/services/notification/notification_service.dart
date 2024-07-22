@@ -2,7 +2,6 @@ import 'package:dio/dio.dart' as dio;
 import 'package:either_dart/either.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:nitrobills/app/controllers/account/transactions_controller.dart';
 import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
 import 'package:nitrobills/app/data/models/app_notification.dart';
 import 'package:nitrobills/app/data/provider/app_error.dart';
@@ -100,12 +99,12 @@ class NotificationService {
         if (notify.right.isNotEmpty) {
           for (AppNotification n in notify.right) {
             if (n.type.isAccountCreate) {
-              await Get.find<UserAccountController>().reload(showToast: false);
-            } else if (n.type.isTransaction) {
-              await Get.find<TransactionsController>().reload(showToast: false);
+              await Get.find<UserAccountController>().reload();
+              // } else if (n.type.isTransaction) {
+              //   await Get.find<TransactionsController>().reload();
             } else if (n.type.isDeposit) {
-              await Get.find<TransactionsController>().reload(showToast: false);
-              await Get.find<UserAccountController>().reload(showToast: false);
+              // await Get.find<TransactionsController>().reload();
+              await Get.find<UserAccountController>().reload();
             }
             yield n;
             if (!bankPending) {

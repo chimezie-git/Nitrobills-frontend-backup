@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/data/enums/loader_enum.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
@@ -17,7 +18,7 @@ class BeneficiariesController extends GetxController {
   final Rx<ServiceTypesEnum> serviceTypeSort =
       Rx<ServiceTypesEnum>(ServiceTypesEnum.airtime);
 
-  Future initialize() async {
+  Future initialize(BuildContext context) async {
     if (!loaded.value) {
       status.value = LoaderEnum.loading;
       final result = await BeneficiaryService.getBeneficiary();
@@ -30,13 +31,14 @@ class BeneficiariesController extends GetxController {
         sort();
       } else {
         status.value = LoaderEnum.failed;
-        NbToast.error(result.left.message);
+        // ignore: use_build_context_synchronously
+        NbToast.error(context, result.left.message);
         update();
       }
     }
   }
 
-  Future reload({bool showLoader = false}) async {
+  Future reload(BuildContext context, {bool showLoader = false}) async {
     if (showLoader) {
       status.value = LoaderEnum.loading;
     }
@@ -47,12 +49,14 @@ class BeneficiariesController extends GetxController {
       loaded.value = true;
     } else {
       status.value = LoaderEnum.failed;
-      NbToast.error(result.left.message);
+      // ignore: use_build_context_synchronously
+      NbToast.error(context, result.left.message);
     }
     update();
   }
 
-  Future<int?> create({
+  Future<int?> create(
+    BuildContext context, {
     required String name,
     required String number,
     required ServiceTypesEnum serviceType,
@@ -64,25 +68,31 @@ class BeneficiariesController extends GetxController {
         name, serviceType, provider, number, colorId, avatarId);
     if (result.isRight) {
       beneficiaries.add(result.right);
-      NbToast.success("Beneficiary Saved");
+      // ignore: use_build_context_synchronously
+      NbToast.success(context, "Beneficiary Saved");
       update();
       return result.right.id;
     } else {
-      NbToast.error(result.left.message);
+      // ignore: use_build_context_synchronously
+      NbToast.error(context, result.left.message);
       return null;
     }
   }
 
-  Future<bool> delete(Beneficiary beneficiary) async {
+  Future<bool> delete(BuildContext context, Beneficiary beneficiary) async {
     final result = await BeneficiaryService.deleteBeneficiary(beneficiary.id);
     if (result.isRight) {
       beneficiaries.value =
           beneficiaries.where((b) => b.id != beneficiary.id).toList();
-      NbToast.success("Beneficiary deleted");
+
+      // ignore: use_build_context_synchronously
+      NbToast.success(context, "Beneficiary deleted");
+
       update();
       return true;
     } else {
-      NbToast.error(result.left.message);
+      // ignore: use_build_context_synchronously
+      NbToast.error(context, result.left.message);
       return false;
     }
   }

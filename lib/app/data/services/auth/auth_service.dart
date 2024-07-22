@@ -146,6 +146,28 @@ class AuthService {
     }
   }
 
+  /// signin with Phone Credential returns token key or error
+  static AsyncOrError<void> confirmOtpPin(String email, String otpCode) async {
+    Map<String, dynamic> payload = {"otp_code": otpCode, "email": email};
+
+    TypeOrError<dio.Response> response =
+        await HttpService.post("${_baseUrl}confirm_otp/pin/", payload);
+    if (response.isRight) {
+      Map responseData = Map.from(response.right.data);
+      if (response.right.statusCode == 200) {
+        return const Right(null);
+      } else if (responseData.containsKey("otp")) {
+        String msg = responseData["otp"];
+        return Left(SingleFieldError("", msg));
+      } else {
+        String msg = _stringFromMap(responseData);
+        return Left(AppError(msg));
+      }
+    } else {
+      return Left(response.left);
+    }
+  }
+
   /// send Otp SMS returns success message or error
   static AsyncOrError<String> sendOTPSMS(String phone) async {
     Map<String, dynamic> payload = {"phone_number": phone};

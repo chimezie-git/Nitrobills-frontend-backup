@@ -89,8 +89,8 @@ class BeneficiaryService {
   static AsyncOrError<Null> deleteBeneficiary(
     int id,
   ) async {
-    TypeOrError<dio.Response> response = await HttpService.delete(
-        "${NbUtils.baseUrl}/api/data/beneficiaries/delete/$id", null,
+    TypeOrError<dio.Response> response = await HttpService.post(
+        "${NbUtils.baseUrl}/api/data/beneficiaries/delete/$id/", null,
         header: _header());
     if (response.isRight) {
       Map<String, dynamic> responseData =

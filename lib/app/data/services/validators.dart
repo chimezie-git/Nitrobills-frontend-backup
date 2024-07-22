@@ -6,7 +6,16 @@ class NbValidators {
 
   static final _password = RegExp(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$");
 
+  static final _username = RegExp(r"^[a-zA-Z0-9]{4,}$");
+  static final _name = RegExp(r"^[a-zA-Z0-9 ,.]{4,}$");
+
   static bool isEmail(String val) => _emailRegex.hasMatch(val);
   static bool isPhone(String val) => _phoneRegex.hasMatch(val);
   static bool isPassword(String val) => _password.hasMatch(val);
+  static bool isUsername(String val) => _username.hasMatch(val);
+  static bool isName(String val) => _name.hasMatch(val);
+
+  static bool isUsernameOrEmail(String val) {
+    return _emailRegex.hasMatch(val) || _username.hasMatch(val);
+  }
 }

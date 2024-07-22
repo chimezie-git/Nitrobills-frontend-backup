@@ -21,10 +21,10 @@ class DoubleTextField extends FormField {
     required this.forcedErrorString,
     required this.onChanged,
   }) : super(validator: (v) {
-          if (firstNameCntrl.text.isEmpty) {
+          if (!NbValidators.isName(firstNameCntrl.text)) {
             return "Enter a valid First Name";
           }
-          if (lastNameCntrl.text.isEmpty) {
+          if (!NbValidators.isName(lastNameCntrl.text)) {
             return "Enter a valid Last Name";
           } else {
             return null;
@@ -112,7 +112,7 @@ class TrippleTextField extends FormField {
     required this.forcedErrorString,
     required this.onChanged,
   }) : super(validator: (v) {
-          if (userNameCntrl.text.isEmpty) {
+          if (!NbValidators.isUsername(userNameCntrl.text)) {
             return "Enter a valid Username";
           } else if (!NbValidators.isPhone(phoneNumCntrl.text.trim())) {
             return "Enter a valid Phone Number";

@@ -15,7 +15,8 @@ class BulkSmsService {
       "sender_name": bill.name,
       "message": bill.message,
       "numbers": bill.contacts,
-      // if (bill.beneficiaryId != null) "beneficiary_id": bill.beneficiaryId,
+      if (bill.beneficiaryId != null) "beneficiary_id": bill.beneficiaryId,
+      if (bill.autopayId != null) "autopay_id": bill.autopayId,
     };
 
     TypeOrError<dio.Response> response = await HttpService.post(

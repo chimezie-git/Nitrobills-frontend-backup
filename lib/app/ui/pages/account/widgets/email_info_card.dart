@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
+import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -35,16 +35,19 @@ class EmailInfoCard extends StatelessWidget {
                 color: NbColors.white,
               ),
               padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: GetX<AuthController>(
-                init: Get.find<AuthController>(),
+              child: GetX<UserAccountController>(
+                init: Get.find<UserAccountController>(),
                 builder: (cntrl) {
                   return Column(
                     children: [
                       const Spacer(flex: 5),
-                      NbText.sp18(cntrl.email.value).w500.black.centerText,
+                      NbText.sp18(cntrl.account.value.email)
+                          .w500
+                          .black
+                          .centerText,
                       const Spacer(flex: 2),
                       NbText.sp14(
-                              "Your email address is ${false ? "" : "not"} verified")
+                              "Your email address is ${cntrl.account.value.emailVerified ? "" : "not"} verified")
                           .w500
                           .setColor(const Color(0xFF4D4D4D)),
                       const Spacer(flex: 1),
@@ -55,8 +58,9 @@ class EmailInfoCard extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: onTap,
-                        child: NbText.sp16(
-                                false ? "Change email adress" : "Verify Email")
+                        child: NbText.sp16(cntrl.account.value.emailVerified
+                                ? "Change email adress"
+                                : "Verify Email")
                             .w500
                             .setColor(const Color(0xFF0A6E8D)),
                       ),

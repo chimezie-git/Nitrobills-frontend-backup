@@ -94,7 +94,7 @@ class _PinCodePageState extends State<PinCodePage> {
 
   Future setPin(String pin) async {
     btnStatus.value = ButtonEnum.loading;
-    await AuthRepo().setPin(pin);
+    await AuthRepo().setPin(context, pin);
     btnStatus.value = ButtonEnum.active;
   }
 }

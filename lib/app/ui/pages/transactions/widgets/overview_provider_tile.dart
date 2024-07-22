@@ -112,7 +112,15 @@ class OverviewProviderTile extends StatelessWidget {
   }
 
   String get _number {
-    return '${bill.codeNumber.substring(0, 2)}-${bill.codeNumber.substring(2, 5)}-${bill.codeNumber.substring(5, 8)}-${bill.codeNumber.substring(8)}';
+    if (bill.codeNumber.length >= 9) {
+      return '${bill.codeNumber.substring(0, 2)}-${bill.codeNumber.substring(2, 5)}-${bill.codeNumber.substring(5, 8)}-${bill.codeNumber.substring(8)}';
+    } else if (bill.codeNumber.length >= 6) {
+      return '${bill.codeNumber.substring(0, 2)}-${bill.codeNumber.substring(2, 5)}-${bill.codeNumber.substring(5)}';
+    } else if (bill.codeNumber.length >= 3) {
+      return '${bill.codeNumber.substring(0, 2)}-${bill.codeNumber.substring(2)}';
+    } else {
+      return bill.codeNumber;
+    }
   }
 
   String get _name {

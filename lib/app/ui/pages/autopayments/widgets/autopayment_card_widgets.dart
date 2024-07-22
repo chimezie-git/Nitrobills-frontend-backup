@@ -6,6 +6,7 @@ import 'package:nitrobills/app/ui/utils/nb_text.dart';
 class AutopaymentCardWidget extends StatelessWidget {
   final void Function() onTap;
   final Autopay autopay;
+
   const AutopaymentCardWidget({
     super.key,
     required this.onTap,

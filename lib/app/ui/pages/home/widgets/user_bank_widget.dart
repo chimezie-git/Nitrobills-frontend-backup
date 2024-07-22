@@ -200,7 +200,7 @@ class _BankTab extends StatelessWidget {
                           .w500,
                     ),
                     InkWell(
-                      onTap: _copyBankDetails,
+                      onTap: () => _copyBankDetails(context),
                       child: SizedBox(
                         width: 24.w,
                         height: 24.w,
@@ -283,10 +283,11 @@ class _BankTab extends StatelessWidget {
     );
   }
 
-  void _copyBankDetails() async {
+  void _copyBankDetails(BuildContext context) async {
     ClipboardData data = ClipboardData(text: bankInfo.accountNumber);
     await Clipboard.setData(data);
-    NbToast.copy("account number copied");
+    // ignore: use_build_context_synchronously
+    NbToast.copy(context, "account number copied");
   }
 
   Future _fundAccount() async {

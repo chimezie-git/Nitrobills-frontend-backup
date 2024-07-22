@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
@@ -48,14 +49,15 @@ class AuthController extends GetxController {
         lastName: lastName, firstName: firstName, email: email);
   }
 
-  Future logoutUser() async {
+  Future logoutUser(BuildContext context) async {
     final logoutData = await AuthService.logout();
     if (logoutData.isRight) {
       Get.find<UserAccountController>().loaded.value = false;
       NbUtils.removeNav;
       Get.offAll(() => const IntroPage());
     } else {
-      NbToast.show(logoutData.left.message);
+      // ignore: use_build_context_synchronously
+      NbToast.show(context, logoutData.left.message);
     }
   }
 

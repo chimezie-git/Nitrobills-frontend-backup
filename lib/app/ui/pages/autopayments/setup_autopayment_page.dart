@@ -4,8 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
 import 'package:nitrobills/app/data/models/pay_frequency.dart';
-import 'package:nitrobills/app/ui/pages/autopayments/models/autopay.dart';
-import 'package:nitrobills/app/ui/pages/autopayments/widgets/recent_autopay_grid_widget.dart';
+import 'package:nitrobills/app/ui/pages/autopayments/widgets/selected_autopay_grid.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/data/provider/abstract_service_provider.dart';
 import 'package:nitrobills/app/ui/global_widgets/custom_date_picker_dialog.dart';
@@ -19,8 +18,8 @@ import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 
 class SetupAutopaymentPage extends StatefulWidget {
-  final Autopay? autopay;
-  const SetupAutopaymentPage({super.key, this.autopay});
+  final Beneficiary? beneficiary;
+  const SetupAutopaymentPage({super.key, this.beneficiary});
 
   @override
   State<SetupAutopaymentPage> createState() => _SetupAutopaymentPageState();
@@ -29,7 +28,7 @@ class SetupAutopaymentPage extends StatefulWidget {
 class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
   late final TextEditingController numberCntr;
   late final TextEditingController priceCntr;
-  List<Autopay> allAutopay = [];
+  List<Beneficiary> allBeneficiaries = [];
   ServiceTypesEnum? serviceType;
   AbstractServiceProvider? serviceProvider;
   PayFrequency? frequency;
@@ -38,10 +37,10 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.autopay != null) {
-      allAutopay.add(widget.autopay!);
-      serviceType = widget.autopay?.serviceType;
-      serviceProvider = widget.autopay?.serviceProvider;
+    if (widget.beneficiary != null) {
+      allBeneficiaries.add(widget.beneficiary!);
+      serviceType = widget.beneficiary?.serviceType;
+      serviceProvider = widget.beneficiary?.serviceProvider;
     }
     numberCntr = TextEditingController();
     priceCntr = TextEditingController();
@@ -78,11 +77,11 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
                   color: NbColors.black,
                 ),
                 20.verticalSpace,
-                RecentAutopayGridWidget(
-                  autopays: allAutopay,
+                SelectedAutopayGrid(
+                  beneficiary: allBeneficiaries,
                   onAdd: _addData,
                   onDelete: (index) {
-                    allAutopay.removeAt(index);
+                    allBeneficiaries.removeAt(index);
                     setState(() {});
                   },
                 ),
@@ -134,7 +133,7 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
 
   void _addData() async {
     if (serviceProvider == null || serviceType == null) {
-      NbToast.show("You have not selected a service");
+      NbToast.show(context, "You have not selected a service");
       return;
     }
     Beneficiary? beneficiary =
@@ -143,7 +142,7 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
               serviceProvider: serviceProvider!,
             ));
     if (beneficiary != null) {
-      allAutopay.add(Autopay.fromBeneficiary(beneficiary));
+      allBeneficiaries.add(beneficiary);
       setState(() {});
     }
   }

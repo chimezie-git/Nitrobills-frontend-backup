@@ -74,6 +74,7 @@ class NbSvg {
   static const String dateTime = "assets/svg/date_time.svg";
   static const String charge = "assets/svg/charge.svg";
   static const String emailHeart = "assets/svg/email_heart.svg";
+  static const String pointerArrow = "assets/svg/pointer_arrow.svg";
 
   // static const String phone = "assets/svg/phone.svg";
 }
@@ -137,4 +138,9 @@ class NbImage {
   // avatar
   static const String avatar1 = "assets/images/avatar/avatar1.png";
   static const String avatar2 = "assets/images/avatar/avatar2.png";
+  // tool tip
+  static const String beneficiaryTooltip =
+      "assets/images/beneficiary_tolltip_info.png";
+  static const String autopayTooltip =
+      "assets/images/autopay_tooltip_image.png";
 }

@@ -15,7 +15,7 @@ class GbCableServiceProviderModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.find<CableController>().initializeProvider();
+      Get.find<CableController>().initializeProvider(context);
     });
     return Material(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),

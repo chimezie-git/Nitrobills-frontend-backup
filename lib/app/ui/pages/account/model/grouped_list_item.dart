@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
-import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
 import 'package:nitrobills/app/ui/pages/account/account_email_page.dart';
 import 'package:nitrobills/app/ui/pages/account/account_referral_page.dart';
 import 'package:nitrobills/app/ui/pages/account/contact_us_page.dart';
+import 'package:nitrobills/app/ui/pages/account/widgets/logout_confirm_modal.dart';
 import 'package:nitrobills/app/ui/pages/account/widgets/password_reset_modal.dart';
 import 'package:nitrobills/app/ui/pages/autopayments/manage_autopayments_page.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
@@ -16,11 +16,12 @@ class GroupedListItem {
   final String svg;
   final void Function()? onTap;
   final bool arrowIcon;
-
+  final bool isEmail;
   GroupedListItem(
       {required this.name,
       required this.svg,
       this.onTap,
+      this.isEmail = false,
       this.arrowIcon = false});
 
   static List<GroupedListItem> account() => [
@@ -43,6 +44,7 @@ class GroupedListItem {
         GroupedListItem(
             name: Get.find<UserAccountController>().account.value.email,
             svg: NbSvg.mail,
+            isEmail: true,
             onTap: () async {
               NbUtils.removeNav;
               await NbUtils.nav.currentState?.push(MaterialPageRoute(
@@ -83,8 +85,15 @@ class GroupedListItem {
         GroupedListItem(
             name: "Sign out",
             svg: NbSvg.signout,
-            onTap: () {
-              Get.find<AuthController>().logoutUser();
+            onTap: () async {
+              NbUtils.removeNav;
+              await showModalBottomSheet(
+                context: NbUtils.nav.currentContext!,
+                builder: (context) => const LogoutConfirmModal(),
+                isScrollControlled: true,
+                isDismissible: false,
+              );
+              NbUtils.showNav;
             }),
       ];
   static List<GroupedListItem> about() => [

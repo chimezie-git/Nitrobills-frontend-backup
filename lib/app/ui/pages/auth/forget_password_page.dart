@@ -141,7 +141,7 @@ class _PhoneNumberPageState extends State<ForgetPasswordPage> {
   void _resetPassword() async {
     if (formKey.currentState?.validate() ?? false) {
       buttonStatus.value = ButtonEnum.loading;
-      final data = await AuthRepo().forgetPassword(phoneCntrl.text);
+      final data = await AuthRepo().forgetPassword(context, phoneCntrl.text);
       if (data.isLeft) {
         _setError(data.left);
       }

@@ -47,10 +47,12 @@ class AutopayService {
     Map<String, dynamic> payload = {
       "name": autopay.name,
       "transaction_type": autopay.serviceType.toServerString,
-      "service_provider": autopay.serviceProvider,
+      "service_provider": autopay.serviceProvider.id,
+      "amount": autopay.amount,
+      "uuid": autopay.uuid,
       "number": autopay.number,
       "amount_plan": autopay.amountPlan,
-      "period": autopay.period,
+      "period": autopay.period.toServerString(),
       "custom_days": autopay.customDays,
       "end_date": autopay.endDate.toIso8601String()
     };

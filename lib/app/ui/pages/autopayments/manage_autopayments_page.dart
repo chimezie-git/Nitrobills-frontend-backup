@@ -1,11 +1,13 @@
+import 'package:el_tooltip/el_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/autopay_controller.dart';
 import 'package:nitrobills/app/ui/global_widgets/empty_fields_widget.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
-import 'package:nitrobills/app/ui/pages/autopayments/setup_autopayment_page.dart';
 import 'package:nitrobills/app/ui/pages/autopayments/widgets/autopayment_card_widgets.dart';
+import 'package:nitrobills/app/ui/pages/autopayments/widgets/autopayment_tooltip.dart';
 import 'package:nitrobills/app/ui/pages/autopayments/widgets/my_bills_card.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
@@ -22,7 +24,7 @@ class ManageAutopaymentsPage extends StatelessWidget {
           builder: (cntrl) {
             return RefreshIndicator(
               onRefresh: () async {
-                await cntrl.reload();
+                await cntrl.reload(context);
               },
               backgroundColor: Colors.white,
               color: NbColors.black,
@@ -49,7 +51,7 @@ class ManageAutopaymentsPage extends StatelessWidget {
                           image: NbImage.noAutopay,
                           text: "You don't have auto-payments set up yet.",
                           onTap: () {},
-                          postfix: NbSvg.questionMark,
+                          postfix: infoToolTip(),
                           btnText: "Click the plus button to add",
                         )
                       else
@@ -65,11 +67,11 @@ class ManageAutopaymentsPage extends StatelessWidget {
                                     return AutopaymentCardWidget(
                                       autopay: cntrl.autopay[index],
                                       onTap: () {
-                                        Get.to(
-                                          () => SetupAutopaymentPage(
-                                            autopay: cntrl.autopay[index],
-                                          ),
-                                        );
+                                        // Get.to(
+                                        //   () => SetupAutopaymentPage(
+                                        //     autopay: cntrl.autopay[index],
+                                        //   ),
+                                        // );
                                       },
                                     );
                                   },
@@ -87,6 +89,35 @@ class ManageAutopaymentsPage extends StatelessWidget {
               ),
             );
           }),
+    );
+  }
+
+  Widget infoToolTip() {
+    return ElTooltip(
+      content: const AutopaymentTooltip(),
+      radius: Radius.circular(16.r),
+      // color: Colors.transparent,
+      color: const Color(0xFFE0E0E0),
+      position: ElTooltipPosition.topEnd,
+
+      child: Container(
+        width: 24.r,
+        height: 24.r,
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(
+          color: NbColors.lightGrey,
+          shape: BoxShape.circle,
+        ),
+        child: SvgPicture.asset(
+          NbSvg.questionMark,
+          width: 16.r,
+          height: 16.r,
+          colorFilter: const ColorFilter.mode(
+            NbColors.primary,
+            BlendMode.srcIn,
+          ),
+        ),
+      ),
     );
   }
 }

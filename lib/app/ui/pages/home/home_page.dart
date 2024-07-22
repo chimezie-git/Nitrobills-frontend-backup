@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
     NbToast.init(context);
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Get.find<UserAccountController>().initialize();
+      Get.find<UserAccountController>().initialize(context);
     });
   }
 
@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future refresh() async {
-    NbToast.updateBalance();
+    NbToast.updateBalance(context);
     await Get.find<UserAccountController>().reload(showLoading: true);
   }
 }

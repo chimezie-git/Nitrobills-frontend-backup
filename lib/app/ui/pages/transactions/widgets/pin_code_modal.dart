@@ -4,8 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
-import 'package:nitrobills/app/ui/global_widgets/buttons.dart';
 import 'package:nitrobills/app/ui/global_widgets/pin_code_widget.dart';
+import 'package:nitrobills/app/ui/pages/transactions/widgets/reset_pin_code_modal.dart';
+import 'package:nitrobills/app/ui/pages/transactions/widgets/send_pin_verification_modal.dart';
+import 'package:nitrobills/app/ui/pages/transactions/widgets/verify_pin_otp_modal.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
@@ -33,7 +35,9 @@ class _PinCodeModalState extends State<PinCodeModal> {
           34.verticalSpace,
           NbText.sp18("Enter your transaction pin").w700.black,
           32.verticalSpace,
-          NbText.sp16("Forgot pin?").w700.primary,
+          InkWell(
+              onTap: _forgetPin,
+              child: NbText.sp16("Forgot pin?").w700.primary),
           31.verticalSpace,
           Container(
             padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 8.h),
@@ -75,7 +79,30 @@ class _PinCodeModalState extends State<PinCodeModal> {
     if (pin == v) {
       Get.back(result: true);
     } else {
-      NbToast.error("Wrong Pin");
+      NbToast.error(context, "Wrong Pin");
+    }
+  }
+
+  void _forgetPin() async {
+    bool? pinSent = await Get.bottomSheet<bool?>(
+      const SendPinVerificationModal(),
+      isScrollControlled: true,
+    );
+    if (pinSent ?? false) {
+      bool? verified = await Get.bottomSheet<bool?>(
+        const VerifyPinOtpModal(),
+        isScrollControlled: true,
+      );
+
+      if (verified ?? false) {
+        bool? pinReset = await Get.bottomSheet<bool?>(
+          const ResetPinCodeModal(),
+          isScrollControlled: true,
+        );
+        if (pinReset ?? true) {
+          Get.back(result: true);
+        }
+      }
     }
   }
 }

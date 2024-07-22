@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,17 +20,17 @@ import 'package:nitrobills/app/ui/utils/nb_toast.dart';
 import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class AuthRepo {
-  Future<void> changePassword(String password) async {
+  Future<void> changePassword(BuildContext context, String password) async {
     final result = await AuthService.changePassword(password);
     if (result.isRight) {
       Navigator.popUntil(Get.context!, (route) => route.isFirst);
-      NbToast.info(result.right);
+      NbToast.info(context, result.right);
     } else {
-      NbToast.error(result.left.message);
+      NbToast.error(context, result.left.message);
     }
   }
 
-  Future<NullOrSingleFieldError> confirmOtpPhone(
+  Future<NullOrSingleFieldError> confirmOtpPhone(BuildContext context,
       String otp, String phoneNum, bool resetPassword) async {
     final response = await AuthService.confirmOtpPhone(phoneNum, otp);
     if (response.isRight) {
@@ -46,83 +48,89 @@ class AuthRepo {
     } else if (response.left is SingleFieldError) {
       return Left(response.left as SingleFieldError);
     } else {
-      NbToast.error(response.left.message);
+      NbToast.error(context, response.left.message);
       return const Right(null);
     }
   }
 
-  Future<NullOrSingleFieldError> sendOtpSMS(String phoneNumber) async {
+  Future<NullOrSingleFieldError> sendOtpSMS(
+      BuildContext context, String phoneNumber) async {
     final String phone;
     try {
       phone = NbFormatter.phone(phoneNumber);
     } catch (e) {
-      NbToast.error(e.toString());
+      NbToast.error(context, e.toString());
       return const Right(null);
     }
     final response = await AuthService.sendOTPSMS(phone);
     if (response.isRight) {
-      NbToast.success(response.right);
+      NbToast.success(context, response.right);
       return const Right(null);
     } else if (response.left is SingleFieldError) {
       return Left(response.left as SingleFieldError);
     } else {
-      NbToast.error(response.left.message);
+      NbToast.error(context, response.left.message);
       return const Right(null);
     }
   }
 
-  Future<void> resendOtp(String phoneNumber) async {
+  Future<void> resendOtp(BuildContext context, String phoneNumber) async {
     final String phone;
     try {
       phone = NbFormatter.phone(phoneNumber);
     } catch (e) {
-      NbToast.error(e.toString());
+      NbToast.error(context, e.toString());
       return;
     }
     final response = await AuthService.sendOTPSMS(phone);
     if (response.isRight) {
-      NbToast.success(response.right);
+      NbToast.success(context, response.right);
     } else {
-      NbToast.error(response.left.message);
+      NbToast.error(context, response.left.message);
     }
   }
 
-  Future<NullOrSingleFieldError> sendOtpEmail(String email) async {
+  Future<NullOrSingleFieldError> sendOtpEmail(
+      BuildContext context, String email) async {
     final response = await AuthService.sendOTPEmail(email);
     if (response.isRight) {
-      NbToast.success(response.right);
+      NbToast.success(context, response.right);
       return const Right(null);
     } else if (response.left is SingleFieldError) {
       return Left(response.left as SingleFieldError);
     } else {
-      NbToast.error(response.left.message);
+      NbToast.error(context, response.left.message);
       return const Right(null);
     }
   }
 
-  Future<NullOrSingleFieldError> changeEmail(String email) async {
+  Future<NullOrSingleFieldError> changeEmail(
+      BuildContext context, String email) async {
     final response = await AuthService.changeEmail(email);
     if (response.isRight) {
-      NbToast.success(response.right);
+      NbToast.success(context, response.right);
       return const Right(null);
     } else if (response.left is SingleFieldError) {
       return Left(response.left as SingleFieldError);
     } else {
-      NbToast.error(response.left.message);
+      NbToast.error(context, response.left.message);
       return const Right(null);
     }
   }
 
-  Future<void> resendEmailVerification() async {
+  Future<void> resendEmailVerification(
+    BuildContext context,
+  ) async {
     final response = await AuthService.resendEmailVerification();
     if (response.isRight) {
-      NbToast.success(response.right);
+      NbToast.success(context, response.right);
     } else {
-      NbToast.error(response.left.message);
+      NbToast.error(context, response.left.message);
     }
   }
 
   Future<NullOrMultipleFieldError> register(
+    BuildContext context,
     String username,
     String firstName,
     String lastName,
@@ -158,13 +166,13 @@ class AuthRepo {
     } else if (response.left is MultipleFieldError) {
       return Left(response.left as MultipleFieldError);
     } else {
-      NbToast.error(response.left.message);
+      NbToast.error(context, response.left.message);
       return const Right(null);
     }
   }
 
   Future<NullOrSingleFieldError> login(
-      String emailUsername, String password) async {
+      BuildContext context, String emailUsername, String password) async {
     final request = await AuthService.login(
         emailUsername: emailUsername, password: password);
     if (request.isRight) {
@@ -191,31 +199,35 @@ class AuthRepo {
     } else if (request.left is SingleFieldError) {
       return Left(request.left as SingleFieldError);
     } else {
-      NbToast.error(request.left.message);
+      NbToast.error(context, request.left.message);
       return const Right(null);
     }
   }
 
-  Future<NullOrSingleFieldError> onlyPasswordLogin(String password) async {
+  Future<NullOrSingleFieldError> onlyPasswordLogin(
+      BuildContext context, String password) async {
     final cntrl = Get.find<AuthController>();
-    return await login(cntrl.email.value, password);
+    return await login(context, cntrl.email.value, password);
   }
 
-  Future<NullOrSingleFieldError> biometricLogin() async {
+  Future<NullOrSingleFieldError> biometricLogin(
+    BuildContext context,
+  ) async {
     final LocalAuthentication auth = LocalAuthentication();
     bool loggedIn = await auth.authenticate(
         localizedReason: 'Use Thumbprint to access Nitro bills',
         options: const AuthenticationOptions(biometricOnly: true));
     if (loggedIn) {
       final cntrl = Get.find<AuthController>();
-      return await login(cntrl.email.value, cntrl.password.value);
+      return await login(context, cntrl.email.value, cntrl.password.value);
     } else {
-      NbToast.error("biometric Login Failed");
+      NbToast.error(context, "biometric Login Failed");
       return const Right(null);
     }
   }
 
   Future<NullOrSingleFieldError> changePhoneNumber(
+    BuildContext context,
     String phoneNumber,
     String email,
     String username,
@@ -224,29 +236,30 @@ class AuthRepo {
     try {
       phone = NbFormatter.phone(phoneNumber);
     } catch (e) {
-      NbToast.error(e.toString());
+      NbToast.error(context, e.toString());
       return const Right(null);
     }
     final response = await AuthService.changePhoneNumber(
         email: email, phone: phone, username: username);
     if (response.isRight) {
-      NbToast.success(response.right);
+      NbToast.success(context, response.right);
       Get.back(result: phoneNumber);
       return const Right(null);
     } else if (response.left is SingleFieldError) {
       return Left(response.left as SingleFieldError);
     } else {
-      NbToast.error(response.left.message);
+      NbToast.error(context, response.left.message);
       return const Right(null);
     }
   }
 
-  Future<NullOrSingleFieldError> forgetPassword(String phoneNumber) async {
+  Future<NullOrSingleFieldError> forgetPassword(
+      BuildContext context, String phoneNumber) async {
     final String phone;
     try {
       phone = NbFormatter.phone(phoneNumber);
     } catch (e) {
-      NbToast.error(e.toString());
+      NbToast.error(context, e.toString());
       return const Right(null);
     }
     final response = await AuthService.forgetPassword(phone: phone);
@@ -264,17 +277,17 @@ class AuthRepo {
     } else if (response.left is SingleFieldError) {
       return Left(response.left as SingleFieldError);
     } else {
-      NbToast.error(response.left.message);
+      NbToast.error(context, response.left.message);
       return const Right(null);
     }
   }
 
-  Future<void> setPin(String pin) async {
+  Future<void> setPin(BuildContext context, String pin) async {
     final response = await AuthService.setPin(pin: pin);
     if (response.isRight) {
       _gotToHome();
     } else {
-      NbToast.error(response.left.message);
+      NbToast.error(context, response.left.message);
     }
   }
 

@@ -75,6 +75,41 @@ class UserAccount extends Equatable {
     );
   }
 
+  UserAccount copy({
+    int? id,
+    String? email,
+    String? pin,
+    int? referralCount,
+    String? firstName,
+    DateTime? dateJoined,
+    DateTime? lastLogin,
+    String? lastName,
+    String? username,
+    bool? emailVerified,
+    bool? phoneVerified,
+    String? phoneNumber,
+    String? referralCode,
+    ApiSecrets? secrets,
+    List<BankInfo>? banks,
+  }) =>
+      UserAccount(
+        id: id ?? this.id,
+        email: email ?? this.email,
+        pin: pin ?? this.pin,
+        referralCount: referralCount ?? this.referralCount,
+        firstName: firstName ?? this.firstName,
+        dateJoined: dateJoined ?? this.dateJoined,
+        lastLogin: lastLogin ?? this.lastLogin,
+        lastName: lastName ?? this.lastName,
+        username: username ?? this.username,
+        emailVerified: emailVerified ?? this.emailVerified,
+        phoneVerified: phoneVerified ?? this.phoneVerified,
+        phoneNumber: phoneNumber ?? this.phoneNumber,
+        referralCode: referralCode ?? this.referralCode,
+        secrets: secrets ?? this.secrets,
+        banks: banks ?? this.banks,
+      );
+
   @override
   List<Object?> get props => [
         id,

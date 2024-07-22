@@ -51,7 +51,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
 
   String? planValidator;
   String? providerValidator;
-  String _providerValidatorTxt = "Please Select a service provider";
+  final String _providerValidatorTxt = "Please Select a service provider";
 
   @override
   void initState() {

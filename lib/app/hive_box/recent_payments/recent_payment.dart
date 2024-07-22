@@ -44,14 +44,22 @@ class RecentPayment extends HiveObject {
     required String number,
   }) async {
     String id = const Uuid().v4();
-    NbHiveBox.recentPayBox.put(
-      id,
-      RecentPayment(
-          id: id,
-          name: name,
-          serviceType: serviceType,
-          serviceProvider: serviceProvider,
-          number: number),
+    final item = NbHiveBox.recentPayBox.values.where(
+      (rP) =>
+          (rP.number == number) &&
+          (rP.serviceType == serviceType) &&
+          (rP.serviceProvider == serviceProvider),
     );
+    if (item.isEmpty) {
+      await NbHiveBox.recentPayBox.put(
+        id,
+        RecentPayment(
+            id: id,
+            name: name,
+            serviceType: serviceType,
+            serviceProvider: serviceProvider,
+            number: number),
+      );
+    }
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
@@ -10,11 +9,13 @@ class MessagesField extends StatelessWidget {
   final TextEditingController controller;
   final void Function(String) onChanged;
   final String? forcedStringValidator;
+  final FocusNode focusNode;
   const MessagesField({
     super.key,
     required this.controller,
     required this.onChanged,
     required this.forcedStringValidator,
+    required this.focusNode,
   });
 
   @override
@@ -41,29 +42,35 @@ class MessagesField extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Opacity(
-                    opacity: controller.text.isEmpty ? 1 : 0,
-                    child: NbText.sp16("Messages").w500.black,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      controller.clear();
-                      onChanged("");
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.all(10.r),
-                      child: SvgPicture.asset(NbSvg.clean),
+              InkWell(
+                onTap: () {
+                  focusNode.requestFocus();
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Opacity(
+                      opacity: controller.text.isEmpty ? 1 : 0,
+                      child: NbText.sp16("Messages").w500.black,
                     ),
-                  ),
-                ],
+                    InkWell(
+                      onTap: () {
+                        controller.clear();
+                        onChanged("");
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(10.r),
+                        child: SvgPicture.asset(NbSvg.clean),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               TextField(
                 controller: controller,
                 onChanged: onChanged,
                 maxLines: 6,
+                focusNode: focusNode,
                 cursorColor: NbColors.darkGrey,
                 style: TextStyle(
                   fontSize: 16.sp,

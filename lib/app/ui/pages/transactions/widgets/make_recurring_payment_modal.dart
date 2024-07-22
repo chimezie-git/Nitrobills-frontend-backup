@@ -1,9 +1,13 @@
+import 'package:el_tooltip/el_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nitrobills/app/data/enums/period_enum.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
+import 'package:nitrobills/app/data/enums/button_enum.dart';
+import 'package:nitrobills/app/data/enums/service_types_enum.dart';
+import 'package:nitrobills/app/data/models/pay_frequency.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/big_primary_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/custom_date_picker_dialog.dart';
 import 'package:nitrobills/app/ui/global_widgets/frequency_selection_modal.dart';
 import 'package:nitrobills/app/ui/pages/transactions/widgets/grey_svg_icon_button.dart';
@@ -12,7 +16,17 @@ import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
 class MakeRecurringPaymentModal extends StatefulWidget {
-  const MakeRecurringPaymentModal({super.key});
+  final ServiceTypesEnum serviceType;
+  final String amount;
+  final PayFrequency? frequency;
+  final DateTime? endDate;
+
+  const MakeRecurringPaymentModal(
+      {super.key,
+      required this.serviceType,
+      required this.amount,
+      this.frequency,
+      this.endDate});
 
   @override
   State<MakeRecurringPaymentModal> createState() =>
@@ -20,8 +34,18 @@ class MakeRecurringPaymentModal extends StatefulWidget {
 }
 
 class _MakeRecurringPaymentModalState extends State<MakeRecurringPaymentModal> {
-  PeriodEnum? frequency;
+  PayFrequency? frequency;
   DateTime? date;
+
+  late ButtonEnum btnStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    frequency = widget.frequency;
+    date = widget.endDate;
+    btnStatus = ButtonEnum.disabled;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +57,50 @@ class _MakeRecurringPaymentModalState extends State<MakeRecurringPaymentModal> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            infoTile("Subscription", "TvSub"),
+            infoTile("Subscription", widget.serviceType.shortName),
             34.verticalSpace,
-            infoTile("Price", "N300"),
+            infoTile("Price", widget.amount),
             21.verticalSpace,
+            Row(
+              children: [
+                NbText.sp14("What does this mean ?").w400.setColor(
+                      const Color(0xFF8F8F8F),
+                    ),
+                8.horizontalSpace,
+                ElTooltip(
+                  content: NbText.sp14(
+                          "How often do you want the transaction to be repeated?")
+                      .w400
+                      .black,
+                  color: const Color(0xFFF2F2F2),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 25.w,
+                    vertical: 15.h,
+                  ),
+                  radius: Radius.circular(16.r),
+                  child: Container(
+                    width: 16.r,
+                    height: 16.r,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFF8F8F8F),
+                      ),
+                    ),
+                    child: SvgPicture.asset(
+                      NbSvg.iSvg,
+                      height: 6.h,
+                      colorFilter: const ColorFilter.mode(
+                          Color(0xFF8F8F8F), BlendMode.srcIn),
+                    ),
+                  ),
+                )
+              ],
+            ),
             GreySvgIconButton(
               svg: NbSvg.arrowDown,
-              text: frequency?.adjective ?? "Frequency",
+              text: frequency?.period.adjective ?? "Frequency",
               iconSize: 16.r,
               onTap: _frequency,
             ),
@@ -53,7 +114,11 @@ class _MakeRecurringPaymentModalState extends State<MakeRecurringPaymentModal> {
               onTap: _endDate,
             ),
             21.verticalSpace,
-            NbButton.primary(text: "Save", onTap: _save),
+            BigPrimaryButton(
+              status: btnStatus,
+              text: "Save",
+              onTap: _save,
+            ),
           ],
         ),
       ),
@@ -71,13 +136,14 @@ class _MakeRecurringPaymentModalState extends State<MakeRecurringPaymentModal> {
   }
 
   void _frequency() async {
-    frequency = await Get.bottomSheet<PeriodEnum>(
+    frequency = await Get.bottomSheet<PayFrequency>(
           const FrequencySelectionModal(),
           backgroundColor: Colors.black.withOpacity(0.2),
           isScrollControlled: true,
         ) ??
         frequency;
-    setState(() {});
+
+    _updateButton();
   }
 
   void _endDate() async {
@@ -90,12 +156,21 @@ class _MakeRecurringPaymentModalState extends State<MakeRecurringPaymentModal> {
           barrierColor: Colors.black.withOpacity(0.2),
         ) ??
         date;
+    _updateButton();
+  }
+
+  void _updateButton() {
+    if ((date != null) && (frequency != null)) {
+      btnStatus = ButtonEnum.active;
+    } else {
+      btnStatus = ButtonEnum.disabled;
+    }
     setState(() {});
   }
 
   void _save() {
     if (frequency != null && date != null) {
-      Get.back(result: true);
+      Get.back(result: (frequency, date));
     } else {
       Get.back();
     }

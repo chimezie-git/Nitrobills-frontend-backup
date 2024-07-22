@@ -1,10 +1,10 @@
+import 'package:el_tooltip/el_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/account/beneficiaries_controller.dart';
 import 'package:nitrobills/app/data/enums/service_types_enum.dart';
-import 'package:nitrobills/app/ui/pages/autopayments/models/autopay.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/ui/global_widgets/empty_fields_widget.dart';
 import 'package:nitrobills/app/ui/global_widgets/servicetype_modal.dart';
@@ -16,6 +16,7 @@ import 'package:nitrobills/app/ui/pages/beneficiaries/widgets/a_to_z_modal.dart'
 import 'package:nitrobills/app/ui/pages/beneficiaries/widgets/airtime_dropdown.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/widgets/beneficiaries_widget.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/widgets/beneficiary_actions_modal.dart';
+import 'package:nitrobills/app/ui/pages/beneficiaries/widgets/beneficiary_tool_tip.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/widgets/last_payment_widget.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/widgets/order_selecting_widget.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
@@ -30,7 +31,7 @@ class BeneficiariesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     int tabIndex = 0;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Get.find<BeneficiariesController>().initialize();
+      Get.find<BeneficiariesController>().initialize(context);
     });
     return GetX<BeneficiariesController>(
       init: Get.find<BeneficiariesController>(),
@@ -52,7 +53,7 @@ class BeneficiariesPage extends StatelessWidget {
                       color: NbColors.black,
                       backgroundColor: Colors.white,
                       onRefresh: () async {
-                        await cntrl.reload();
+                        await cntrl.reload(context);
                       },
                       child: Column(
                         children: [
@@ -63,7 +64,7 @@ class BeneficiariesPage extends StatelessWidget {
                               image: NbImage.noBeneficiary,
                               text: "You don't have any Saved beneficiary. ",
                               onTap: () {},
-                              postfix: NbSvg.iSvg,
+                              postfix: infoToolTip(),
                               btnText: "Click the plus button to add",
                             )
                           else
@@ -180,8 +181,8 @@ class BeneficiariesPage extends StatelessWidget {
                                             itemBuilder: (context, index) {
                                               final ben = cntrl.filtered[index];
                                               return BeneficiariesWidget(
-                                                  onTap: () =>
-                                                      _editBeneficiary(ben),
+                                                  onTap: () => _editBeneficiary(
+                                                      context, ben),
                                                   beneficiary: ben,
                                                   index: index);
                                             },
@@ -260,7 +261,7 @@ class BeneficiariesPage extends StatelessWidget {
     NbUtils.showNav;
   }
 
-  void _editBeneficiary(Beneficiary beneficiary) async {
+  void _editBeneficiary(BuildContext context, Beneficiary beneficiary) async {
     NbUtils.removeNav;
     int? idx = await showModalBottomSheet<int>(
         context: NbUtils.nav.currentContext!,
@@ -279,14 +280,45 @@ class BeneficiariesPage extends StatelessWidget {
       await NbUtils.nav.currentState?.push(
         MaterialPageRoute(
           builder: (context) => SetupAutopaymentPage(
-            autopay: Autopay.fromBeneficiary(beneficiary),
+            beneficiary: beneficiary,
           ),
         ),
       );
     } else if (idx == 3) {
-      Get.find<BeneficiariesController>().delete(beneficiary);
+      Get.find<BeneficiariesController>().delete(context, beneficiary);
     }
 
     NbUtils.showNav;
+  }
+
+  Widget infoToolTip() {
+    return ElTooltip(
+      content: const BeneficiaryToolTip(),
+      radius: Radius.circular(16.r),
+      // color: Colors.transparent,
+      color: const Color(0xFFE0E0E0),
+      position: ElTooltipPosition.topEnd,
+      // distance: 0,
+      // showArrow: false,
+      child: Container(
+        width: 22.r,
+        padding: EdgeInsets.zero,
+        height: 22.r,
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(
+          color: NbColors.lightGrey,
+          shape: BoxShape.circle,
+        ),
+        child: SvgPicture.asset(
+          NbSvg.iSvg,
+          width: 11.r,
+          height: 11.r,
+          colorFilter: const ColorFilter.mode(
+            NbColors.black,
+            BlendMode.srcIn,
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -1,9 +1,10 @@
+import 'package:el_tooltip/el_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
+import 'package:nitrobills/app/ui/global_widgets/buttons/grey_dark_grey_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/nb_headers.dart';
 import 'package:nitrobills/app/ui/pages/home/models/bank_info.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
@@ -61,11 +62,12 @@ class FundAccountPage extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _bankInfo("Account Name", bankInfo.accountName),
+                      _bankInfo(context, "Account Name", bankInfo.accountName),
                       35.verticalSpace,
-                      _bankInfo("Bank Name", bankInfo.bankName),
+                      _bankInfo(context, "Bank Name", bankInfo.bankName),
                       35.verticalSpace,
-                      _bankInfo("Account Number", bankInfo.accountNumber),
+                      _bankInfo(
+                          context, "Account Number", bankInfo.accountNumber),
                     ],
                   ),
                 ),
@@ -78,11 +80,37 @@ class FundAccountPage extends StatelessWidget {
                     color: const Color(0xFFFFC1C1),
                     borderRadius: BorderRadius.circular(4.r),
                   ),
-                  child: NbText.sp16("N50 charge on every deposit.").black.w500,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      NbText.sp16("N50 charge on every deposit.").w500.black,
+                      10.horizontalSpace,
+                      ElTooltip(
+                        color: const Color(0xFFFDE8E8),
+                        radius: Radius.circular(16.r),
+                        position: ElTooltipPosition.rightStart,
+                        content: NbText.sp14(
+                                "This fixed charged is due to third-party processing fees,"
+                                " service fees, maintenance fees, and a 7.5% VAT on transactions by CBN.")
+                            .w400
+                            .black,
+                        child: Container(
+                          height: 24.r,
+                          width: 24.r,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFF323232).withOpacity(0.15),
+                          ),
+                          child: SvgPicture.asset(NbSvg.iSvg),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 23.verticalSpace,
-                NbButton.primary(
-                    text: "Share Account Details", onTap: _shareAccount),
+                GreyDarkGreyButton(
+                    onTap: _shareAccount, text: "Share Account Details"),
               ],
             ),
           ),
@@ -91,12 +119,13 @@ class FundAccountPage extends StatelessWidget {
     );
   }
 
-  Widget _bankInfo(String title, String info) {
+  Widget _bankInfo(BuildContext context, String title, String info) {
     return InkWell(
       onTap: () async {
         ClipboardData data = ClipboardData(text: info);
         await Clipboard.setData(data);
-        NbToast.copy("$title copied");
+        // ignore: use_build_context_synchronously
+        NbToast.copy(context, "$title copied");
       },
       child: Row(
         children: [

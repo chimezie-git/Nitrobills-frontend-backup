@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:nitrobills/app/ui/pages/beneficiaries/models/beneficiary.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
-import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
 class BeneficiariesWidget extends StatelessWidget {
   final void Function() onTap;
