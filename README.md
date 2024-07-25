@@ -34,3 +34,4 @@ adb reverse tcp:8000 tcp:8000
 |DataManagement | 1 |
 |DayData | 2 |
 |Recent Payment | 3|
+|Sim Card data | 4|
