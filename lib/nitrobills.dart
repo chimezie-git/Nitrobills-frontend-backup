@@ -7,6 +7,8 @@ import 'package:nitrobills/app/ui/pages/onboarding/splash_page.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_utils.dart';
 
+import 'app/ui/pages/pay_bills/pay_cable_tv_page.dart';
+
 class NitroBills extends StatelessWidget {
   const NitroBills({super.key});
 
