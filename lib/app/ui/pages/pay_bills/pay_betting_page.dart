@@ -53,7 +53,7 @@ class _PayBettingPageState extends State<PayBettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         bottom: false,
@@ -79,7 +79,7 @@ class _PayBettingPageState extends State<PayBettingPage> {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(children: [
-                      NbField.buttonArrowDown(
+                      ButtonArrowDown(
                         fieldHeight: 78.h,
                         text: betProvider?.name ?? "Choose Provider",
                         onTap: _chooseProvider,
@@ -176,6 +176,7 @@ class _PayBettingPageState extends State<PayBettingPage> {
           const GbBetServiceProviderModal(),
           barrierColor: NbColors.black.withOpacity(0.2),
           isScrollControlled: true,
+          isDismissible: true,
         ) ??
         betProvider;
     setState(() {});

@@ -30,7 +30,7 @@ class _AddNewBeneficiaryPageState extends State<AddNewBeneficiaryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEBEBEB),
+      backgroundColor: const Color.fromRGBO(242, 242, 242, 1),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
@@ -62,7 +62,7 @@ class _AddNewBeneficiaryPageState extends State<AddNewBeneficiaryPage> {
                       }
                     }),
                 29.verticalSpace,
-                NbField.buttonArrowDown(
+                ButtonArrowDown(
                   fieldHeight: 78.h,
                   text: _serviceName,
                   onTap: _addService,
@@ -93,6 +93,7 @@ class _AddNewBeneficiaryPageState extends State<AddNewBeneficiaryPage> {
       const ServiceTypeModal(),
       barrierColor: NbColors.black.withOpacity(0.2),
       isScrollControlled: true,
+      isDismissible: true,
     );
     if (modalData != null) {
       serviceType = modalData.$1;

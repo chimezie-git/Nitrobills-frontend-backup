@@ -64,7 +64,7 @@ class _BallLoaderButtonState extends State<BallLoaderButton>
           child: widget.status.isLoading
               ? Lottie.asset(
                   NbLottie.ballLoader,
-                  height: 60.h,
+                  height: 50.h,
                   alignment: Alignment.center,
                   fit: BoxFit.cover,
                   controller: _controller,
@@ -181,7 +181,7 @@ class _CircleLoaderButtonState extends State<CircleLoaderButton>
         child: widget.status.isLoading
             ? Lottie.asset(
                 NbLottie.circleLoader,
-                height: 41.h,
+                height: 31.h,
                 controller: _controller,
                 onLoaded: (composition) {
                   _controller

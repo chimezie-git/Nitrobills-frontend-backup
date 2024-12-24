@@ -1,6 +1,7 @@
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nitrobills/app/controllers/auth/auth_controller.dart';
 import 'package:nitrobills/app/data/enums/button_enum.dart';
@@ -30,6 +31,7 @@ class SigninPage extends StatefulWidget {
 
 class _SigninPageState extends State<SigninPage> {
   late bool hasUser;
+  ValueNotifier<bool> obscurePassword = ValueNotifier(true);
   late AuthController userCntrl;
   ValueNotifier<ButtonEnum> buttonStatus =
       ValueNotifier<ButtonEnum>(ButtonEnum.disabled);
@@ -59,7 +61,7 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           Positioned(
@@ -120,8 +122,11 @@ class _SigninPageState extends State<SigninPage> {
                                 }
                               }),
                       24.verticalSpace,
-                      NbField.text(
-                          obscureText: true,
+                      ValueListenableBuilder(
+                        valueListenable: obscurePassword,
+                        builder: (context, obscure, child) =>
+                            NbField.textAndIcon(
+                          obscureText: obscure,
                           controller: passwordCntrl,
                           hint: "Password",
                           forcedError: signinError,
@@ -133,7 +138,16 @@ class _SigninPageState extends State<SigninPage> {
                             } else {
                               return null;
                             }
-                          }),
+                          },
+                          trailing: InkWell(
+                            onTap: () {
+                              obscurePassword.value = !obscure;
+                            },
+                            child: SvgPicture.asset(
+                                obscure ? NbSvg.notVisible : NbSvg.visible),
+                          ),
+                        ),
+                      ),
                       if (signinErrorTxt != null)
                         Align(
                             alignment: Alignment.centerLeft,

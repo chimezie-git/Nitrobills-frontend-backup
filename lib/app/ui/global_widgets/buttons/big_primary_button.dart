@@ -83,14 +83,8 @@ class _BigPrimaryButtonState extends State<BigPrimaryButton>
                       child: Container(
                         height: 97.h,
                         width: 26.w,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              const Color(0xFFCFCFCF).withOpacity(0.13),
-                              const Color(0xFF91DFF7).withOpacity(0.13),
-                              const Color(0xFF67ADC4).withOpacity(0.13),
-                            ],
-                          ),
+                        decoration: const BoxDecoration(
+                          color: Colors.transparent,
                         ),
                       ),
                     ),

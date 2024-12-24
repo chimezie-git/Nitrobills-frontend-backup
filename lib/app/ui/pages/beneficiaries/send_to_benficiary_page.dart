@@ -76,7 +76,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: const Color.fromRGBO(242, 242, 242, 1),
       body: SingleChildScrollView(
         child: SafeArea(
           bottom: false,
@@ -111,13 +111,13 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
                     },
                   ),
                   20.verticalSpace,
-                  NbField.buttonArrowDown(
+                  ButtonArrowDown(
                     fieldHeight: 78.h,
                     text: serviceType.name,
                     onTap: _chooseServiceType,
                   ),
                   32.verticalSpace,
-                  NbField.buttonArrowDown(
+                  ButtonArrowDown(
                     fieldHeight: 78.h,
                     text: serviceProvider?.name ?? "Select A Service Provider",
                     onTap: _chooseServiceProvider,
@@ -125,7 +125,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
                   ),
                   32.verticalSpace,
                   if (serviceType.hasPlan)
-                    NbField.buttonArrowDown(
+                    ButtonArrowDown(
                       fieldHeight: 78.h,
                       text: servicePlan?.name ?? "Choose Plan",
                       onTap: _choosePlan,
@@ -233,6 +233,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
               provider: serviceProvider as MobileServiceProvider,
             ),
             isScrollControlled: true,
+            isDismissible: true,
           ) ??
           servicePlan;
       setState(() {});
@@ -241,6 +242,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
             GbCablePlansModal(provider: serviceProvider as TvServiceProvider),
             barrierColor: NbColors.black.withOpacity(0.2),
             isScrollControlled: true,
+            isDismissible: true,
           ) ??
           servicePlan;
       setState(() {});
@@ -253,6 +255,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
       const ServiceTypeModal(onlyServiceType: true),
       barrierColor: NbColors.black.withOpacity(0.2),
       isScrollControlled: true,
+      isDismissible: true,
     );
     if (chosenServiceType != null) {
       if (chosenServiceType != serviceType) {
@@ -311,6 +314,7 @@ class _SendToBeneficiaryPageState extends State<SendToBeneficiaryPage> {
       child,
       barrierColor: NbColors.black.withOpacity(0.2),
       isScrollControlled: true,
+      isDismissible: true,
     );
   }
 

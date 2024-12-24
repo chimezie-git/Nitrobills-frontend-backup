@@ -15,6 +15,8 @@ import 'package:nitrobills/app/ui/pages/transactions/models/bill.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
+import '../../global_widgets/choose_contact_button.dart';
+
 class PayCableTvPage extends StatefulWidget {
   const PayCableTvPage({super.key});
 
@@ -79,20 +81,24 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(children: [
-                      NbField.buttonArrowDown(
+                      ButtonArrowDown(
                         fieldHeight: 78.h,
                         text: cableProvider?.name ?? "Choose Provider",
                         onTap: _chooseProvider,
                         forcedErrorString: providerValidator,
                       ),
                       32.verticalSpace,
-                      NbField.buttonArrowDown(
+                      ButtonArrowDown(
                         fieldHeight: 78.h,
                         text: plan?.name ?? "Subscription",
                         onTap: _chooseSubscription,
                         forcedErrorString: planValidator,
                       ),
-                      32.verticalSpace,
+                      16.verticalSpace,
+                      ChooseContactButton(
+                        getContact: _getContact,
+                      ),
+                      16.verticalSpace,
                       NbField.text(
                         controller: codeCntr,
                         hint: "Cable Number",
@@ -159,6 +165,7 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
           const GbCableServiceProviderModal(),
           barrierColor: NbColors.black.withOpacity(0.2),
           isScrollControlled: true,
+          isDismissible: true,
         ) ??
         cableProvider;
     buttonValidate("");
@@ -173,6 +180,7 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
             GbCablePlansModal(provider: cableProvider!),
             barrierColor: NbColors.black.withOpacity(0.2),
             isScrollControlled: true,
+            isDismissible: true,
           ) ??
           plan;
       buttonValidate("");
@@ -233,5 +241,10 @@ class _PayCableTvPageState extends State<PayCableTvPage> {
       });
       Get.to(() => ConfirmTransactionScreen(bill: bill));
     }
+  }
+
+  void _getContact(String contact) {
+    codeCntr.text = contact;
+    setState(() {});
   }
 }

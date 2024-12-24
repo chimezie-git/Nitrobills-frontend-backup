@@ -14,7 +14,7 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
@@ -80,14 +80,14 @@ class AccountPage extends StatelessWidget {
               Expanded(
                 child: RichText(
                   text: TextSpan(
-                      children: [
-                        const TextSpan(
+                      children: const [
+                        TextSpan(
                             text:
                                 "Pending email address verification, confirm account before "),
                         TextSpan(
                             text: "24:00",
                             style: TextStyle(fontWeight: FontWeight.w700)),
-                        const TextSpan(
+                        TextSpan(
                             text:
                                 " Hrs to be able recover your forgotten pin."),
                       ],

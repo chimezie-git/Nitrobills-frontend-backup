@@ -40,7 +40,7 @@ class BeneficiariesPage extends StatelessWidget {
           return const BeneficiariesLoadingPage();
         } else {
           return Scaffold(
-            backgroundColor: const Color(0xFFEBEBEB),
+            backgroundColor: const Color.fromRGBO(242, 242, 242, 1),
             body: SafeArea(
               child: Stack(
                 children: [
@@ -233,8 +233,11 @@ class BeneficiariesPage extends StatelessWidget {
 
   void _orderSelect() async {
     NbUtils.removeNav;
-    final aToZ = await Get.bottomSheet<bool>(const AtoZModal(),
-        isScrollControlled: true);
+    final aToZ = await Get.bottomSheet<bool>(
+      const AtoZModal(),
+      isScrollControlled: true,
+      isDismissible: true,
+    );
     Get.find<BeneficiariesController>().sort(aToZ: aToZ);
     NbUtils.showNav;
   }
@@ -246,6 +249,7 @@ class BeneficiariesPage extends StatelessWidget {
         onlyServiceType: true,
       ),
       isScrollControlled: true,
+      isDismissible: true,
     );
     Get.find<BeneficiariesController>().sort(serviceType: serviceType);
     NbUtils.showNav;
@@ -265,6 +269,7 @@ class BeneficiariesPage extends StatelessWidget {
     NbUtils.removeNav;
     int? idx = await showModalBottomSheet<int>(
         context: NbUtils.nav.currentContext!,
+        isDismissible: true,
         builder: (context) {
           return BeneficiariesActionsModal(
             serviceType: beneficiary.serviceType,

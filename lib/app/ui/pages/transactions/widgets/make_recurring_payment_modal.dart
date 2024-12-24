@@ -137,6 +137,7 @@ class _MakeRecurringPaymentModalState extends State<MakeRecurringPaymentModal> {
 
   void _frequency() async {
     frequency = await Get.bottomSheet<PayFrequency>(
+          isDismissible: true,
           const FrequencySelectionModal(),
           backgroundColor: Colors.black.withOpacity(0.2),
           isScrollControlled: true,

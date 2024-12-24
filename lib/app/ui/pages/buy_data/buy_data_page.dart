@@ -174,7 +174,10 @@ class _BuyDataPageState extends State<BuyDataPage> {
   }
 
   void deleteAccount(RecentPayment payment) {
-    Get.bottomSheet(DeleteAccountModal(payment: payment),
-        isScrollControlled: true);
+    Get.bottomSheet(
+      DeleteAccountModal(payment: payment),
+      isScrollControlled: true,
+      isDismissible: true,
+    );
   }
 }

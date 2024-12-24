@@ -85,13 +85,13 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(children: [
-                      NbField.buttonArrowDown(
+                      ButtonArrowDown(
                         text: mobileProvider.name,
                         onTap: _serviceProvider,
                         fieldHeight: 78.h,
                       ),
                       30.verticalSpace,
-                      NbField.buttonArrowDown(
+                      ButtonArrowDown(
                           text: dataPlan?.name ?? "Data Plan",
                           onTap: _dataProvider,
                           fieldHeight: 78.h,
@@ -137,6 +137,9 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
                             onChanged: (v) {
                               setState(() {
                                 addBeneficiary = v;
+                                if (!addBeneficiary) {
+                                  nameCntr.clear();
+                                }
                               });
                             },
                           ),
@@ -164,6 +167,7 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
           const GbDataServiceProviderModal(),
           barrierColor: Colors.black.withOpacity(0.2),
           isScrollControlled: true,
+          isDismissible: true,
         ) ??
         mobileProvider;
     buttonValidate("val");
@@ -174,6 +178,7 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
           GbDataPlansModal(provider: mobileProvider),
           barrierColor: Colors.black.withOpacity(0.2),
           isScrollControlled: true,
+          isDismissible: true,
         ) ??
         dataPlan;
     buttonValidate("val");
@@ -184,6 +189,7 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
     validForm = formKey.currentState?.validate() ?? false;
     if (dataPlan == null) {
       planValidator = "Select a valid data plan";
+      validForm = false;
     }
     setState(() {});
     return validForm;
@@ -201,16 +207,15 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
     } else {
       isValid = true;
     }
-    if (isValid) {
-      btnStatus = ButtonEnum.active;
-    } else {
-      btnStatus = ButtonEnum.disabled;
-    }
+    btnStatus = isValid ? ButtonEnum.active : ButtonEnum.disabled;
     setState(() {});
   }
 
   void _continue() async {
     if (isValid) {
+      setState(() {
+        btnStatus = ButtonEnum.loading;
+      });
       DataBill bill = DataBill(
         amount: dataPlan!.amount,
         name: nameCntr.text,
@@ -219,6 +224,9 @@ class _BuyDataInformationState extends State<BuyDataInformation> {
         plan: dataPlan!,
         saveBeneficiary: addBeneficiary,
       );
+      setState(() {
+        btnStatus = ButtonEnum.active;
+      });
       Get.to(() => ConfirmTransactionScreen(bill: bill));
     }
   }

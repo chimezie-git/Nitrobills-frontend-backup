@@ -41,7 +41,41 @@ class MainActivity: FlutterFragmentActivity() {
         }
     }
 
-    private fun getDataUsage(startTime: Long, endTime: Long): Long {
+    private fun getDataUsage(startTime: Long, endTime: Long): Map<String, Long> {
+        val dataUsage = mutableMapOf<String, Long>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val networkStatsManager = getSystemService(Context.NETWORK_STATS_SERVICE) as NetworkStatsManager
+            val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+            var mobileDataUsage = 0L
+            var wifiDataUsage = 0L
+
+            try {
+                val bucket = NetworkStats.Bucket()
+
+                val mobileStats = networkStatsManager.querySummary(NetworkCapabilities.TRANSPORT_CELLULAR, null, startTime, endTime)
+                while (mobileStats.hasNextBucket()) {
+                    mobileStats.getNextBucket(bucket)
+                    mobileDataUsage += bucket.rxBytes + bucket.txBytes
+                }
+
+                val wifiStats = networkStatsManager.querySummary(NetworkCapabilities.TRANSPORT_WIFI, null, startTime, endTime)
+                while (wifiStats.hasNextBucket()) {
+                    wifiStats.getNextBucket(bucket)
+                    wifiDataUsage += bucket.rxBytes + bucket.txBytes
+                }
+
+                dataUsage["mobile"] = mobileDataUsage
+                dataUsage["wifi"] = wifiDataUsage
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        return dataUsage
+    }
+
+
+    private fun getDataUsageV2(startTime: Long, endTime: Long): Long {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val networkStatsManager = getSystemService(Context.NETWORK_STATS_SERVICE) as NetworkStatsManager
             val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

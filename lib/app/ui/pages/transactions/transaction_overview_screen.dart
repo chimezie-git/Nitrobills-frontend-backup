@@ -79,7 +79,7 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: Colors.white,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -208,6 +208,7 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
     if (value) {
       // (PayFrequency, DateTime)
       final hasSetData = await Get.bottomSheet<(PayFrequency, DateTime)?>(
+        isDismissible: true,
         MakeRecurringPaymentModal(
           serviceType: widget.bill.serviceType,
           amount: NbFormatter.amount(widget.bill.amount),
@@ -244,6 +245,7 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
 
   void _payNow() async {
     final confirmed = await Get.bottomSheet<(bool, int?)?>(
+      isDismissible: true,
       ConfirmDetailsModal(
         bill: widget.bill,
         avatarColor: avatarColor,
@@ -255,6 +257,7 @@ class _ConfirmTransactionScreenState extends State<ConfirmTransactionScreen> {
       //
 
       final verified = await Get.bottomSheet<bool?>(
+        isDismissible: true,
         const PinCodeModal(),
         isScrollControlled: true,
       );

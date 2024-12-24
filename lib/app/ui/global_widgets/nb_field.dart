@@ -67,60 +67,60 @@ class NbField {
     );
   }
 
-  static Widget buttonArrowDown({
-    required String text,
-    double? fieldHeight,
-    required void Function() onTap,
-    String? forcedErrorString,
-  }) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Container(
-            alignment: Alignment.center,
-            height: fieldHeight ?? 62.h,
-            decoration: BoxDecoration(
-              color: NbColors.white,
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(
-                color: forcedErrorString == null
-                    ? const Color(0xFFBBB9B9)
-                    : NbColors.red,
-                width: 1,
-              ),
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.r,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    text,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w400,
-                      color: NbColors.darkGrey,
-                    ),
-                  ),
-                ),
-                SvgPicture.asset(
-                  NbSvg.arrowDown,
-                  width: 16.r,
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (forcedErrorString != null)
-          NbText.sp12(forcedErrorString).setColor(NbColors.red),
-      ],
-    );
-  }
+  // static Widget buttonArrowDown({
+  //   required String text,
+  //   double? fieldHeight,
+  //   required void Function() onTap,
+  //   String? forcedErrorString,
+  // }) {
+  //   return Column(
+  //     mainAxisSize: MainAxisSize.min,
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       InkWell(
+  //         onTap: onTap,
+  //         child: Container(
+  //           alignment: Alignment.center,
+  //           height: fieldHeight ?? 62.h,
+  //           decoration: BoxDecoration(
+  //             color: NbColors.white,
+  //             borderRadius: BorderRadius.circular(16.r),
+  //             border: Border.all(
+  //               color: forcedErrorString == null
+  //                   ? const Color(0xFFBBB9B9)
+  //                   : NbColors.red,
+  //               width: 1,
+  //             ),
+  //           ),
+  //           padding: EdgeInsets.symmetric(
+  //             horizontal: 16.r,
+  //           ),
+  //           child: Row(
+  //             children: [
+  //               Expanded(
+  //                 child: Text(
+  //                   text,
+  //                   maxLines: 1,
+  //                   style: TextStyle(
+  //                     fontSize: 16.sp,
+  //                     fontWeight: FontWeight.w400,
+  //                     color: NbColors.darkGrey,
+  //                   ),
+  //                 ),
+  //               ),
+  //               SvgPicture.asset(
+  //                 NbSvg.arrowDown,
+  //                 width: 16.r,
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //       if (forcedErrorString != null)
+  //         NbText.sp12(forcedErrorString).setColor(NbColors.red),
+  //     ],
+  //   );
+  // }
 
   static Widget check({
     required bool value,
@@ -157,6 +157,86 @@ class NbField {
               )
             : const SizedBox.shrink(),
       ),
+    );
+  }
+}
+
+class ButtonArrowDown extends StatefulWidget {
+  final String text;
+  final double? fieldHeight;
+  final void Function() onTap;
+  final String? forcedErrorString;
+
+  const ButtonArrowDown({
+    super.key,
+    required this.text,
+    this.fieldHeight,
+    required this.onTap,
+    this.forcedErrorString,
+  });
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _ButtonArrowDownState createState() => _ButtonArrowDownState();
+}
+
+class _ButtonArrowDownState extends State<ButtonArrowDown> {
+  Color borderColor = const Color(0xFFBBB9B9); // Default border color
+
+  void _handleTap() {
+    setState(() {
+      // Change the border color when tapped
+      borderColor = Colors.black; // Change to your desired color
+    });
+    widget.onTap(); // Call the onTap function passed to the button
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          onTap: _handleTap,
+          child: Container(
+            alignment: Alignment.center,
+            height: widget.fieldHeight ?? 62.h,
+            decoration: BoxDecoration(
+              color: NbColors.white,
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(
+                color: widget.forcedErrorString == null
+                    ? borderColor
+                    : NbColors.red,
+                width: 1,
+              ),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 16.r),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.text,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      color: NbColors.darkGrey,
+                    ),
+                  ),
+                ),
+                SvgPicture.asset(
+                  NbSvg.arrowDown,
+                  width: 16.r,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (widget.forcedErrorString != null)
+          NbText.sp12(widget.forcedErrorString!).setColor(NbColors.red),
+      ],
     );
   }
 }

@@ -178,7 +178,7 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
                           },
                         ),
                         32.verticalSpace,
-                        NbField.buttonArrowDown(
+                        ButtonArrowDown(
                           text: mobileProvider?.name ?? "Service Provider",
                           fieldHeight: 78.h,
                           onTap: _setServiceProvider,
@@ -273,6 +273,7 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
           enterBottomSheetDuration: NbContants.navDuration,
           barrierColor: NbColors.black.withOpacity(0.2),
           isScrollControlled: true,
+          isDismissible: true,
         ) ??
         mobileProvider;
     buttonValidate("val");
@@ -307,7 +308,7 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
       isValid = false;
     } else if (mobileProvider == null) {
       isValid = false;
-    } else if (amount == null) {
+    } else if (amount == null || amount <= 0) {
       isValid = false;
     } else {
       isValid = true;
@@ -322,6 +323,9 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
 
   void _continue() async {
     if (isValid) {
+      setState(() {
+        btnStatus = ButtonEnum.loading;
+      });
       AirtimeBill bill = AirtimeBill(
         amount: double.parse(amountCntr.text),
         name: '',
@@ -329,7 +333,9 @@ class _PayAirtimePageState extends State<PayAirtimePage> {
         provider: mobileProvider!,
         saveBeneficiary: false,
       );
-
+      setState(() {
+        btnStatus = ButtonEnum.active;
+      });
       Get.to(
         () => ConfirmTransactionScreen(bill: bill),
       );

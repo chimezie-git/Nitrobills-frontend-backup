@@ -124,22 +124,22 @@ class TransactionInfoWidget extends StatelessWidget {
 
   SizedBox _listTile(String svg, String title, String info) {
     return SizedBox(
-      height: 50.h,
+      height: 40.h,
       child: Row(
         children: [
           Container(
-            width: 50.w,
-            height: 50.h,
+            width: 40.w,
+            height: 40.h,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.r),
-              color: const Color(0xFFF1F1F1),
+              color: const Color.fromRGBO(241, 241, 241, 1),
             ),
             child: SvgPicture.asset(
               svg,
-              width: 16.w,
+              width: 19.w,
               colorFilter: const ColorFilter.mode(
-                Color(0xFF737373),
+                Color.fromRGBO(115, 115, 115, 1),
                 BlendMode.srcIn,
               ),
             ),

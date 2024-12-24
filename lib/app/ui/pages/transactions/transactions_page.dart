@@ -28,7 +28,7 @@ class TransactionsPage extends StatelessWidget {
           return const TransactionsLoadingPage();
         } else {
           return Scaffold(
-            backgroundColor: const Color(0xFFEBEBEB),
+            backgroundColor: const Color.fromRGBO(242, 242, 242, 1),
             body: SafeArea(
               bottom: false,
               child: RefreshIndicator(
