@@ -5,11 +5,12 @@ import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
-class MessagesField extends StatelessWidget {
+class MessagesField extends StatefulWidget {
   final TextEditingController controller;
   final void Function(String) onChanged;
   final String? forcedStringValidator;
   final FocusNode focusNode;
+
   const MessagesField({
     super.key,
     required this.controller,
@@ -17,6 +18,34 @@ class MessagesField extends StatelessWidget {
     required this.forcedStringValidator,
     required this.focusNode,
   });
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _MessagesFieldState createState() => _MessagesFieldState();
+}
+
+class _MessagesFieldState extends State<MessagesField> {
+  Color borderColor = const Color(0xFFBBB9B9); // Default border color
+
+  @override
+  void initState() {
+    super.initState();
+    widget.focusNode.addListener(() {
+      setState(() {
+        borderColor = widget.focusNode.hasFocus
+            ? Colors.black
+            : (widget.forcedStringValidator == null
+                ? const Color(0xFFBBB9B9)
+                : NbColors.red);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.focusNode.removeListener(() {});
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +59,7 @@ class MessagesField extends StatelessWidget {
             color: NbColors.white,
             borderRadius: BorderRadius.circular(16.r),
             border: Border.all(
-              color: forcedStringValidator == null
-                  ? const Color(0xFFBBB9B9)
-                  : NbColors.red,
+              color: borderColor,
               width: 1,
             ),
           ),
@@ -44,19 +71,19 @@ class MessagesField extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () {
-                  focusNode.requestFocus();
+                  widget.focusNode.requestFocus();
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Opacity(
-                      opacity: controller.text.isEmpty ? 1 : 0,
+                      opacity: widget.controller.text.isEmpty ? 1 : 0,
                       child: NbText.sp16("Messages").w500.black,
                     ),
                     InkWell(
                       onTap: () {
-                        controller.clear();
-                        onChanged("");
+                        widget.controller.clear();
+                        widget.onChanged("");
                       },
                       child: Padding(
                         padding: EdgeInsets.all(10.r),
@@ -67,10 +94,10 @@ class MessagesField extends StatelessWidget {
                 ),
               ),
               TextField(
-                controller: controller,
-                onChanged: onChanged,
+                controller: widget.controller,
+                onChanged: widget.onChanged,
                 maxLines: 6,
-                focusNode: focusNode,
+                focusNode: widget.focusNode,
                 cursorColor: NbColors.darkGrey,
                 style: TextStyle(
                   fontSize: 16.sp,
@@ -85,13 +112,14 @@ class MessagesField extends StatelessWidget {
             ],
           ),
         ),
-        if (forcedStringValidator != null)
+        if (widget.forcedStringValidator != null)
           Align(
-              alignment: Alignment.centerLeft,
-              child:
-                  NbText.sp12(forcedStringValidator!).setColor(NbColors.red)),
-        5.verticalSpace,
-        NbText.sp16("${controller.text.length}/160").w500.black,
+            alignment: Alignment.centerLeft,
+            child: NbText.sp12(widget.forcedStringValidator!)
+                .setColor(NbColors.red),
+          ),
+        SizedBox(height: 5.h), // Use SizedBox for vertical spacing
+        NbText.sp16("${widget.controller.text.length}/160").w500.black,
       ],
     );
   }

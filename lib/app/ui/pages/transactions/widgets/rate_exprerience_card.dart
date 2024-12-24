@@ -122,6 +122,7 @@ class RateExprerienceCard extends StatelessWidget {
     Get.bottomSheet(
       const _RateExperienceModal(),
       isScrollControlled: true,
+      isDismissible: true,
     );
   }
 }

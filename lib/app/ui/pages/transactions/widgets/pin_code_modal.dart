@@ -85,17 +85,20 @@ class _PinCodeModalState extends State<PinCodeModal> {
 
   void _forgetPin() async {
     bool? pinSent = await Get.bottomSheet<bool?>(
+      isDismissible: true,
       const SendPinVerificationModal(),
       isScrollControlled: true,
     );
     if (pinSent ?? false) {
       bool? verified = await Get.bottomSheet<bool?>(
+        isDismissible: true,
         const VerifyPinOtpModal(),
         isScrollControlled: true,
       );
 
       if (verified ?? false) {
         bool? pinReset = await Get.bottomSheet<bool?>(
+          isDismissible: true,
           const ResetPinCodeModal(),
           isScrollControlled: true,
         );

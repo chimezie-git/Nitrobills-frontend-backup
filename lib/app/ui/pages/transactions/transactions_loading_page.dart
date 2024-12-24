@@ -12,7 +12,7 @@ class TransactionsLoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Color rectColor = const Color(0xFFE8E7E7);
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F3F3),
+      backgroundColor: const Color.fromRGBO(242, 242, 242, 1),
       body: Shimmer.fromColors(
         baseColor: const Color(0xFFE8E7E7),
         highlightColor: NbColors.white,

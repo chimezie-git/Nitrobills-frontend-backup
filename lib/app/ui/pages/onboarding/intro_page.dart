@@ -7,13 +7,14 @@ import 'package:nitrobills/app/data/enums/button_enum.dart';
 import 'package:nitrobills/app/ui/global_widgets/buttons/elevated_primary_button.dart';
 import 'package:nitrobills/app/ui/global_widgets/buttons/white_grey_auth_button.dart';
 // import 'package:nitrobills/app/ui/global_widgets/nb_buttons.dart';
-import 'package:nitrobills/app/ui/pages/auth/signin_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/signup_page.dart';
 import 'package:nitrobills/app/ui/pages/auth/widgets/auth_modal.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 import 'package:nitrobills/app/ui/utils/nb_toast.dart';
+
+import '../auth/signin_page.dart';
 
 class IntroPage extends StatefulWidget {
   const IntroPage({super.key});
@@ -213,9 +214,9 @@ class _IntroPageState extends State<IntroPage>
       padding: EdgeInsets.symmetric(horizontal: 9.w),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         12.verticalSpace,
-        NbText.sp22(title).w600,
+        NbText.sp20(title).w600,
         24.verticalSpace,
-        NbText.sp18(subtitle).w500,
+        NbText.sp16(subtitle).w500,
       ]),
     );
   }

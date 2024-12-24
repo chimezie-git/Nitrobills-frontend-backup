@@ -32,6 +32,7 @@ class NitroBills extends StatelessWidget {
           initialBinding: InitialBinding(),
           builder: (context, child) => TabOverlay(child: child ?? Container()),
           home: const SplashPage(),
+          
         );
       },
     );

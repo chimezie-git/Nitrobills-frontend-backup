@@ -112,7 +112,9 @@ class OverviewProviderTile extends StatelessWidget {
   }
 
   String get _number {
-    if (bill.codeNumber.length >= 9) {
+    if (bill.codeNumber.length == 11) {
+      return '${bill.codeNumber.substring(0, 3)}-${bill.codeNumber.substring(3, 6)}-${bill.codeNumber.substring(6, 9)}-${bill.codeNumber.substring(9)}';
+    } else if (bill.codeNumber.length >= 9) {
       return '${bill.codeNumber.substring(0, 2)}-${bill.codeNumber.substring(2, 5)}-${bill.codeNumber.substring(5, 8)}-${bill.codeNumber.substring(8)}';
     } else if (bill.codeNumber.length >= 6) {
       return '${bill.codeNumber.substring(0, 2)}-${bill.codeNumber.substring(2, 5)}-${bill.codeNumber.substring(5)}';
@@ -124,15 +126,13 @@ class OverviewProviderTile extends StatelessWidget {
   }
 
   String get _name {
-    if (bill.saveBeneficiary) {
-      return bill.name;
-    } else {
-      return "${bill.provider.name} ${bill.serviceType.shortName}";
-    }
+    return bill.saveBeneficiary && bill.name.isNotEmpty
+        ? bill.name
+        : "${bill.provider.name} ${bill.serviceType.shortName}";
   }
-
   void _chooseAvatar() async {
     final data = await Get.bottomSheet<(int?, int?)>(
+      isDismissible: true,
       AvatarSelectionModal(
         avatarIdx: avatarIdx,
         colorIdx: colorIdx,

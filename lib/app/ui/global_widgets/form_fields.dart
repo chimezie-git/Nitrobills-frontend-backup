@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:nitrobills/app/data/services/validators.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
 
-class DoubleTextField extends FormField {
+class DoubleTextField extends StatefulWidget {
   static const String firstNameHint = "First name";
   static const String lastNameHint = "Last name";
   final TextEditingController firstNameCntrl;
@@ -13,89 +12,121 @@ class DoubleTextField extends FormField {
   final String? forcedErrorString;
   final void Function(String?)? onChanged;
 
-  DoubleTextField({
+  const DoubleTextField({
     super.key,
     required this.firstNameCntrl,
     required this.lastNameCntrl,
     required this.forcedError,
     required this.forcedErrorString,
     required this.onChanged,
-  }) : super(validator: (v) {
-          if (!NbValidators.isName(firstNameCntrl.text)) {
-            return "Enter a valid First Name";
-          }
-          if (!NbValidators.isName(lastNameCntrl.text)) {
-            return "Enter a valid Last Name";
-          } else {
-            return null;
-          }
-        }, builder: (FormFieldState state) {
-          final Color borderColor;
-          String? errorText;
-          if (state.hasError || forcedError) {
-            borderColor = NbColors.red;
-            errorText = state.errorText ?? forcedErrorString;
-          } else {
-            borderColor = const Color(0xFFBBB9B9);
-          }
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: 62.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(16.r)),
-                  border: Border.all(
-                    color: borderColor,
-                    width: 1,
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.r,
-                ),
-                child: _textField(
-                  firstNameCntrl,
-                  firstNameHint,
-                  TextInputType.text,
-                  onChanged: onChanged,
-                ),
-              ),
-              Container(
-                height: 62.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(16.r)),
-                  border: Border(
-                    bottom: BorderSide(color: borderColor, width: 1),
-                    left: BorderSide(color: borderColor, width: 1),
-                    right: BorderSide(color: borderColor, width: 1),
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.r,
-                ),
-                child: _textField(
-                  lastNameCntrl,
-                  lastNameHint,
-                  TextInputType.text,
-                  onChanged: onChanged,
-                ),
-              ),
-              if (errorText != null)
-                NbText.sp12(errorText).setColor(borderColor),
-            ],
-          );
-        });
+  });
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _DoubleTextFieldState createState() => _DoubleTextFieldState();
 }
 
-class TrippleTextField extends FormField {
+class _DoubleTextFieldState extends State<DoubleTextField> {
+  late FocusNode _firstNameFocusNode;
+  late FocusNode _lastNameFocusNode;
+  Color borderColor = const Color(0xFFBBB9B9);
+
+  @override
+  void initState() {
+    super.initState();
+    _firstNameFocusNode = FocusNode();
+    _lastNameFocusNode = FocusNode();
+    _firstNameFocusNode.addListener(() {
+      setState(() {
+        borderColor =
+            _firstNameFocusNode.hasFocus || _lastNameFocusNode.hasFocus
+                ? Colors.black
+                : const Color(0xFFBBB9B9);
+      });
+    });
+    _lastNameFocusNode.addListener(() {
+      setState(() {
+        borderColor =
+            _firstNameFocusNode.hasFocus || _lastNameFocusNode.hasFocus
+                ? Colors.black
+                : const Color(0xFFBBB9B9);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _firstNameFocusNode.dispose(); 
+    _lastNameFocusNode.dispose(); 
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String? errorText;
+    if (widget.forcedError) {
+      borderColor = NbColors.red;
+      errorText = widget.forcedErrorString;
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: 62.h,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+            border: Border.all(
+              color: borderColor,
+              width: 1,
+            ),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: 16.r,
+          ),
+          child: _textField(
+            widget.firstNameCntrl,
+            DoubleTextField.firstNameHint,
+            TextInputType.text,
+            focusNode: _firstNameFocusNode, 
+            onChanged: widget.onChanged,
+          ),
+        ),
+        Container(
+          height: 62.h,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(16.r)),
+            border: Border(
+              bottom: BorderSide(color: borderColor, width: 1),
+              left: BorderSide(color: borderColor, width: 1),
+              right: BorderSide(color: borderColor, width: 1),
+            ),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: 16.r,
+          ),
+          child: _textField(
+            widget.lastNameCntrl,
+            DoubleTextField.lastNameHint,
+            TextInputType.text,
+            focusNode: _lastNameFocusNode, 
+            onChanged: widget.onChanged,
+          ),
+        ),
+        if (errorText != null) NbText.sp12(errorText).setColor(borderColor),
+      ],
+    );
+  }
+}
+
+class TrippleTextField extends StatefulWidget {
   static const String userNameHint = "Username";
   static const String emailHint = "Email address";
   static const String phoneHint = "Phone number (080-XXX-XXX-XXXX)";
+
   final TextEditingController userNameCntrl;
   final TextEditingController phoneNumCntrl;
   final TextEditingController emailCntrl;
@@ -103,7 +134,7 @@ class TrippleTextField extends FormField {
   final String? forcedErrorString;
   final void Function(String?)? onChanged;
 
-  TrippleTextField({
+  const TrippleTextField({
     super.key,
     required this.userNameCntrl,
     required this.phoneNumCntrl,
@@ -111,100 +142,132 @@ class TrippleTextField extends FormField {
     required this.forcedError,
     required this.forcedErrorString,
     required this.onChanged,
-  }) : super(validator: (v) {
-          if (!NbValidators.isUsername(userNameCntrl.text)) {
-            return "Enter a valid Username";
-          } else if (!NbValidators.isPhone(phoneNumCntrl.text.trim())) {
-            return "Enter a valid Phone Number";
-          } else if (!NbValidators.isEmail(emailCntrl.text.trim())) {
-            return "Enter a valid Email Address";
-          } else {
-            return null;
-          }
-        }, builder: (FormFieldState state) {
-          final Color borderColor;
-          String? errorText;
-          if (state.hasError || forcedError) {
-            borderColor = NbColors.red;
-            errorText = state.errorText ?? forcedErrorString;
-          } else {
-            borderColor = const Color(0xFFBBB9B9);
-          }
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: 62.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(16.r)),
-                  border: Border.all(
-                    color: borderColor,
-                    width: 1,
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.r,
-                ),
-                child: _textField(
-                  userNameCntrl,
-                  userNameHint,
-                  TextInputType.text,
-                  onChanged: onChanged,
-                ),
-              ),
-              Container(
-                height: 62.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: borderColor, width: 1),
-                    left: BorderSide(color: borderColor, width: 1),
-                    right: BorderSide(color: borderColor, width: 1),
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.r,
-                ),
-                child: _textField(
-                  phoneNumCntrl,
-                  phoneHint,
-                  TextInputType.phone,
-                  onChanged: onChanged,
-                ),
-              ),
-              Container(
-                height: 62.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(16.r)),
-                  border: Border(
-                    bottom: BorderSide(color: borderColor, width: 1),
-                    left: BorderSide(color: borderColor, width: 1),
-                    right: BorderSide(color: borderColor, width: 1),
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.r,
-                ),
-                child: _textField(
-                  emailCntrl,
-                  emailHint,
-                  TextInputType.emailAddress,
-                  onChanged: onChanged,
-                ),
-              ),
-              if (errorText != null)
-                NbText.sp12(errorText).setColor(borderColor),
-            ],
-          );
-        });
+  });
+
+  @override
+  _TrippleTextFieldState createState() => _TrippleTextFieldState();
 }
 
-class PlainTextField extends FormField {
+class _TrippleTextFieldState extends State<TrippleTextField> {
+  late FocusNode _userNameFocusNode;
+  late FocusNode _phoneNumFocusNode;
+  late FocusNode _emailFocusNode;
+  Color borderColor = const Color(0xFFBBB9B9); 
+
+  @override
+  void initState() {
+    super.initState();
+    _userNameFocusNode = FocusNode();
+    _phoneNumFocusNode = FocusNode();
+    _emailFocusNode = FocusNode();
+
+    _userNameFocusNode.addListener(_updateBorderColor);
+    _phoneNumFocusNode.addListener(_updateBorderColor);
+    _emailFocusNode.addListener(_updateBorderColor);
+  }
+
+  void _updateBorderColor() {
+    setState(() {
+      borderColor = _userNameFocusNode.hasFocus ||
+              _phoneNumFocusNode.hasFocus ||
+              _emailFocusNode.hasFocus
+          ? Colors.black
+          : const Color(0xFFBBB9B9);
+    });
+  }
+
+  @override
+  void dispose() {
+    _userNameFocusNode.dispose(); 
+    _phoneNumFocusNode.dispose();
+    _emailFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String? errorText;
+    if (widget.forcedError) {
+      borderColor = Colors.red;
+      errorText = widget.forcedErrorString;
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: 62.0, 
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(16.0)),
+            border: Border.all(
+              color: borderColor,
+              width: 1,
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: _textField(
+            widget.userNameCntrl,
+            TrippleTextField.userNameHint,
+            TextInputType.text,
+            focusNode: _userNameFocusNode,
+            onChanged: widget.onChanged,
+          ),
+        ),
+        Container(
+          height: 62.0, 
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: borderColor, width: 1),
+              left: BorderSide(color: borderColor, width: 1),
+              right: BorderSide(color: borderColor, width: 1),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: _textField(
+            widget.phoneNumCntrl,
+            TrippleTextField.phoneHint,
+            TextInputType.phone,
+            focusNode: _phoneNumFocusNode, 
+            onChanged: widget.onChanged,
+          ),
+        ),
+        Container(
+          height: 62.0, 
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius:
+                const BorderRadius.vertical(bottom: Radius.circular(16.0)),
+            border: Border(
+              bottom: BorderSide(color: borderColor, width: 1),
+              left: BorderSide(color: borderColor, width: 1),
+              right: BorderSide(color: borderColor, width: 1),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: _textField(
+            widget.emailCntrl,
+
+            TrippleTextField.emailHint,
+            TextInputType.emailAddress,
+            focusNode: _emailFocusNode,
+            onChanged: widget.onChanged,
+          ),
+        ),
+        if (errorText != null)
+          Text(
+            errorText,
+            style: TextStyle(color: borderColor),
+          ),
+      ],
+    );
+  }
+}
+
+class PlainTextField extends StatefulWidget {
   final TextEditingController? cntrl;
   final String? hint;
   final TextInputType? keyboardType;
@@ -217,7 +280,7 @@ class PlainTextField extends FormField {
   final String? forcedErrorString;
   final void Function(String?)? onChanged;
 
-  PlainTextField({
+  const PlainTextField({
     super.key,
     required this.cntrl,
     required this.hint,
@@ -230,52 +293,78 @@ class PlainTextField extends FormField {
     required this.forcedError,
     required this.forcedErrorString,
     required this.onChanged,
-  }) : super(validator: (v) {
-          return textValidator();
-        }, builder: (FormFieldState state) {
-          final Color borderColor;
-          String? errorText;
-          if (state.hasError || forcedError) {
-            borderColor = NbColors.red;
-            errorText = state.errorText ?? forcedErrorString;
-          } else {
-            borderColor = const Color(0xFFBBB9B9);
-          }
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: fieldHeight ?? 62.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: fieldColor,
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(
-                    color: borderColor,
-                    width: 1,
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.r,
-                ),
-                child: _textField(
-                  cntrl,
-                  hint,
-                  keyboardType,
-                  obscureText: obscureText,
-                  enabled: enable,
-                  onChanged: onChanged,
-                ),
-              ),
-              if (errorText != null)
-                NbText.sp12(errorText).setColor(borderColor),
-            ],
-          );
-        });
+  });
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _PlainTextFieldState createState() => _PlainTextFieldState();
 }
 
-class IconTextField extends FormField {
+class _PlainTextFieldState extends State<PlainTextField> {
+  late FocusNode _focusNode;
+  Color borderColor = const Color(0xFFBBB9B9); 
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _focusNode.addListener(() {
+      setState(() {
+        borderColor =
+            _focusNode.hasFocus ? Colors.black : const Color(0xFFBBB9B9);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose(); 
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String? errorText;
+    if (widget.forcedError) {
+      borderColor = NbColors.red;
+      errorText = widget.forcedErrorString;
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: widget.fieldHeight ?? 62.h,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: widget.fieldColor,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: borderColor,
+              width: 1,
+            ),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: 16.r,
+          ),
+          child: _textField(
+            widget.cntrl,
+            widget.hint,
+            widget.keyboardType,
+            obscureText: widget.obscureText,
+            enabled: widget.enable,
+            onChanged: widget.onChanged,
+            focusNode: _focusNode, 
+          ),
+        ),
+        if (errorText != null) NbText.sp12(errorText).setColor(borderColor),
+      ],
+    );
+  }
+}
+
+class IconTextField extends StatefulWidget {
   final TextEditingController? cntrl;
   final String? hint;
   final TextInputType? keyboardType;
@@ -289,7 +378,7 @@ class IconTextField extends FormField {
   final String? forcedErrorString;
   final void Function(String?)? onChanged;
 
-  IconTextField({
+  const IconTextField({
     super.key,
     required this.cntrl,
     required this.hint,
@@ -303,52 +392,83 @@ class IconTextField extends FormField {
     required this.forcedError,
     required this.forcedErrorString,
     required this.onChanged,
-  }) : super(validator: (v) {
-          return textValidator();
-        }, builder: (FormFieldState state) {
-          final Color borderColor;
-          String? errorText;
-          if (state.hasError || forcedError) {
-            borderColor = NbColors.red;
-            errorText = state.errorText ?? forcedErrorString;
-          } else {
-            borderColor = const Color(0xFFBBB9B9);
-          }
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+  });
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _IconTextFieldState createState() => _IconTextFieldState();
+}
+
+class _IconTextFieldState extends State<IconTextField> {
+  late FocusNode _focusNode;
+  Color borderColor = const Color(0xFFBBB9B9);
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _focusNode.addListener(() {
+      setState(() {
+        borderColor =
+            _focusNode.hasFocus ? Colors.black : const Color(0xFFBBB9B9);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose(); 
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String? errorText;
+    if (widget.forcedError) {
+      borderColor = NbColors.red;
+      errorText = widget.forcedErrorString;
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: widget.fieldHeight ?? 62.h,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: widget.fieldColor,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: borderColor,
+              width: 1,
+            ),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: 16.r,
+          ),
+          child: Row(
             children: [
-              Container(
-                height: fieldHeight ?? 62.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: fieldColor,
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(
-                    color: borderColor,
-                    width: 1,
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.r,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _textField(cntrl, hint, keyboardType,
-                          obscureText: obscureText,
-                          enabled: enable,
-                          onChanged: onChanged),
-                    ),
-                    trailing ?? const SizedBox.shrink(),
-                  ],
+              Expanded(
+                child: _textField(
+                  widget.cntrl,
+                  widget.hint,
+                  widget.keyboardType,
+                  obscureText: widget.obscureText,
+                  enabled: widget.enable,
+                  onChanged: widget.onChanged,
+                  focusNode:
+                      _focusNode,
                 ),
               ),
-              if (errorText != null)
-                NbText.sp12(errorText).setColor(borderColor),
+              widget.trailing ?? const SizedBox.shrink(),
             ],
-          );
-        });
+          ),
+        ),
+        if (errorText != null) NbText.sp12(errorText).setColor(borderColor),
+      ],
+    );
+  }
 }
 
 TextField _textField(
@@ -358,6 +478,7 @@ TextField _textField(
   bool obscureText = false,
   bool enabled = true,
   required void Function(String?)? onChanged,
+  FocusNode? focusNode, 
 }) {
   return TextField(
     controller: controller,
@@ -372,6 +493,7 @@ TextField _textField(
     ),
     cursorColor: NbColors.darkGrey,
     onChanged: onChanged,
+    focusNode: focusNode, 
     decoration: InputDecoration(
       contentPadding: EdgeInsets.zero,
       border: InputBorder.none,

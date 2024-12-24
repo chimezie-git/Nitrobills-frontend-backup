@@ -30,7 +30,7 @@ class HomeLoadingPage extends StatelessWidget {
                       width: double.maxFinite,
                       height: 66.h,
                       decoration: BoxDecoration(
-                        // color: NbColors.white,
+                        color: NbColors.white,
                         borderRadius: BorderRadius.circular(6.r),
                       ),
                       child: Row(

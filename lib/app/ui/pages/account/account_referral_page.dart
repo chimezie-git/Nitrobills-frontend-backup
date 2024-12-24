@@ -18,7 +18,7 @@ class AccountReferralPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: Colors.white,
       body: SafeArea(
         bottom: false,
         child: Padding(

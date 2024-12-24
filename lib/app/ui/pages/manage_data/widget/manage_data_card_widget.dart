@@ -111,7 +111,8 @@ class ManageDataCardWidget extends StatelessWidget {
     NbUtils.removeNav;
     await showModalBottomSheet(
       context: NbUtils.nav.currentContext!,
-      builder: (context) => EditQuotaModal(
+      isDismissible: true,
+      builder: (context) => const EditQuotaModal(
         totalData: "10",
         usedData: "2",
         periodEnum: PeriodEnum.day,

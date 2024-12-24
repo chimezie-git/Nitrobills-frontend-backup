@@ -129,7 +129,7 @@ class AuthService {
     Map<String, dynamic> payload = {"otp_code": otpCode, "phone_number": phone};
 
     TypeOrError<dio.Response> response =
-        await HttpService.post("${_baseUrl}confirm_otp/phone/", payload);
+        await HttpService.post("${_baseUrl}otp/sms/confirm/", payload);
     if (response.isRight) {
       Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
@@ -151,7 +151,7 @@ class AuthService {
     Map<String, dynamic> payload = {"otp_code": otpCode, "email": email};
 
     TypeOrError<dio.Response> response =
-        await HttpService.post("${_baseUrl}confirm_otp/pin/", payload);
+        await HttpService.post("${_baseUrl}otp/pin/confirm/", payload);
     if (response.isRight) {
       Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
@@ -172,7 +172,7 @@ class AuthService {
   static AsyncOrError<String> sendOTPSMS(String phone) async {
     Map<String, dynamic> payload = {"phone_number": phone};
     TypeOrError<dio.Response> response =
-        await HttpService.post("${_baseUrl}send_sms_otp/", payload);
+        await HttpService.post("${_baseUrl}otp/sms/send/", payload);
     if (response.isRight) {
       Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
@@ -194,7 +194,7 @@ class AuthService {
     Map<String, dynamic> payload = {"email": email};
 
     TypeOrError<dio.Response> response =
-        await HttpService.post("${_baseUrl}send_email_otp/", payload);
+        await HttpService.post("${_baseUrl}otp/email/send/", payload);
     if (response.isRight) {
       Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
@@ -263,7 +263,7 @@ class AuthService {
     Map<String, dynamic> payload = {"password": newPassword};
 
     TypeOrError<dio.Response> response = await HttpService.post(
-        "${_baseUrl}password_change/", payload,
+        "${_baseUrl}password/change/", payload,
         header: _loginHeader());
 
     if (response.isRight) {
@@ -297,7 +297,7 @@ class AuthService {
       "phone_number": phone,
     };
     TypeOrError<dio.Response> response =
-        await HttpService.post("${_baseUrl}change_phone/", payload);
+        await HttpService.post("${_baseUrl}phone/change/", payload);
     if (response.isRight) {
       Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
@@ -324,7 +324,7 @@ class AuthService {
       "phone_number": phone,
     };
     TypeOrError<dio.Response> response =
-        await HttpService.post("${_baseUrl}forget_password/", payload);
+        await HttpService.post("${_baseUrl}password/reset/", payload);
     if (response.isRight) {
       Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
@@ -351,7 +351,7 @@ class AuthService {
       "pin": pin,
     };
     TypeOrError<dio.Response> response = await HttpService.post(
-        "${_baseUrl}pin_code/update/", payload,
+        "${_baseUrl}pin/update/", payload,
         header: _loginHeader());
     if (response.isRight) {
       Map responseData = Map.from(response.right.data);

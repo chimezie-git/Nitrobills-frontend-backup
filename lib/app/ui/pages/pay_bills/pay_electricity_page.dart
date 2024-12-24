@@ -79,7 +79,7 @@ class _PayElectricityPageState extends State<PayElectricityPage> {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(children: [
-                      NbField.buttonArrowDown(
+                      ButtonArrowDown(
                         fieldHeight: 78.h,
                         text: electricityProvider?.name ?? "Choose Provider",
                         onTap: _chooseProvider,
@@ -172,6 +172,7 @@ class _PayElectricityPageState extends State<PayElectricityPage> {
           const GbElectricityServiceProviderModal(),
           barrierColor: NbColors.black.withOpacity(0.2),
           isScrollControlled: true,
+          isDismissible: true,
         ) ??
         electricityProvider;
     setState(() {});

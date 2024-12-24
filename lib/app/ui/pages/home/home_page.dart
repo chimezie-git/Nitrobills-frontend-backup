@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: const Color(0xFFFAFAFA),
             body: RefreshIndicator(
               color: NbColors.black,
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.transparent,
               onRefresh: () async {
                 await refresh();
               },
@@ -59,6 +59,7 @@ class _HomePageState extends State<HomePage> {
                           image: AssetImage(NbImage.homeBgImg),
                           fit: BoxFit.cover,
                         ),
+                        color: NbColors.white,
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -80,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                     Container(
                       width: double.maxFinite,
                       padding: EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 0),
-                      // color: NbColors.white,
+                      color: NbColors.white,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -95,26 +96,21 @@ class _HomePageState extends State<HomePage> {
                                 svg: NbSvg.buyData,
                                 title: "Buy Data",
                                 subtitle: "MTN, Airtel, 9mobile, GlO",
-                                onTap: () {
-                                  _closeOpenNav(const BuyDataPage());
-                                },
+                                onTap: () => _closeOpenNav(const BuyDataPage()),
                               ),
                               TopPaymentsButtonWidget(
                                 svg: NbSvg.card,
                                 title: "Pay Bills",
                                 subtitle: "Buy airtime, Recharge decoder",
                                 maxLines: 2,
-                                onTap: () {
-                                  _closeOpenNav(const PayBillsPage());
-                                },
+                                onTap: () =>
+                                    _closeOpenNav(const PayBillsPage()),
                               ),
                               TopPaymentsButtonWidget(
                                 svg: NbSvg.mail,
                                 title: "Bulk SMS",
                                 subtitle: "Send multiple SMS",
-                                onTap: () {
-                                  _closeOpenNav(const BulkSMSPage());
-                                },
+                                onTap: () => _closeOpenNav(const BulkSMSPage()),
                               ),
                             ],
                           ),

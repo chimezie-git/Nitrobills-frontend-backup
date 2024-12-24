@@ -20,6 +20,7 @@ class ManageDataPage extends StatelessWidget {
       Get.find<ManageDataController>().initialize();
     });
     return Scaffold(
+      backgroundColor: const Color.fromRGBO(242, 242, 242, 1),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 9.w),

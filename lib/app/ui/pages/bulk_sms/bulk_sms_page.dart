@@ -29,7 +29,7 @@ class _BulkSMSPageState extends State<BulkSMSPage> {
   late TextEditingController senderCntr;
   late TextEditingController recepientsCntr;
   Map<String, SmsRecepient> recepientMap = {};
-
+  FocusNode recepientFocusNode = FocusNode();
   String? recepientValidator;
   String? msgValidator;
   GlobalKey<FormState> formKey = GlobalKey();
@@ -37,13 +37,22 @@ class _BulkSMSPageState extends State<BulkSMSPage> {
   int txtLen = 0;
 
   ButtonEnum btnStatus = ButtonEnum.disabled;
-
+  Color recepientBorderColor = const Color(0xFFBBB9B9);
   @override
   void initState() {
     super.initState();
     msgCntr = TextEditingController();
     recepientsCntr = TextEditingController();
     senderCntr = TextEditingController();
+    recepientFocusNode.addListener(() {
+      setState(() {
+        recepientBorderColor = recepientFocusNode.hasFocus
+            ? Colors.black
+            : (recepientValidator == null
+                ? const Color(0xFFBBB9B9)
+                : NbColors.red);
+      });
+    });
   }
 
   @override
@@ -52,6 +61,7 @@ class _BulkSMSPageState extends State<BulkSMSPage> {
     recepientsCntr.dispose();
     senderCntr.dispose();
     msgFocusNode.dispose();
+    recepientFocusNode.dispose();
     super.dispose();
   }
 
@@ -128,13 +138,16 @@ class _BulkSMSPageState extends State<BulkSMSPage> {
                                     borderRadius: BorderRadius.circular(16.r),
                                     border: Border.all(
                                       color: recepientValidator == null
-                                          ? const Color(0xFFBBB9B9)
+                                          ? recepientFocusNode.hasFocus
+                                              ? Colors.black
+                                              : const Color(0xFFBBB9B9)
                                           : NbColors.red,
                                       width: 1,
                                     ),
                                   ),
                                   child: TextField(
                                     controller: recepientsCntr,
+                                    focusNode: recepientFocusNode,
                                     onSubmitted: _addNumber,
                                     onChanged: _onChanged,
                                     keyboardType: TextInputType.number,
@@ -225,6 +238,9 @@ class _BulkSMSPageState extends State<BulkSMSPage> {
 
   void _sendMessage() async {
     if (isValid()) {
+      setState(() {
+        btnStatus = ButtonEnum.loading;
+      });
       List<String> contacts =
           recepientMap.values.map((rec) => rec.number).toList();
       BulkSMSBill bill = BulkSMSBill(
@@ -233,6 +249,9 @@ class _BulkSMSPageState extends State<BulkSMSPage> {
           codeNumber: '',
           contacts: contacts,
           message: msgCntr.text);
+      setState(() {
+        btnStatus = ButtonEnum.active;
+      });
       Get.to(() => ConfirmTransactionScreen(bill: bill));
     }
   }

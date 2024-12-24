@@ -86,7 +86,7 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
                   },
                 ),
                 5.verticalSpace,
-                NbField.buttonArrowDown(
+                ButtonArrowDown(
                   fieldHeight: 78.h,
                   text: serviceType == null ? "Service" : serviceName,
                   onTap: _chooseProvider,
@@ -104,13 +104,13 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
                   hint: "Amount",
                 ),
                 32.verticalSpace,
-                NbField.buttonArrowDown(
+                ButtonArrowDown(
                   fieldHeight: 78.h,
                   text: frequency?.period.adjective ?? "Frequency",
                   onTap: _chooseFrequency,
                 ),
                 32.verticalSpace,
-                NbField.buttonArrowDown(
+                ButtonArrowDown(
                   fieldHeight: 78.h,
                   text: endDate == null
                       ? "End date"
@@ -157,6 +157,7 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
       const ServiceTypeModal(),
       barrierColor: NbColors.black.withOpacity(0.2),
       isScrollControlled: true,
+      isDismissible: true,
     );
     if (modalData != null) {
       serviceType = modalData.$1;
@@ -170,6 +171,7 @@ class _SetupAutopaymentPageState extends State<SetupAutopaymentPage> {
           const FrequencySelectionModal(),
           backgroundColor: Colors.black.withOpacity(0.2),
           isScrollControlled: true,
+          isDismissible: true,
         ) ??
         frequency;
     setState(() {});

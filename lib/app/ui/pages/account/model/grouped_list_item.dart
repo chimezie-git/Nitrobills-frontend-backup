@@ -76,6 +76,7 @@ class GroupedListItem {
               NbUtils.removeNav;
               await showModalBottomSheet(
                 context: NbUtils.nav.currentContext!,
+                isDismissible: true,
                 builder: (context) => const PasswordResetModal(),
                 backgroundColor: NbColors.black.withOpacity(0.2),
                 isScrollControlled: true,

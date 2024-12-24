@@ -5,10 +5,13 @@ import 'package:nitrobills/app/controllers/navbar_controller.dart';
 import 'package:nitrobills/app/data/models/app_notification.dart';
 import 'package:nitrobills/app/data/services/notification/notification_service.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+// {
+    // "username": "testuser1",
+    // "password": "password@123"
+// }
 class NbUtils {
-  // static String baseUrl = "https://nitrobills-backend.onrender.com";
-  static String baseUrl = "http://127.0.0.1:8000";
+  static String baseUrl = "https://nitrobills-backend-backup.onrender.com";
+  // static String baseUrl = "http://127.0.0.1:8000";
 
   static GlobalKey<NavigatorState> nav = GlobalKey<NavigatorState>();
 

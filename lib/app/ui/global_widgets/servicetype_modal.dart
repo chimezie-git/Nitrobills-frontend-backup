@@ -126,6 +126,7 @@ class ServiceTypeModal extends StatelessWidget {
       child,
       barrierColor: NbColors.black.withOpacity(0.2),
       isScrollControlled: true,
+      isDismissible: true,
     );
   }
 }

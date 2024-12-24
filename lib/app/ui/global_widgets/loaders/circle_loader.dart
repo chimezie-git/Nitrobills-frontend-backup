@@ -35,8 +35,8 @@ class _CircleLoaderState extends State<CircleLoader>
   Widget build(BuildContext context) {
     return Lottie.asset(
       NbLottie.circleLoader,
-      height: 50.r,
-      width: 50.r,
+      height: 40.r,
+      width: 40.r,
       alignment: Alignment.center,
       fit: BoxFit.fitWidth,
       controller: _controller,
