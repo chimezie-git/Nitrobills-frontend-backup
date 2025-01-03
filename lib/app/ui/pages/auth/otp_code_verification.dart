@@ -203,7 +203,7 @@ class _OtpCodeVerificationPageState extends State<OtpCodeVerificationPage> {
                         valueListenable: buttonStatus,
                         builder: (context, value, child) {
                           return ElevatedPrimaryButton(
-                            status: ButtonEnum.active,
+                            status: value,
                             text: "Verify number",
                             onTap: _verifyNumber,
                           );
