@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' as dio;
 import 'package:either_dart/either.dart';
 import 'package:get/get.dart';
+import 'dart:developer';
 import 'package:nitrobills/app/controllers/account/user_account_controller.dart';
 import 'package:nitrobills/app/data/models/user_account.dart';
 import 'package:nitrobills/app/data/provider/app_error.dart';
@@ -20,6 +21,7 @@ class UserAccountService {
         });
 
     if (response.isRight) {
+      log(response.right.data);
       Map responseData = Map.from(response.right.data);
       if (response.right.statusCode == 200) {
         return Right(

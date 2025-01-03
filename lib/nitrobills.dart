@@ -22,6 +22,7 @@ class NitroBills extends StatelessWidget {
       builder: (_, context) {
         return GetMaterialApp(
           title: 'Nitro Bills',
+          debugShowCheckedModeBanner: false,
           navigatorKey: NbUtils.nav,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -32,7 +33,6 @@ class NitroBills extends StatelessWidget {
           initialBinding: InitialBinding(),
           builder: (context, child) => TabOverlay(child: child ?? Container()),
           home: const SplashPage(),
-          
         );
       },
     );

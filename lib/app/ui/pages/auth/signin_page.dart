@@ -167,7 +167,7 @@ class _SigninPageState extends State<SigninPage> {
                         valueListenable: buttonStatus,
                         builder: (context, value, child) {
                           return ElevatedPrimaryButton(
-                            status: value,
+                            status: ButtonEnum.active,
                             text: "Login",
                             onTap: _login,
                           );

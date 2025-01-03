@@ -35,11 +35,11 @@ class _BallLoaderState extends State<BallLoader>
   Widget build(BuildContext context) {
     return Lottie.asset(
       NbLottie.ballLoaderV2,
-      height: 80.r,
-      width: 80.r,
+      height: 60.r,
+      width: 60.r,
       // alignment: Alignment(0, -1),
       alignment: Alignment.topCenter,
-      fit: BoxFit.fitWidth,
+      fit: BoxFit.cover,
       controller: _controller,
       onLoaded: (composition) {
         _controller

@@ -105,17 +105,11 @@ class _ElevatedPrimaryButtonState extends State<ElevatedPrimaryButton>
                     ),
                   ),
                   if (widget.status.isLoading)
-                    Positioned(
-                      top: -15.h,
-                      left: 0,
-                      right: 0,
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          BallLoader(),
-                        ],
-                      ),
-                    )
+                    const Positioned.fill(
+                        child: Align(
+                      alignment: Alignment.center,
+                      child: BallLoader(),
+                    ))
                 ],
               ),
             ),

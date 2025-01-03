@@ -14,6 +14,7 @@ import 'package:nitrobills/app/ui/global_widgets/form_fields.dart';
 import 'package:nitrobills/app/ui/utils/nb_colors.dart';
 import 'package:nitrobills/app/ui/utils/nb_image.dart';
 import 'package:nitrobills/app/ui/utils/nb_text.dart';
+import 'dart:developer';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -190,7 +191,9 @@ class _SignupPageState extends State<SignupPage> {
                                     fontFamily: 'Satoshi',
                                     fontWeight: FontWeight.w400),
                                 recognizer: TapGestureRecognizer()
-                                  ..onTap = _privacyPolicy,
+                                  ..onTap = () {
+                                    _privacyPolicy();
+                                  },
                               )
                             ],
                           ),
@@ -202,7 +205,9 @@ class _SignupPageState extends State<SignupPage> {
                               return ElevatedPrimaryButton(
                                 status: value,
                                 text: "Agree and continue",
-                                onTap: _agreeAndContinue,
+                                onTap: () {
+                                  _agreeAndContinue();
+                                },
                               );
                             }),
                         37.verticalSpace,
@@ -250,9 +255,12 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
-  void _privacyPolicy() {}
+  void _privacyPolicy() {
+    log('PRIVACY POLICY');
+  }
 
   void _agreeAndContinue() async {
+    log('AGREE');
     if (formKey.currentState?.validate() ?? false) {
       buttonStatus.value = ButtonEnum.loading;
       final data = await AuthRepo().register(
